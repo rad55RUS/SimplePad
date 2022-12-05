@@ -1,0 +1,87 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseWindowsForms>False</UseWindowsForms>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
+    <Configurations>Debug</Configurations>
+    <Platforms>AnyCPU;x64</Platforms>
+    <StartupObject></StartupObject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Icon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Assets\WindowChrome\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Memory" Version="4.5.5" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TextFile_Lib\TextFile_Lib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <!--Original images-->
+	  <!--Scroll bar-->
+      <Resource Include="Assets/ScrollBar/DownArrowBlack.png" />
+	  <Resource Include="Assets/ScrollBar/DownArrowWhite.png" />
+      <Resource Include="Assets/ScrollBar/UpArrowBlack.png" />
+	  <Resource Include="Assets/ScrollBar/UpArrowWhite.png" />
+	  <!---->
+	  
+	  <!--Title bar-->
+      <Resource Include="Assets/WindowChrome/CloseBlack.png" />
+      <Resource Include="Assets/WindowChrome/CloseWhite.png" />
+	  <Resource Include="Assets/WindowChrome/Icon.png" />
+	  <Resource Include="Assets/WindowChrome/MaximizeBlack.png" />
+	  <Resource Include="Assets/WindowChrome/MaximizeWhite.png" />
+	  <Resource Include="Assets/WindowChrome/MinimizeBlack.png" />
+	  <Resource Include="Assets/WindowChrome/MinimizeWhite.png" />
+	  <Resource Include="Assets/WindowChrome/RestoreBlack.png" />
+	  <Resource Include="Assets/WindowChrome/RestoreWhite.png" />
+	  <Resource Include="Icon.png" />
+	  <!---->
+	  
+	  <!--Icons-->
+	  <!--Title bar-->
+	  <Resource Include="Assets/WindowChrome/CloseBlackIcon.png" />
+      <Resource Include="Assets/WindowChrome/CloseWhiteIcon.png" />
+	  <Resource Include="Assets/WindowChrome/MaximizeBlackIcon.png" />
+	  <Resource Include="Assets/WindowChrome/MaximizeWhiteIcon.png" />
+	  <Resource Include="Assets/WindowChrome/MinimizeBlackIcon.png" />
+	  <Resource Include="Assets/WindowChrome/MinimizeWhiteIcon.png" />
+	  <Resource Include="Assets/WindowChrome/RestoreBlackIcon.png" />
+	  <Resource Include="Assets/WindowChrome/RestoreWhiteIcon.png" />
+	  <!---->
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>

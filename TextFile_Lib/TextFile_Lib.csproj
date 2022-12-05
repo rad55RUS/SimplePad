@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="ClassDiagram1.cd" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="UDE.CSharp" Version="1.1.0" />
+  </ItemGroup>
+
+</Project>
