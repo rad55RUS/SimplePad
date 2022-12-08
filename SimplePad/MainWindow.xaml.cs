@@ -316,8 +316,31 @@ namespace SimplePad
 		{
             var placement = SearchButton.PointToScreen(new Point(0, 0));
 
-			findWindow.Left = this.Left + this.Width - 367;
-            findWindow.Top = placement.Y;
+			if (this.Left >= System.Windows.SystemParameters.WorkArea.Width / 1.5)
+			{
+				findWindow.Left = System.Windows.SystemParameters.WorkArea.Width - 367;
+			}
+			else if (this.Left <= 0)
+			{
+				findWindow.Left = 0;
+			}
+			else
+			{
+                findWindow.Left = this.Left + this.Width - 367;
+            }
+			if (this.Top >= System.Windows.SystemParameters.WorkArea.Height / 1.5)
+			{
+                findWindow.Top = System.Windows.SystemParameters.WorkArea.Height - 367;
+            }
+            else if (this.Top <= 0)
+            {
+                findWindow.Top = 0;
+            }
+            else
+			{
+				findWindow.Top = placement.Y;
+			}
+
 			findWindow.Owner = this;
 
 			findWindow.Show();
