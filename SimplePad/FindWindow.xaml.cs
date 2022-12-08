@@ -39,11 +39,28 @@ namespace SimplePad
 
         protected virtual void OnLoad(object sender, RoutedEventArgs e)
         {
+            // Load settings
             this.findInput_TextBox.Text = Properties.Settings.Default.DesiredString;
             this.findInput2_TextBox.Text = Properties.Settings.Default.DesiredString;
             this.matchCase_CheckBox.IsChecked = Properties.Settings.Default.MatchCase;
+            this.multipleLine_CheckBox.IsChecked = Properties.Settings.Default.MultipleLineInput;
             this.down_RadioButton.IsChecked = Properties.Settings.Default.SearchDirectionIsDown;
             this.up_RadioButton.IsChecked = !Properties.Settings.Default.SearchDirectionIsDown;
+            //
+
+            if (multipleLine_CheckBox.IsChecked == true)
+            {
+                findInput_TextBox.AcceptsReturn = true;
+                findInput2_TextBox.AcceptsReturn = true;
+                replaceInput_TextBox.AcceptsReturn = true;
+                this.findButton.Focus();
+            }
+            else
+            {
+                findInput_TextBox.AcceptsReturn = false;
+                findInput2_TextBox.AcceptsReturn = false;
+                replaceInput_TextBox.AcceptsReturn = false;
+            }
 
             // WindowChrome
             IntPtr windIntPtr = new WindowInteropHelper(this).Handle;
@@ -58,7 +75,7 @@ namespace SimplePad
         }
         //
 
-        // Search events
+        // This window events
         /// <summary>
         /// Event on changing matchCase_CheckBox status
         /// </summary>
@@ -67,6 +84,46 @@ namespace SimplePad
         private void matchCase_Change(object sender, RoutedEventArgs e)
         {
             ((MainWindow)this.Owner).searchResults.Clear();
+            this.findButton.Focus();
+        }
+
+        /// <summary>
+        /// Event on changing radio button status
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void direction_Changed(object sender, RoutedEventArgs e)
+        {
+            this.findButton.Focus();
+        }
+
+        /// <summary>
+        /// Event on changing multipleLine_CheckBox unchecked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void multipleLine_Unchecked(object sender, RoutedEventArgs e)
+        {
+
+            findInput_TextBox.AcceptsReturn = false;
+            findInput2_TextBox.AcceptsReturn = false;
+            replaceInput_TextBox.AcceptsReturn = false;
+
+            this.findButton.Focus();
+        }
+
+        /// <summary>
+        /// Event on changing multipleLine_CheckBox checked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void multipleLine_Checked(object sender, RoutedEventArgs e)
+        {
+            findInput_TextBox.AcceptsReturn = true;
+            findInput2_TextBox.AcceptsReturn = true;
+            replaceInput_TextBox.AcceptsReturn = true;
+
+            this.findButton.Focus();
         }
 
         /// <summary>
@@ -76,36 +133,85 @@ namespace SimplePad
         /// <param name="e"></param>
         private void FindButton_Click(object sender, RoutedEventArgs e)
         {
-            if (findInput_TextBox.Text.Length > 0)
+            if (find_TabItem.IsSelected == true)
+            {
+                InitiateSearch(findInput_TextBox.Text);
+            }
+            else if (replace_TabItem.IsSelected == true)
+            {
+                InitiateSearch(findInput2_TextBox.Text);
+            }
+        }
+
+        /// <summary>
+        /// Event on text changing
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        private void findInput_Changed(object sender, EventArgs e)
+        {
+            if (find_TabItem.IsSelected == true)
+            {
+                findInput2_TextBox.Text = findInput_TextBox.Text;
+            }
+            else if (replace_TabItem.IsSelected == true)
+            {
+                findInput_TextBox.Text = findInput2_TextBox.Text;
+            }
+        }
+
+        protected void findInput_KeyDown(object sender, KeyEventArgs e)
+        {
+            // ENTER
+            if (e.Key == Key.Return && multipleLine_CheckBox.IsChecked == false)
+            {
+                InitiateSearch(findInput_TextBox.Text);
+
+                e.Handled = true;
+            }
+            if (find_TabItem.IsSelected == true)
+            {
+                findInput_TextBox.Focus();
+            }
+            else if (replace_TabItem.IsSelected == true)
+            {
+                findInput2_TextBox.Focus();
+            }
+        }
+        //
+
+        private void InitiateSearch(string text)
+        {
+            if (text.Length > 0)
             {
                 ((MainWindow)this.Owner).textBoxMain.Focus();
                 if (matchCase_CheckBox.IsChecked == true)
                 {
                     if (down_RadioButton.IsChecked == true)
                     {
-                        ((MainWindow)this.Owner).FindString(findInput_TextBox.Text, false, true);
+                        ((MainWindow)this.Owner).FindString(text, false, true);
                     }
                     else
                     {
-                        ((MainWindow)this.Owner).FindString(findInput_TextBox.Text, false, false);
+                        ((MainWindow)this.Owner).FindString(text, false, false);
                     }
                 }
                 else
                 {
                     if (down_RadioButton.IsChecked == true)
                     {
-                        ((MainWindow)this.Owner).FindString(findInput_TextBox.Text, true, true);
+                        ((MainWindow)this.Owner).FindString(text, true, true);
                     }
                     else
                     {
-                        ((MainWindow)this.Owner).FindString(findInput_TextBox.Text, true, false);
+                        ((MainWindow)this.Owner).FindString(text, true, false);
                     }
                 }
             }
             this.findButton.Focus();
             matchesCounter.Content = "*matches found: " + ((MainWindow)this.Owner).searchResults.Count;
         }
-        //
 
         // Window methods
         //// Fixing default context menu via creating another one
@@ -138,6 +244,21 @@ namespace SimplePad
         /// <param name="e"></param>
         protected override void OnKeyDown(KeyEventArgs e)
         {
+            // ENTER
+            if (e.SystemKey == Key.Enter && multipleLine_CheckBox.IsChecked == false)
+            {
+                if (find_TabItem.IsSelected == true)
+                {
+                    InitiateSearch(findInput_TextBox.Text);
+                }
+                else if (replace_TabItem.IsSelected == true)
+                {
+                    InitiateSearch(findInput2_TextBox.Text);
+                }
+
+                e.Handled = true;
+            }
+
             // ALT + SPACE
             if (Keyboard.Modifiers == ModifierKeys.Alt && e.SystemKey == Key.Space)
             {
@@ -162,6 +283,7 @@ namespace SimplePad
         {
             Properties.Settings.Default.DesiredString = this.findInput_TextBox.Text;
             Properties.Settings.Default.MatchCase = this.matchCase_CheckBox.IsChecked ?? false;
+            Properties.Settings.Default.MultipleLineInput = this.multipleLine_CheckBox.IsChecked ?? false;
             Properties.Settings.Default.SearchDirectionIsDown = this.down_RadioButton.IsChecked ?? false;
 
             Hide();

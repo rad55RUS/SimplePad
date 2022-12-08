@@ -142,5 +142,17 @@ namespace SimplePad.Properties {
                 this["FontSize"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MultipleLineInput {
+            get {
+                return ((bool)(this["MultipleLineInput"]));
+            }
+            set {
+                this["MultipleLineInput"] = value;
+            }
+        }
     }
 }

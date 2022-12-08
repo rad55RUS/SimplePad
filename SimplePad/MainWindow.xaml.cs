@@ -285,6 +285,10 @@ namespace SimplePad
         {
 			OpenFindWindow();
         }
+        private void Replace_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFindWindow();
+        }
         ///
         /// FormatButton methods
         private void FormatButton_MouseDown(object sender, MouseButtonEventArgs e)
@@ -569,6 +573,13 @@ namespace SimplePad
 			}
             // CTRL + F
             if (e.Key == Key.F && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+            {
+                OpenFindWindow();
+
+                e.Handled = true;
+            }
+            // CTRL + H
+            if (e.Key == Key.H && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
             {
                 OpenFindWindow();
 

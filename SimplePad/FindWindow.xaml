@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimplePad"
         mc:Ignorable="d"
-        Title="NameOfApplication" Height="207" Width="367" 
+        Title="NameOfApplication" Height="240" Width="367" 
         MinHeight="100" MinWidth="50"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -254,7 +254,7 @@
             <TabControl x:Name="tabControl" HorizontalAlignment="Center" Height="199" VerticalAlignment="Top" Width="360" Foreground="{x:Null}" BorderBrush="#FF333333" Background="{x:Null}" BorderThickness="0,1,0,0" Margin="0,-22,0,0">
                 <TabItem x:Name="find_TabItem" Header="Find">
                     <Grid Background="#FF171717">
-                        <TextBox x:Name="findInput_TextBox" TextWrapping="Wrap" Text="" Margin="0,10,9,0" Background="#FF0C0C0C" SelectionBrush="#FF0061FF" RenderTransformOrigin="0.5,0.5" Foreground="White" CaretBrush="White" BorderBrush="{x:Null}" BorderThickness="0" FontSize="14" TextAlignment="Justify" VerticalAlignment="Top" Height="45" AcceptsReturn="True" HorizontalAlignment="Right" Width="299"/>
+                        <TextBox x:Name="findInput_TextBox" TextWrapping="Wrap" Text="" Margin="0,10,9,0" Background="#FF0C0C0C" SelectionBrush="#FF0061FF" RenderTransformOrigin="0.5,0.5" Foreground="White" CaretBrush="White" BorderBrush="{x:Null}" BorderThickness="0" FontSize="14" TextAlignment="Justify" VerticalAlignment="Top" Height="45" AcceptsReturn="True" HorizontalAlignment="Right" Width="299" TextChanged="findInput_Changed" KeyDown="findInput_KeyDown"/>
                         <Label Content="What:" HorizontalAlignment="Left" Height="26" Margin="0,19,0,0" VerticalAlignment="Top" Width="48" HorizontalContentAlignment="Right" Foreground="White"/>
                     </Grid>
                 </TabItem>
@@ -264,9 +264,9 @@
                             <RowDefinition Height="19*"/>
                             <RowDefinition Height="24*"/>
                         </Grid.RowDefinitions>
-                        <TextBox x:Name="findInput2_TextBox" TextWrapping="Wrap" Text="" Margin="0,10,9,0" Background="#FF0C0C0C" SelectionBrush="#FF0061FF" RenderTransformOrigin="0.5,0.5" Foreground="White" CaretBrush="White" BorderBrush="{x:Null}" BorderThickness="0" FontSize="14" TextAlignment="Justify" VerticalAlignment="Top" Height="45" AcceptsReturn="True" HorizontalAlignment="Right" Width="299"/>
+                        <TextBox x:Name="findInput2_TextBox" TextWrapping="Wrap" Text="" Margin="0,10,9,0" Background="#FF0C0C0C" SelectionBrush="#FF0061FF" RenderTransformOrigin="0.5,0.5" Foreground="White" CaretBrush="White" BorderBrush="{x:Null}" BorderThickness="0" FontSize="14" TextAlignment="Justify" VerticalAlignment="Top" Height="45" AcceptsReturn="True" HorizontalAlignment="Right" Width="299" TextChanged="findInput_Changed"/>
                         <Label Content="What:" HorizontalAlignment="Left" Height="26" Margin="-1,19,0,0" VerticalAlignment="Top" Width="48" HorizontalContentAlignment="Right" Foreground="White"/>
-                        <TextBox x:Name="replaceInput_TextBox_Copy" TextWrapping="Wrap" Text="" Margin="0,64,9,0" Background="#FF0C0C0C" SelectionBrush="#FF0061FF" RenderTransformOrigin="0.5,0.5" Foreground="White" CaretBrush="White" BorderBrush="{x:Null}" BorderThickness="0" FontSize="14" TextAlignment="Justify" VerticalAlignment="Top" Height="44" AcceptsReturn="True" HorizontalAlignment="Right" Width="299" Grid.RowSpan="2"/>
+                        <TextBox x:Name="replaceInput_TextBox" TextWrapping="Wrap" Text="" Margin="0,64,9,0" Background="#FF0C0C0C" SelectionBrush="#FF0061FF" RenderTransformOrigin="0.5,0.5" Foreground="White" CaretBrush="White" BorderBrush="{x:Null}" BorderThickness="0" FontSize="14" TextAlignment="Justify" VerticalAlignment="Top" Height="44" AcceptsReturn="True" HorizontalAlignment="Right" Width="299" Grid.RowSpan="2"/>
                         <Label Content="By:" HorizontalAlignment="Left" Height="26" Margin="-1,73,0,0" VerticalAlignment="Top" Width="48" HorizontalContentAlignment="Right" Foreground="White" Grid.RowSpan="2"/>
                     </Grid>
                 </TabItem>
@@ -274,7 +274,7 @@
                     <Grid/>
                 </TabItem>
             </TabControl>
-            <Button x:Name="findButton" Content="Find Next" HorizontalAlignment="Left" Height="22" Margin="242,0,0,15" VerticalAlignment="Bottom" Width="104" Foreground="White" Background="#FF373737" BorderBrush="{x:Null}" Click="FindButton_Click">
+            <Button x:Name="findButton" Content="Find Next" HorizontalAlignment="Left" Height="22" Margin="242,0,0,10" VerticalAlignment="Bottom" Width="104" Foreground="White" Background="#FF373737" BorderBrush="{x:Null}" Click="FindButton_Click">
                 <Button.Style>
                     <Style TargetType="{x:Type Button}">
                         <Setter Property="Template">
@@ -297,12 +297,13 @@
                     </Style>
                 </Button.Style>
             </Button>
-            <CheckBox x:Name="matchCase_CheckBox" Content="Match case" HorizontalAlignment="Left" Height="30" Margin="13,0,0,61" VerticalAlignment="Bottom" Width="111" Foreground="White" BorderBrush="#FF272727" Checked="matchCase_Change" Unchecked="matchCase_Change"/>
+            <CheckBox x:Name="matchCase_CheckBox" Content="Match case" HorizontalAlignment="Left" Height="16" Margin="10,0,0,65" VerticalAlignment="Bottom" Width="92" Foreground="White" BorderBrush="#FF272727" Checked="matchCase_Change" Unchecked="matchCase_Change"/>
             <Label x:Name="matchesCounter" Content="" HorizontalAlignment="Left" Height="27" Margin="152,58,0,0" VerticalAlignment="Top" Width="194" Foreground="White" FontSize="11" HorizontalContentAlignment="Right"/>
-            <Rectangle HorizontalAlignment="Left" Height="41" Margin="13,0,0,17" Stroke="#FF383838" VerticalAlignment="Bottom" Width="136" RadiusX="1" RadiusY="1" StrokeThickness="2"/>
-            <Label Content="Direction" HorizontalAlignment="Left" Height="24" Margin="20,0,0,47" VerticalAlignment="Bottom" Width="58" Background="#FF171717" Foreground="White" VerticalContentAlignment="Center"/>
-            <RadioButton x:Name="down_RadioButton" Content="Down" HorizontalAlignment="Left" Height="18" VerticalAlignment="Bottom" Width="60" Foreground="White" BorderBrush="#FF272727" Margin="20,0,0,27"/>
-            <RadioButton x:Name="up_RadioButton" Content="Up" HorizontalAlignment="Left" Height="18" VerticalAlignment="Bottom" Width="60" Foreground="White" BorderBrush="#FF272727" Margin="85,0,0,27" RenderTransformOrigin="0.492,-0.713"/>
+            <Rectangle HorizontalAlignment="Left" Height="41" Margin="12,0,0,11" Stroke="#FF383838" VerticalAlignment="Bottom" Width="136" RadiusX="1" RadiusY="1" StrokeThickness="2"/>
+            <Label Content="Direction" HorizontalAlignment="Left" Height="24" Margin="19,0,0,41" VerticalAlignment="Bottom" Width="58" Background="#FF171717" Foreground="White" VerticalContentAlignment="Center"/>
+            <RadioButton x:Name="down_RadioButton" Content="Down" HorizontalAlignment="Left" Height="18" VerticalAlignment="Bottom" Width="60" Foreground="White" BorderBrush="#FF272727" Margin="19,0,0,21" Checked="direction_Changed" Unchecked="direction_Changed"/>
+            <RadioButton x:Name="up_RadioButton" Content="Up" HorizontalAlignment="Left" Height="18" VerticalAlignment="Bottom" Width="60" Foreground="White" BorderBrush="#FF272727" Margin="84,0,0,21" RenderTransformOrigin="0.492,-0.713" Checked="direction_Changed" Unchecked="direction_Changed"/>
+            <CheckBox x:Name="multipleLine_CheckBox" Content="Multiple line input" HorizontalAlignment="Center" Height="16" Margin="0,118,0,0" VerticalAlignment="Top" Width="124" Foreground="White" BorderBrush="#FF272727" Checked="multipleLine_Checked" Unchecked="multipleLine_Unchecked" RenderTransformOrigin="0.083,0.542"/>
         </Grid>
         <Button x:Name="CloseButton" Background="{x:Null}" Click="CloseWindow" BorderBrush="{x:Null}" Focusable="False" Margin="313,5,6,0" VerticalAlignment="Top" Height="27">
             <Button.Style>
