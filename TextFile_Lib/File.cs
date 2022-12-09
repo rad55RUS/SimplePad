@@ -13,6 +13,7 @@ using Microsoft.Win32;
 using System.Windows;
 using System.Diagnostics;
 using System.Windows.Navigation;
+using Microsoft.VisualBasic.FileIO;
 
 namespace TextFile_Lib
 {
@@ -34,6 +35,15 @@ namespace TextFile_Lib
 			openFileDialog.RestoreDirectory = true;
 		}
 
-		public abstract void RenameOrMoveFile();
+        public void DeleteFile()
+        {
+            FileSystem.DeleteFile(Path, UIOption.AllDialogs, RecycleOption.SendToRecycleBin, UICancelOption.ThrowException);
+
+            Path = "";
+
+            this.isSaved = true;
+        }
+
+        public abstract void RenameOrMoveFile();
     }
 }

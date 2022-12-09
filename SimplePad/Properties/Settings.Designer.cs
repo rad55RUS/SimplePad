@@ -154,5 +154,17 @@ namespace SimplePad.Properties {
                 this["MultipleLineInput"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ReplaceTo_String {
+            get {
+                return ((string)(this["ReplaceTo_String"]));
+            }
+            set {
+                this["ReplaceTo_String"] = value;
+            }
+        }
     }
 }

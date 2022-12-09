@@ -124,6 +124,7 @@ namespace SimplePad
 			FileButton.ContextMenu.PlacementTarget = FileButton;
 			FileButton_Save.Style = (Style)Resources["UnclickableMenuItem"];
             FileButton_RenameOrMove.Style = (Style)Resources["UnclickableMenuItem"];
+            FileButton_MoveToRecycleBin.Style = (Style)Resources["UnclickableMenuItem"];
             ///
             /// EditButton context menu
             EditButton.ContextMenu.PlacementTarget = EditButton;
@@ -134,10 +135,11 @@ namespace SimplePad
 			EditButton_Delete.Style = (Style)Resources["UnclickableMenuItem"];
             /// SearchButton context menu
             SearchButton.ContextMenu.PlacementTarget = SearchButton;
-            //
+            ///
             /// FormatButton context menu
             FormatButton.ContextMenu.PlacementTarget = FormatButton;
-            //
+            ///
+			//
 
             // Initial title bar context menu settings
             TitleBar_Restore.Style = (Style)Resources["UnclickableMenuItem"];
@@ -150,7 +152,7 @@ namespace SimplePad
             textFile = App.textFile;
             if (textFile.Path != "")
                 textBoxMain.Text = textFile.ReadFromFile(textBoxMain.Text, encoding);
-            textFile.OnFileOperation += ChangeTitle;
+            textFile.OnFileOperation += OnFileOperation;
             textBoxMain.TextChanged += textBoxMain_TextChanged;
             //
         }
@@ -272,6 +274,32 @@ namespace SimplePad
 		{
 			textFile.RenameOrMoveFile();
 		}
+
+        private void MoveToRecycleBin_Click(object sender, RoutedEventArgs e)
+        {
+            textFile.DeleteFile();
+
+            // Reset title bar menu item style
+            /// FileButton context menu
+            FileButton_Save.Style = (Style)Resources["UnclickableMenuItem"];
+            FileButton_RenameOrMove.Style = (Style)Resources["UnclickableMenuItem"];
+            FileButton_MoveToRecycleBin.Style = (Style)Resources["UnclickableMenuItem"];
+            ///
+            /// EditButton context menu
+            EditButton_Undo.Style = (Style)Resources["UnclickableMenuItem"];
+            EditButton_Redo.Style = (Style)Resources["UnclickableMenuItem"];
+            EditButton_Cut.Style = (Style)Resources["UnclickableMenuItem"];
+            EditButton_Copy.Style = (Style)Resources["UnclickableMenuItem"];
+            EditButton_Delete.Style = (Style)Resources["UnclickableMenuItem"];
+            /// SearchButton context menu
+            ///
+            /// FormatButton context menu
+            ///
+            //
+
+            WindowName.Content = "SimplePad";
+            textBoxMain.Text = "";
+        }
         ///
         /// SearchButton methods
 		private void SearchButton_MouseDown(object sender, MouseButtonEventArgs e)
@@ -283,11 +311,11 @@ namespace SimplePad
         }
         private void Find_Click(object sender, RoutedEventArgs e)
         {
-			OpenFindWindow();
+			OpenSearchWindow(0);
         }
         private void Replace_Click(object sender, RoutedEventArgs e)
         {
-            OpenFindWindow();
+            OpenSearchWindow(1);
         }
         ///
         /// FormatButton methods
@@ -307,18 +335,18 @@ namespace SimplePad
 			else
                 this.textBoxMain.TextWrapping = TextWrapping.NoWrap;
         }
-        ///
-        //
+		///
+		//
 
-        // Find window methods
-        /// Open find window
-        private void OpenFindWindow()
+		// Find window methods
+		/// Open find window
+		private void OpenSearchWindow(int tabItemNum)
 		{
-            var placement = SearchButton.PointToScreen(new Point(0, 0));
+			var placement = SearchButton.PointToScreen(new Point(0, 0));
 
 			if (this.Left >= System.Windows.SystemParameters.WorkArea.Width / 1.5)
 			{
-				findWindow.Left = System.Windows.SystemParameters.WorkArea.Width - 367;
+				findWindow.Left = System.Windows.SystemParameters.WorkArea.Width - findWindow.Width;
 			}
 			else if (this.Left <= 0)
 			{
@@ -326,24 +354,40 @@ namespace SimplePad
 			}
 			else
 			{
-                findWindow.Left = this.Left + this.Width - 367;
-            }
+				findWindow.Left = this.Left + this.Width - findWindow.Width;
+			}
 			if (this.Top >= System.Windows.SystemParameters.WorkArea.Height / 1.5)
 			{
-                findWindow.Top = System.Windows.SystemParameters.WorkArea.Height - 367;
-            }
-            else if (this.Top <= 0)
-            {
-                findWindow.Top = 0;
-            }
-            else
+				findWindow.Top = System.Windows.SystemParameters.WorkArea.Height - findWindow.Height;
+			}
+			else if (this.Top <= 0)
+			{
+				findWindow.Top = 0;
+			}
+			else
 			{
 				findWindow.Top = placement.Y;
 			}
 
 			findWindow.Owner = this;
+            findWindow.Show();
 
-			findWindow.Show();
+            switch (tabItemNum)
+			{
+				case 0:
+					findWindow.find_TabItem.IsSelected = true;
+                    break;
+				case 1:
+					findWindow.replace_TabItem.IsSelected = true;
+                    break;
+                case 2:
+                    findWindow.findInFiles_TabItem.IsSelected = true;
+					break;
+				default:
+					break;
+            }
+            findWindow.findInput_TextBox.Focus();
+            findWindow.findInput_TextBox.SelectAll();
         }
 
 		/// <summary>
@@ -440,6 +484,33 @@ namespace SimplePad
                             break;
                         }
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Find string in the textBoxMain
+        /// </summary>
+        /// <param name="desiredString"></param>
+        /// <param name="anyCase"></param>
+        /// <param name="DirectionIsDown"></param>
+        internal void ReplaceString(string replaceFrom, string replaceTo, bool anyCase, bool DirectionIsDown)
+        {
+			bool textReplaced = false;
+
+            if (textBoxMain.SelectedText == replaceFrom)
+            {
+                textBoxMain.SelectedText = textBoxMain.SelectedText.Replace(textBoxMain.SelectedText, replaceTo);
+                textReplaced = true;
+            }
+
+			FindString(replaceFrom, anyCase, DirectionIsDown);
+
+            if (searchResults.Count > 0)
+            {
+                if (textReplaced == false)
+                {
+                    textBoxMain.SelectedText = textBoxMain.SelectedText.Replace(textBoxMain.SelectedText, replaceTo);
                 }
             }
         }
@@ -541,10 +612,11 @@ namespace SimplePad
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-        private void ChangeTitle(object sender, EventArgs e)
+        private void OnFileOperation(object sender, EventArgs e)
         {
             FileButton_Save.Style = (Style)Resources["ClickableMenuItemBlack"];
             FileButton_RenameOrMove.Style = (Style)Resources["ClickableMenuItemBlack"];
+            FileButton_MoveToRecycleBin.Style = (Style)Resources["ClickableMenuItemBlack"];
 
             WindowName.Content = textFile.Path + " - SimplePad";
         }
@@ -572,13 +644,15 @@ namespace SimplePad
 		}
 
         /// <summary>
-        /// Prevent bugged default title bar context menu from appearing on Alt+Space;
+        /// Prevent bugged default title bar context menu from appearing on alt+Space;
         /// <br/>//<br/>
         /// Save text file on ctrl+s;
         /// <br/>//<br/>
         /// Open text file on ctrl+o
         /// <br/>//<br/>
-        /// Open find window on ctrl+f
+        /// Open find tab item in search window on ctrl+f
+        /// </summary>
+		/// Open replace tab item in search window on ctrl+f
         /// </summary>
         /// <param name="e"></param>
         protected override void OnKeyDown(KeyEventArgs e)
@@ -597,14 +671,14 @@ namespace SimplePad
             // CTRL + F
             if (e.Key == Key.F && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
             {
-                OpenFindWindow();
+                OpenSearchWindow(0);
 
                 e.Handled = true;
             }
             // CTRL + H
             if (e.Key == Key.H && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
             {
-                OpenFindWindow();
+                OpenSearchWindow(1);
 
                 e.Handled = true;
             }

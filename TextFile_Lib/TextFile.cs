@@ -11,6 +11,8 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Xml.Linq;
 using System.Runtime;
 using System.Diagnostics;
+using Microsoft.VisualBasic.FileIO;
+using static System.Net.WebRequestMethods;
 
 namespace TextFile_Lib
 {
@@ -39,10 +41,10 @@ namespace TextFile_Lib
 			openFileDialog.FilterIndex = 2;
 		}
 
-		/// <summary>
-		/// Show <b>SaveFileDialog</b> for renaming or moving current opened file.
-		/// </summary>
-		public override void RenameOrMoveFile()
+        /// <summary>
+        /// Show <b>SaveFileDialog</b> for renaming or moving current opened file.
+        /// </summary>
+        public override void RenameOrMoveFile()
 		{
             saveFileDialog.FileName = fullName;
             if (saveFileDialog.ShowDialog() == true)

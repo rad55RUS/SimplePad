@@ -607,6 +607,7 @@
                     <MenuItem Name ="FileButton_Save" InputGestureText="Ctrl+S" Header="Save" Click="Save_Click"/>
                     <MenuItem Header="Save as..." InputGestureText="Ctrl+Shift+S" Click="SaveAs_Click"/>
                     <MenuItem Name ="FileButton_RenameOrMove" Header="Rename or move..." Click="RenameOrMove_Click"/>
+                    <MenuItem Name ="FileButton_MoveToRecycleBin" Header="Move to Recycle Bin" Click="MoveToRecycleBin_Click"/>
                 </ContextMenu>
             </Button.ContextMenu>
             <Button.RenderTransform>
