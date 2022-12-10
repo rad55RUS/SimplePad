@@ -306,6 +306,33 @@ namespace SimplePad
         }
 
         /// <summary>
+        /// Event on goToButton clicking
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void GoTo_Button_Click(object sender, RoutedEventArgs e)
+        {
+            ((MainWindow)this.Owner).FindLine(int.Parse(goToInput_TextBox.Text));
+        }
+
+        /// <summary>
+        /// Event on key down in goToInput
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void goToInput_KeyDown(object sender, KeyEventArgs e)
+        {
+            // ENTER
+            if (e.Key == Key.Return && multipleLine_CheckBox.IsChecked == false)
+            {
+                ((MainWindow)this.Owner).FindLine(int.Parse(goToInput_TextBox.Text));
+
+                e.Handled = true;
+            }
+        }
+        //
+
+        /// <summary>
         /// Event on key down in findInput
         /// </summary>
         /// <param name="sender"></param>

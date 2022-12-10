@@ -344,12 +344,19 @@ namespace SimplePad
         }
         private void WordWrap_Click(object sender, RoutedEventArgs e)
         {
-            if (FormatButton_WordWrap.IsChecked)
+			if (FormatButton_WordWrap.IsChecked)
 			{
 				this.textBoxMain.TextWrapping = TextWrapping.Wrap;
 			}
 			else
-                this.textBoxMain.TextWrapping = TextWrapping.NoWrap;
+			{
+				this.textBoxMain.TextWrapping = TextWrapping.NoWrap;
+			}
+
+            int currentLine = textBoxMain.GetLineIndexFromCharacterIndex(textBoxMain.SelectionStart);
+
+            findWindow.currentLine_Label.Content = "current line is " + currentLine.ToString();
+            findWindow.goToInput_TextBox.Text = currentLine.ToString();
         }
         ///
         //
@@ -478,6 +485,17 @@ namespace SimplePad
                     i += desiredString.Length - 1;
                 }
             }
+        }
+
+        /// <summary>
+        /// Find line in the textBoxMain
+        /// </summary>
+        internal void FindLine(int line)
+        {
+			textBoxMain.Focus();
+
+            textBoxMain.SelectionStart = textBoxMain.GetCharacterIndexFromLineIndex(line);
+			textBoxMain.SelectionLength = 0;
         }
 
         /// <summary>
