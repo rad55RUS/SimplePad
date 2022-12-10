@@ -494,7 +494,7 @@ namespace SimplePad
         {
 			textBoxMain.Focus();
 
-            textBoxMain.SelectionStart = textBoxMain.GetCharacterIndexFromLineIndex(line - 1);
+            textBoxMain.SelectionStart = textBoxMain.GetCharacterIndexFromLineIndex(line);
 			textBoxMain.SelectionLength = 0;
         }
 

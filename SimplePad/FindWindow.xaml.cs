@@ -105,7 +105,7 @@ namespace SimplePad
                 {
                     if (Int32.Parse(goToInput_TextBox.Text) > ((MainWindow)this.Owner).textBoxMain.LineCount)
                     {
-                        goToInput_TextBox.Text = ((MainWindow)this.Owner).textBoxMain.LineCount.ToString();
+                        goToInput_TextBox.Text = (((MainWindow)this.Owner).textBoxMain.LineCount - 1).ToString();
                     }
                 }
             }
