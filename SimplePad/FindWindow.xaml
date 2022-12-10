@@ -252,7 +252,7 @@
         </DockPanel>
         <Grid Margin="6,31,6,10" Background="#FF171717">
             <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="229" VerticalAlignment="Top" Width="472" Foreground="{x:Null}" BorderBrush="#FF333333" Background="{x:Null}" BorderThickness="0,1,0,0" Margin="0,-22,0,0" SelectionChanged="tabControl_SelectionChanged">
-                <TabItem x:Name="find_TabItem" Header="Find">
+                <TabItem x:Name="find_TabItem" Header="Find" GotFocus="TabItem_GotFocus">
                     <Grid Background="#FF171717">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="59*"/>
@@ -260,7 +260,7 @@
                         </Grid.ColumnDefinitions>
                     </Grid>
                 </TabItem>
-                <TabItem x:Name="replace_TabItem" Header="Replace">
+                <TabItem x:Name="replace_TabItem" Header="Replace" GotFocus="TabItem_GotFocus">
                     <Grid Height="172" Margin="1,0,0,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="19*"/>
@@ -291,8 +291,39 @@
                         </Button>
                     </Grid>
                 </TabItem>
-                <TabItem x:Name="findInFiles_TabItem" Header="Find in Files">
+                <TabItem x:Name="findInFiles_TabItem" Header="Find in Files" GotFocus="TabItem_GotFocus">
                     <Grid/>
+                </TabItem>
+                <TabItem x:Name="goTo_TabItem" Header="Go to" GotFocus="TabItem_GotFocus">
+                    <Grid>
+                        <TextBox x:Name="goToInput_TextBox" TextWrapping="Wrap" Text="0" Margin="14,32,0,0" Background="#FF0C0C0C" SelectionBrush="#FF0061FF" RenderTransformOrigin="0.5,0.5" Foreground="White" CaretBrush="White" BorderBrush="{x:Null}" BorderThickness="0" FontSize="14" TextAlignment="Justify" VerticalAlignment="Top" Height="22" HorizontalAlignment="Left" Width="233" KeyDown="findInput_KeyDown" TextChanged="goToInput_TextBox_TextChanged" PreviewTextInput="goToInput_TextBox_TextInput"/>
+                        <Label x:Name="goToInput_Label" Content="Line:" HorizontalAlignment="Left" Height="30" Margin="10,10,0,0" VerticalAlignment="Top" Width="41" HorizontalContentAlignment="Left" Foreground="White" RenderTransformOrigin="0.358,0.501"/>
+                        <Button x:Name="goToButton" Content="Go to" HorizontalAlignment="Left" Height="22" Margin="252,32,0,0" VerticalAlignment="Top" Width="101" Foreground="White" Background="#FF373737" BorderBrush="{x:Null}" Click="FindButton_Click" RenderTransformOrigin="0.818,0.424">
+                            <Button.Style>
+                                <Style TargetType="{x:Type Button}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#FF505050" TargetName="Border" />
+                                                    </Trigger>
+                                                    <Trigger Property="IsPressed" Value="True">
+                                                        <Setter Property="Background" Value="#FF7D7D7D" TargetName="Border" />
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Label x:Name="lineCounter" Content="line amount: 1" HorizontalAlignment="Left" Height="26" Margin="10,54,0,0" VerticalAlignment="Top" Width="120" HorizontalContentAlignment="Left" Foreground="White" RenderTransformOrigin="0.358,0.501"/>
+                        <Label x:Name="currentLine_Label" Content="current line is 0" HorizontalAlignment="Left" Height="26" Margin="135,54,0,0" VerticalAlignment="Top" Width="120" HorizontalContentAlignment="Left" Foreground="White" RenderTransformOrigin="0.358,0.501"/>
+                    </Grid>
                 </TabItem>
             </TabControl>
             <CheckBox x:Name="matchCase_CheckBox" Content="Match case" HorizontalAlignment="Left" Height="16" Margin="157,0,0,22" VerticalAlignment="Bottom" Width="92" Foreground="White" BorderBrush="#FF272727" Checked="matchCase_Change" Unchecked="matchCase_Change"/>
@@ -302,8 +333,8 @@
             <Label x:Name="direction_Label" Content="Direction" HorizontalAlignment="Left" Height="24" Margin="19,0,0,40" VerticalAlignment="Bottom" Width="58" Background="#FF171717" Foreground="White" VerticalContentAlignment="Center"/>
             <RadioButton x:Name="down_RadioButton" Content="Down" HorizontalAlignment="Left" Height="18" VerticalAlignment="Bottom" Width="60" Foreground="White" BorderBrush="#FF272727" Margin="19,0,0,20" Checked="direction_Changed" Unchecked="direction_Changed"/>
             <RadioButton x:Name="up_RadioButton" Content="Up" HorizontalAlignment="Left" Height="18" VerticalAlignment="Bottom" Width="60" Foreground="White" BorderBrush="#FF272727" Margin="84,0,0,20" RenderTransformOrigin="0.492,-0.713" Checked="direction_Changed" Unchecked="direction_Changed"/>
-            <TextBox x:Name="findInput_TextBox" TextWrapping="Wrap" Text="" Margin="0,13,111,0" Background="#FF0C0C0C" SelectionBrush="#FF0061FF" RenderTransformOrigin="0.5,0.5" Foreground="White" CaretBrush="White" BorderBrush="{x:Null}" BorderThickness="0" FontSize="14" TextAlignment="Justify" VerticalAlignment="Top" Height="46" AcceptsReturn="True" HorizontalAlignment="Right" Width="286" KeyDown="findInput_KeyDown"/>
-            <Label Content="What:" HorizontalAlignment="Left" Height="26" Margin="1,23,0,0" VerticalAlignment="Top" Width="48" HorizontalContentAlignment="Right" Foreground="White"/>
+            <TextBox x:Name="findInput_TextBox" TextWrapping="Wrap" Text="" Margin="0,13,111,0" Background="#FF0C0C0C" SelectionBrush="#FF0061FF" RenderTransformOrigin="0.5,0.5" Foreground="White" CaretBrush="White" BorderBrush="{x:Null}" BorderThickness="0" FontSize="14" TextAlignment="Justify" VerticalAlignment="Top" Height="46" AcceptsReturn="True" HorizontalAlignment="Right" Width="286" KeyDown="findInput_KeyDown" d:IsHidden="True"/>
+            <Label x:Name="findInput_Label" Content="What:" HorizontalAlignment="Left" Height="26" Margin="1,23,0,0" VerticalAlignment="Top" Width="48" HorizontalContentAlignment="Right" Foreground="White"/>
             <TextBox x:Name="replaceInput_TextBox" TextWrapping="Wrap" Text="" Margin="54,0,0,0" Background="#FF0C0C0C" SelectionBrush="#FF0061FF" RenderTransformOrigin="0.5,0.5" Foreground="White" CaretBrush="White" BorderBrush="{x:Null}" BorderThickness="0" FontSize="14" TextAlignment="Justify" VerticalAlignment="Center" Height="45" AcceptsReturn="True" HorizontalAlignment="Left" Width="286"/>
             <Label x:Name="replaceInput_Label" Content="By:" HorizontalAlignment="Left" Height="26" VerticalAlignment="Center" Width="48" HorizontalContentAlignment="Right" Foreground="White" Margin="1,0,0,0"/>
             <Button x:Name="findButton" Content="Find Next" HorizontalAlignment="Left" Height="22" Margin="345,13,0,0" VerticalAlignment="Top" Width="101" Foreground="White" Background="#FF373737" BorderBrush="{x:Null}" Click="FindButton_Click" RenderTransformOrigin="0.818,0.424">

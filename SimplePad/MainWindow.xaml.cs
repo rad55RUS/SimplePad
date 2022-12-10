@@ -311,11 +311,27 @@ namespace SimplePad
         }
         private void Find_Click(object sender, RoutedEventArgs e)
         {
-			OpenSearchWindow(0);
+            OpenSearchWindow(0);
         }
+
+        private void FindNext_Click(object sender, RoutedEventArgs e)
+        {
+			FindNext();
+        }
+
+        private void FindPrevious_Click(object sender, RoutedEventArgs e)
+        {
+            FindPrevious();
+        }
+
         private void Replace_Click(object sender, RoutedEventArgs e)
         {
             OpenSearchWindow(1);
+        }
+
+        private void GoTo_Click(object sender, RoutedEventArgs e)
+        {
+            OpenSearchWindow(3);
         }
         ///
         /// FormatButton methods
@@ -335,12 +351,54 @@ namespace SimplePad
 			else
                 this.textBoxMain.TextWrapping = TextWrapping.NoWrap;
         }
-		///
-		//
+        ///
+        //
 
-		// Find window methods
-		/// Open find window
-		private void OpenSearchWindow(int tabItemNum)
+        // Find window methods
+        /// <summary>
+        /// Find next
+        /// </summary>
+        private void FindNext()
+		{
+            if (!findWindow.IsVisible)
+            {
+                OpenSearchWindow(0);
+            }
+
+            if (findWindow.findInput_TextBox.Text != "")
+            {
+                FindString(findWindow.findInput_TextBox.Text, (bool)!findWindow.matchCase_CheckBox.IsChecked, true);
+                findWindow.findButton.Focus();
+                findWindow.matchesCounter.Content = "*matches found: " + searchResults.Count;
+            }
+
+			textBoxMain.Focus();
+        }
+
+        /// <summary>
+        /// Find previous
+        /// </summary>
+        private void FindPrevious()
+        {
+            if (!findWindow.IsVisible)
+            {
+                OpenSearchWindow(0);
+            }
+
+            if (findWindow.findInput_TextBox.Text != "")
+            {
+                FindString(findWindow.findInput_TextBox.Text, (bool)!findWindow.matchCase_CheckBox.IsChecked, false);
+                findWindow.findButton.Focus();
+                findWindow.matchesCounter.Content = "*matches found: " + searchResults.Count;
+            }
+
+            textBoxMain.Focus();
+        }
+
+        /// <summary>
+        /// Open search window
+        /// </summary>
+        private void OpenSearchWindow(int tabItemNum)
 		{
 			var placement = SearchButton.PointToScreen(new Point(0, 0));
 
@@ -376,18 +434,27 @@ namespace SimplePad
 			{
 				case 0:
 					findWindow.find_TabItem.IsSelected = true;
+                    findWindow.findInput_TextBox.Focus();
+                    findWindow.findInput_TextBox.SelectAll();
                     break;
 				case 1:
 					findWindow.replace_TabItem.IsSelected = true;
+                    findWindow.findInput_TextBox.Focus();
+                    findWindow.findInput_TextBox.SelectAll();
                     break;
                 case 2:
                     findWindow.findInFiles_TabItem.IsSelected = true;
-					break;
-				default:
+                    findWindow.findInput_TextBox.Focus();
+                    findWindow.findInput_TextBox.SelectAll();
+                    break;
+                case 3:
+                    findWindow.goTo_TabItem.IsSelected = true;
+                    findWindow.goToInput_TextBox.Focus();
+                    findWindow.goToInput_TextBox.SelectAll();
+                    break;
+                default:
 					break;
             }
-            findWindow.findInput_TextBox.Focus();
-            findWindow.findInput_TextBox.SelectAll();
         }
 
 		/// <summary>
@@ -528,6 +595,8 @@ namespace SimplePad
         /// <returns></returns>
         private void textBoxMain_SelectionChanged(object sender, EventArgs e)
 		{
+			int currentLine = textBoxMain.GetLineIndexFromCharacterIndex(textBoxMain.SelectionStart);
+
 			if (!String.IsNullOrEmpty(textBoxMain.SelectedText))
 			{
 				EditButton_Cut.Style = (Style)Resources["ClickableMenuItemBlack"];
@@ -539,7 +608,10 @@ namespace SimplePad
 				EditButton_Cut.Style = (Style)Resources["UnclickableMenuItem"];
 				EditButton_Delete.Style = (Style)Resources["UnclickableMenuItem"];
 			}
-		}
+
+            findWindow.currentLine_Label.Content = "current line is " + currentLine.ToString();
+            findWindow.goToInput_TextBox.Text = currentLine.ToString();
+        }
 
         /// <summary>
         /// Event on text changing
@@ -550,14 +622,22 @@ namespace SimplePad
         private void textBoxMain_TextChanged(object sender, EventArgs e)
 		{
 			if (textBoxMain.CanRedo == true)
+			{
 				EditButton_Redo.Style = (Style)Resources["ClickableMenuItemBlack"];
+			}
 			else
+			{
 				EditButton_Redo.Style = (Style)Resources["UnclickableMenuItem"];
+			}
 
 			if (textBoxMain.CanUndo == true)
+			{
 				EditButton_Undo.Style = (Style)Resources["ClickableMenuItemBlack"];
+			}
 			else
+			{
 				EditButton_Undo.Style = (Style)Resources["UnclickableMenuItem"];
+			}
 
 			if (!String.IsNullOrEmpty(textFile.Path))
 			{
@@ -568,7 +648,9 @@ namespace SimplePad
 				WindowName.Content = "*" + "SimplePad";
 			}
 
+			findWindow.lineCounter.Content = "line amount: " + textBoxMain.LineCount.ToString();
             searchResults.Clear();
+
             textFile.isSaved = false;
 		}
 
@@ -644,21 +726,43 @@ namespace SimplePad
 		}
 
         /// <summary>
+        /// Find next on f3;
+        /// <br/>
+        /// Find previous on shift + f3;
+        /// <br/>
         /// Prevent bugged default title bar context menu from appearing on alt+Space;
-        /// <br/>//<br/>
+        /// <br/>
         /// Save text file on ctrl+s;
-        /// <br/>//<br/>
+        /// <br/>
         /// Open text file on ctrl+o
-        /// <br/>//<br/>
+        /// <br/>
         /// Open find tab item in search window on ctrl+f
-        /// </summary>
-		/// Open replace tab item in search window on ctrl+f
+        /// <br/>
+        /// Open replace tab item in search window on ctrl+h
+		/// <br/>
+        /// Open GoTo tab item in search window on ctrl+g
         /// </summary>
         /// <param name="e"></param>
         protected override void OnKeyDown(KeyEventArgs e)
 		{
-			// ALT + SPACE
-			if (Keyboard.Modifiers == ModifierKeys.Alt && e.SystemKey == Key.Space)
+            // F3
+            if (e.Key == Key.F3)
+            {
+				if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+				{
+					FindPrevious();
+
+                    e.Handled = true;
+                }
+				else
+				{
+					FindNext();
+
+					e.Handled = true;
+				}
+            }
+            // ALT + SPACE
+            if (Keyboard.Modifiers == ModifierKeys.Alt && e.SystemKey == Key.Space)
 			{
 				TitleBar_ContextMenu.IsOpen = true;
 
@@ -679,6 +783,13 @@ namespace SimplePad
             if (e.Key == Key.H && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
             {
                 OpenSearchWindow(1);
+
+                e.Handled = true;
+            }
+            // CTRL + G
+            if (e.Key == Key.G && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+            {
+                OpenSearchWindow(3);
 
                 e.Handled = true;
             }

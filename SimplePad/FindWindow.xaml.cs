@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -70,11 +71,46 @@ namespace SimplePad
             WindowChrome.SetIsHitTestVisibleInChrome(this.find_TabItem, true);
             WindowChrome.SetIsHitTestVisibleInChrome(this.replace_TabItem, true);
             WindowChrome.SetIsHitTestVisibleInChrome(this.findInFiles_TabItem, true);
+            WindowChrome.SetIsHitTestVisibleInChrome(this.goTo_TabItem, true);
             //
         }
         //
 
         // This window events
+        /// <summary>
+        /// Event on goToInput_Textbox text changing
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        private void goToInput_TextBox_TextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+
+        /// <summary>
+        /// Event on goToInput_Textbox text changing
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        private void goToInput_TextBox_TextChanged(object sender, EventArgs e)
+        {
+            goToInput_TextBox.Text = goToInput_TextBox.Text.Replace(" ", "");
+
+            if (this.Visibility == Visibility.Visible && this.IsActive)
+            {
+                if (goToInput_TextBox.Text != "")
+                {
+                    if (Int32.Parse(goToInput_TextBox.Text) > ((MainWindow)this.Owner).textBoxMain.LineCount)
+                    {
+                        goToInput_TextBox.Text = ((MainWindow)this.Owner).textBoxMain.LineCount.ToString();
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Event on changing matchCase_CheckBox status
         /// </summary>
@@ -84,6 +120,14 @@ namespace SimplePad
         {
             if (find_TabItem.IsSelected == true)
             {
+                matchesCounter.Visibility = Visibility.Visible;
+                matchCase_CheckBox.Visibility = Visibility.Visible;
+                multipleLine_CheckBox.Visibility = Visibility.Visible;
+
+                findInput_TextBox.Visibility = Visibility.Visible;
+                findInput_Label.Visibility = Visibility.Visible;
+                findButton.Visibility = Visibility.Visible;
+
                 replaceInput_TextBox.Visibility = Visibility.Hidden;
                 replaceInput_Label.Visibility = Visibility.Hidden;
                 replaceButton.Visibility = Visibility.Hidden;
@@ -96,9 +140,18 @@ namespace SimplePad
                 findButton.Content = "Find next";
 
                 this.Height = 170;
+                this.Width = 463;
             }
             else if (replace_TabItem.IsSelected == true)
             {
+                matchesCounter.Visibility = Visibility.Visible;
+                matchCase_CheckBox.Visibility = Visibility.Visible;
+                multipleLine_CheckBox.Visibility = Visibility.Visible;
+
+                findInput_TextBox.Visibility = Visibility.Visible;
+                findInput_Label.Visibility = Visibility.Visible;
+                findButton.Visibility = Visibility.Visible;
+
                 replaceInput_TextBox.Visibility = Visibility.Visible;
                 replaceInput_Label.Visibility = Visibility.Visible;
                 replaceButton.Visibility = Visibility.Visible;
@@ -111,9 +164,18 @@ namespace SimplePad
                 findButton.Content = "Find next";
 
                 this.Height = 217;
+                this.Width = 463;
             }
             else if (findInFiles_TabItem.IsSelected == true)
             {
+                matchesCounter.Visibility = Visibility.Visible;
+                matchCase_CheckBox.Visibility = Visibility.Visible;
+                multipleLine_CheckBox.Visibility = Visibility.Visible;
+
+                findInput_TextBox.Visibility = Visibility.Visible;
+                findInput_Label.Visibility = Visibility.Visible;
+                findButton.Visibility = Visibility.Visible;
+
                 replaceInput_TextBox.Visibility = Visibility.Visible;
                 replaceInput_Label.Visibility = Visibility.Visible;
                 replaceButton.Visibility = Visibility.Visible;
@@ -126,10 +188,51 @@ namespace SimplePad
                 findButton.Content = "Find";
 
                 this.Height = 217;
+                this.Width = 463;
             }
+            else if (goTo_TabItem.IsSelected == true)
+            {
+                matchesCounter.Visibility = Visibility.Hidden;
+                matchCase_CheckBox.Visibility = Visibility.Hidden;
+                multipleLine_CheckBox.Visibility = Visibility.Hidden;
 
-            findInput_TextBox.Focus();
-            findInput_TextBox.SelectAll();
+                findInput_TextBox.Visibility = Visibility.Hidden;
+                findInput_Label.Visibility = Visibility.Hidden;
+                findButton.Visibility = Visibility.Hidden;
+
+                replaceInput_TextBox.Visibility = Visibility.Hidden;
+                replaceInput_Label.Visibility = Visibility.Hidden;
+                replaceButton.Visibility = Visibility.Hidden;
+
+                direction_Label.Visibility = Visibility.Hidden;
+                direction_Rectangle.Visibility = Visibility.Hidden;
+                up_RadioButton.Visibility = Visibility.Hidden;
+                down_RadioButton.Visibility = Visibility.Hidden;
+
+                findButton.Content = "Find";
+
+                this.Height = 140;
+                this.Width = 380;
+            }
+        }
+
+        /// <summary>
+        /// Event on changing matchCase_CheckBox status
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TabItem_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (goTo_TabItem.IsSelected != true)
+            {
+                findInput_TextBox.Focus();
+                findInput_TextBox.SelectAll();
+            }
+            else
+            {
+                goToInput_TextBox.Focus();
+                goToInput_TextBox.SelectAll();
+            }
         }
 
         /// <summary>
@@ -160,7 +263,6 @@ namespace SimplePad
         /// <param name="e"></param>
         private void multipleLine_Unchecked(object sender, RoutedEventArgs e)
         {
-
             findInput_TextBox.AcceptsReturn = false;
             replaceInput_TextBox.AcceptsReturn = false;
 
@@ -214,13 +316,14 @@ namespace SimplePad
             if (e.Key == Key.Return && multipleLine_CheckBox.IsChecked == false)
             {
                 InitiateSearch(findInput_TextBox.Text);
+                findInput_TextBox.Focus();
 
                 e.Handled = true;
             }
-            findInput_TextBox.Focus();
         }
         //
 
+        // Initiate search methods
         /// <summary>
         /// Call ReplaceString method based on selected settings
         /// </summary>
@@ -292,6 +395,7 @@ namespace SimplePad
             this.findButton.Focus();
             matchesCounter.Content = "*matches found: " + ((MainWindow)this.Owner).searchResults.Count;
         }
+        //
 
         // Window methods
         //// Fixing default context menu via creating another one
@@ -318,20 +422,37 @@ namespace SimplePad
 
         /// <summary>
         /// Prevent bugged default title bar context menu from appearing on Alt+Space;
-        /// <br/>//<br/>
-        /// Save text file on ctrl+s;
+        /// <br/>
+        /// Open find_TabItem on ctrl + f
+        /// <br/>
+        /// Open replace_tabItem on ctrl + h
+        /// <br/>
+        /// Open goTo_tabItem on ctrl + g
         /// </summary>
         /// <param name="e"></param>
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            // ENTER
-            if (e.SystemKey == Key.Enter && multipleLine_CheckBox.IsChecked == false)
+            // CTRL + F
+            if (e.Key == Key.F && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
             {
-                InitiateSearch(findInput_TextBox.Text);
+                find_TabItem.IsSelected = true;
 
                 e.Handled = true;
             }
+            // CTRL + H
+            if (e.Key == Key.H && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+            {
+                replace_TabItem.IsSelected = true;
 
+                e.Handled = true;
+            }
+            // CTRL + G
+            if (e.Key == Key.G && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+            {
+                goTo_TabItem.IsSelected = true;
+
+                e.Handled = true;
+            }
             // ALT + SPACE
             if (Keyboard.Modifiers == ModifierKeys.Alt && e.SystemKey == Key.Space)
             {

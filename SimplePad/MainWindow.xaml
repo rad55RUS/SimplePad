@@ -709,8 +709,10 @@
             <Button.ContextMenu>
                 <ContextMenu Placement="Bottom" PlacementRectangle="0, 0, 0, 0" MinWidth="200">
                     <MenuItem x:Name ="SearchButton_Find" Header="Find..." InputGestureText="Ctrl+F" Click="Find_Click"/>
+                    <MenuItem x:Name ="SearchButton_FindNext" Header="Find next" InputGestureText="F3" Click="FindNext_Click"/>
+                    <MenuItem x:Name ="SearchButton_FindPrevious" Header="Find previous" InputGestureText="Shift+F3" Click="FindPrevious_Click"/>
                     <MenuItem x:Name ="SearchButton_Replace" Header="Replace..." InputGestureText="Ctrl+H" Click="Replace_Click"/>
-                    <MenuItem x:Name ="SearchButton_GoTo" Header="Go to..." InputGestureText="Ctrl+G" Click="Find_Click"/>
+                    <MenuItem x:Name ="SearchButton_GoTo" Header="Go to..." InputGestureText="Ctrl+G" Click="GoTo_Click"/>
                 </ContextMenu>
             </Button.ContextMenu>
             <Button.RenderTransform>
