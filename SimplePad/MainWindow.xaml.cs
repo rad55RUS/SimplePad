@@ -152,9 +152,10 @@ namespace SimplePad
             textFile = App.textFile;
             if (textFile.Path != "")
                 textBoxMain.Text = textFile.ReadFromFile(textBoxMain.Text, encoding);
-            textFile.OnFileOperation += OnFileOperation;
             textBoxMain.TextChanged += textBoxMain_TextChanged;
             //
+
+            textFile.OnFileOperation += OnFileOperation;
         }
 		//
 
