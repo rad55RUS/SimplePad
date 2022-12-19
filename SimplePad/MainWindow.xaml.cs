@@ -495,7 +495,7 @@ namespace SimplePad
         {
 			textBoxMain.Focus();
 
-            textBoxMain.SelectionStart = textBoxMain.GetCharacterIndexFromLineIndex(line);
+			textBoxMain.SelectionStart = textBoxMain.GetCharacterIndexFromLineIndex(line - 1);
 			textBoxMain.SelectionLength = 0;
         }
 
@@ -628,7 +628,7 @@ namespace SimplePad
         /// <returns></returns>
         private void textBoxMain_SelectionChanged(object sender, EventArgs e)
 		{
-			int currentLine = textBoxMain.GetLineIndexFromCharacterIndex(textBoxMain.SelectionStart);
+			int currentLine = textBoxMain.GetLineIndexFromCharacterIndex(textBoxMain.SelectionStart) + 1;
 
 			if (!String.IsNullOrEmpty(textBoxMain.SelectedText))
 			{

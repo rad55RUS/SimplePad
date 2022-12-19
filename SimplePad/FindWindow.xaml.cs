@@ -103,9 +103,13 @@ namespace SimplePad
             {
                 if (goToInput_TextBox.Text != "")
                 {
-                    if (Int32.Parse(goToInput_TextBox.Text) > ((MainWindow)this.Owner).textBoxMain.LineCount - 1)
+                    if (Int32.Parse(goToInput_TextBox.Text) > ((MainWindow)this.Owner).textBoxMain.LineCount)
                     {
-                        goToInput_TextBox.Text = (((MainWindow)this.Owner).textBoxMain.LineCount - 1).ToString();
+                        goToInput_TextBox.Text = (((MainWindow)this.Owner).textBoxMain.LineCount).ToString();
+                    }
+                    else if (Int32.Parse(goToInput_TextBox.Text) == 0)
+                    {
+                        goToInput_TextBox.Text = "1";
                     }
                 }
             }
