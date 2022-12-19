@@ -150,12 +150,13 @@ namespace SimplePad
             // Insert text from startup file
             textBoxMain.TextChanged -= textBoxMain_TextChanged;
             textFile = App.textFile;
+            textFile.OnFileOperation += OnFileOperation;
             if (textFile.Path != "")
-                textBoxMain.Text = textFile.ReadFromFile(textBoxMain.Text, encoding);
+			{
+				textBoxMain.Text = textFile.ReadFromFile(textBoxMain.Text, encoding);
+			}
             textBoxMain.TextChanged += textBoxMain_TextChanged;
             //
-
-            textFile.OnFileOperation += OnFileOperation;
         }
 		//
 
