@@ -154,7 +154,8 @@ namespace SimplePad
             if (textFile.Path != "")
 			{
 				textBoxMain.Text = textFile.ReadFromFile(textBoxMain.Text, encoding);
-			}
+                findWindow.lineCounter.Content = "line amount: " + textBoxMain.LineCount.ToString();
+            }
             textBoxMain.TextChanged += textBoxMain_TextChanged;
             //
         }
@@ -300,6 +301,7 @@ namespace SimplePad
             //
 
             WindowName.Content = "SimplePad";
+            this.Title = "SimplePad";
             textBoxMain.Text = "";
         }
         ///
@@ -314,6 +316,11 @@ namespace SimplePad
         private void Find_Click(object sender, RoutedEventArgs e)
         {
             OpenSearchWindow(0);
+        }
+
+        private void FindInFiles_Click(object sender, RoutedEventArgs e)
+        {
+            OpenSearchWindow(2);
         }
 
         private void FindNext_Click(object sender, RoutedEventArgs e)
@@ -676,11 +683,13 @@ namespace SimplePad
 			if (!String.IsNullOrEmpty(textFile.Path))
 			{
 				WindowName.Content = "*" + textFile.Path + " - SimplePad";
-			}
+                this.Title = "*" + textFile.Path + " - SimplePad";
+            }
 			else
 			{
 				WindowName.Content = "*" + "SimplePad";
-			}
+				this.Title = "*" + "SimplePad";
+            }
 
 			findWindow.lineCounter.Content = "line amount: " + textBoxMain.LineCount.ToString();
             searchResults.Clear();
@@ -735,6 +744,7 @@ namespace SimplePad
             FileButton_MoveToRecycleBin.Style = (Style)Resources["ClickableMenuItemBlack"];
 
             WindowName.Content = textFile.Path + " - SimplePad";
+            this.Title = textFile.Path + " - SimplePad";
         }
 
         //// Fixing default context menu via creating another one
@@ -771,6 +781,8 @@ namespace SimplePad
         /// Open text file on ctrl+o
         /// <br/>
         /// Open find tab item in search window on ctrl+f
+        /// <br/>
+		/// Open 'find in files' tab item in search window on ctrl+shift+f
         /// <br/>
         /// Open replace tab item in search window on ctrl+h
 		/// <br/>
@@ -809,7 +821,16 @@ namespace SimplePad
             // CTRL + F
             if (e.Key == Key.F && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
             {
-                OpenSearchWindow(0);
+				// NO SHIFT
+                if (!Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+                {
+                    OpenSearchWindow(0);
+                }
+				// SHIFT
+				else
+                {
+                    OpenSearchWindow(2);
+                }
 
                 e.Handled = true;
             }
@@ -841,18 +862,8 @@ namespace SimplePad
 			// CTRL + S
 			if (e.Key == Key.S && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
 			{
-                // Interface conversion testing
-                if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt) && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
-                {
-                    ITextFilePublicMethods conversionTest = textFile;
-                    Debug.Print("Попытка сохранения файла с помощью преобразования к интерфейсу");
-                    conversionTest.SaveFile(textBoxMain.Text, false);
-                    Debug.Print("(выполняется явное преобразование интерфейса к классу) Путь файла равен: " + ((TextFile)conversionTest).Path);
-                    Debug.Print("");
-                }
-				//
                 // SHIFT
-                else if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+                if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
 				{
 					textFile.SaveFile(textBoxMain.Text, true);
 				}

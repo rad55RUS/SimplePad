@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimplePad"
         mc:Ignorable="d"
-        Title="NameOfApplication" Height="447" Width="800"
+        Title="SimplePad" Height="447" Width="800"
         MinHeight="100" MinWidth="250"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -709,6 +709,7 @@
             <Button.ContextMenu>
                 <ContextMenu Placement="Bottom" PlacementRectangle="0, 0, 0, 0" MinWidth="200">
                     <MenuItem x:Name ="SearchButton_Find" Header="Find..." InputGestureText="Ctrl+F" Click="Find_Click"/>
+                    <MenuItem x:Name ="SearchButton_FindInFiles" Header="Find in Files..." InputGestureText="Ctrl+Shift+F" Click="FindInFiles_Click"/>
                     <MenuItem x:Name ="SearchButton_FindNext" Header="Find next" InputGestureText="F3" Click="FindNext_Click"/>
                     <MenuItem x:Name ="SearchButton_FindPrevious" Header="Find previous" InputGestureText="Shift+F3" Click="FindPrevious_Click"/>
                     <MenuItem x:Name ="SearchButton_Replace" Header="Replace..." InputGestureText="Ctrl+H" Click="Replace_Click"/>
