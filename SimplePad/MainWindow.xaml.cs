@@ -603,6 +603,20 @@ namespace SimplePad
 
         // TextBox events
         /// <summary>
+        /// Event on lost focus
+        /// </summary>
+        /// <param name="hwnd"></param>
+        /// <param name="msg"></param>
+        /// <param name="wparam"></param>
+        /// <param name="lparam"></param>
+        /// <param name="handled"></param>
+        /// <returns></returns>
+        private void textBoxMain_LostFocus(object sender, RoutedEventArgs e)
+        {
+            e.Handled = false;
+        }
+
+        /// <summary>
         /// Event on text selection
         /// </summary>
         /// <param name="hwnd"></param>

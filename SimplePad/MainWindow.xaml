@@ -594,7 +594,7 @@
                 <Image x:Name="Icon" Width="32" Source="/Assets/WindowChrome/Icon.png" Height="22" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"/>
             </Button>
         </DockPanel>
-        <TextBox x:Name="textBoxMain" Margin="6,59,6,4" TextWrapping="NoWrap" Background="#FF0C0C0C" SelectionBrush="#FF0061FF" RenderTransformOrigin="0.5,0.5" Foreground="White" CaretBrush="White" AcceptsReturn="True" BorderThickness="0" BorderBrush="{x:Null}" TextChanged="textBoxMain_TextChanged" SelectionChanged="textBoxMain_SelectionChanged" IsInactiveSelectionHighlightEnabled="True" FocusManager.IsFocusScope="True" FontFamily="Consolas" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" PreviewMouseWheel="textBoxMain_MouseWheel" AcceptsTab="True" UndoLimit="1000">
+        <TextBox x:Name="textBoxMain" Margin="6,59,6,4" TextWrapping="NoWrap" Background="#FF0C0C0C" SelectionBrush="#FF0061FF" RenderTransformOrigin="0.5,0.5" Foreground="White" CaretBrush="White" AcceptsReturn="True" BorderThickness="0" BorderBrush="{x:Null}" TextChanged="textBoxMain_TextChanged" SelectionChanged="textBoxMain_SelectionChanged" LostFocus="textBoxMain_LostFocus" IsInactiveSelectionHighlightEnabled="True" FocusManager.IsFocusScope="False" FontFamily="Consolas" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" PreviewMouseWheel="textBoxMain_MouseWheel" AcceptsTab="True" UndoLimit="1000">
             <TextBox.Resources>
                 <Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource ScrollBarStyle}"/>
             </TextBox.Resources>
