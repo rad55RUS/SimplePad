@@ -10,7 +10,8 @@
         MinHeight="100" MinWidth="250"
         WindowStyle="None"
         AllowsTransparency="True"
-        Loaded="OnLoad" Icon="/Icon.png">
+        Loaded="OnLoad" Icon="/Icon.png"
+        SizeChanged="MainWindow_SizeChanged">
     <Window.Background>
         <SolidColorBrush Opacity="0.0"/>
     </Window.Background>
@@ -594,7 +595,7 @@
                 <Image x:Name="Icon" Width="32" Source="/Assets/WindowChrome/Icon.png" Height="22" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"/>
             </Button>
         </DockPanel>
-        <TextBox x:Name="textBoxMain" Margin="6,59,6,4" TextWrapping="NoWrap" Background="#FF0C0C0C" SelectionBrush="#FF0061FF" RenderTransformOrigin="0.5,0.5" Foreground="White" CaretBrush="White" AcceptsReturn="True" BorderThickness="0" BorderBrush="{x:Null}" TextChanged="textBoxMain_TextChanged" SelectionChanged="textBoxMain_SelectionChanged" LostFocus="textBoxMain_LostFocus" IsInactiveSelectionHighlightEnabled="True" FocusManager.IsFocusScope="False" FontFamily="Consolas" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" PreviewMouseWheel="textBoxMain_MouseWheel" AcceptsTab="True" UndoLimit="1000">
+        <TextBox x:Name="textBoxMain" Margin="6,59,6,0" TextWrapping="NoWrap" Background="#FF0C0C0C" SelectionBrush="#FF0061FF" RenderTransformOrigin="0.5,0.5" Foreground="White" CaretBrush="White" AcceptsReturn="True" BorderThickness="0" BorderBrush="{x:Null}" TextChanged="textBoxMain_TextChanged" SelectionChanged="textBoxMain_SelectionChanged" LostFocus="textBoxMain_LostFocus" IsInactiveSelectionHighlightEnabled="True" FocusManager.IsFocusScope="False" FontFamily="Consolas" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" PreviewMouseWheel="textBoxMain_MouseWheel" AcceptsTab="True" UndoLimit="1000" VerticalAlignment="Top" Height="384">
             <TextBox.Resources>
                 <Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource ScrollBarStyle}"/>
             </TextBox.Resources>
@@ -804,5 +805,40 @@
                 </TextBlock.RenderTransform>
             </TextBlock>
         </Button>
+        <Grid x:Name="searchResults_Grid" Height="175" Margin="6,59,6,4" Background="#FF171717" VerticalAlignment="Bottom">
+            <TextBox x:Name="searchResults_TextBox" Margin="0,17,0,0" TextWrapping="NoWrap" Background="#FF101010" SelectionBrush="#FF0061FF" RenderTransformOrigin="0.5,0.5" Foreground="White" CaretBrush="White" AcceptsReturn="True" BorderThickness="0" BorderBrush="{x:Null}" IsReadOnly="True" IsInactiveSelectionHighlightEnabled="True" FocusManager.IsFocusScope="False" FontFamily="Consolas" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" PreviewMouseWheel="searchResults_TextBox_MouseWheel" AcceptsTab="True" UndoLimit="0">
+                <TextBox.Resources>
+                    <Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource ScrollBarStyle}"/>
+                </TextBox.Resources>
+            </TextBox>
+            <Label Content="Search results" HorizontalAlignment="Left" Height="21" VerticalAlignment="Top" Width="788" FontSize="10" Margin="0,-4,0,0" VerticalContentAlignment="Center" Foreground="White"/>
+            <Rectangle x:Name="searchResults_RectangleTitle" Height="17" Stroke="#FF101010" VerticalAlignment="Top" Width="788"/>
+            <Rectangle x:Name="searchResults_RectangleUpResizer" Height="12" VerticalAlignment="Top" Width="788" PreviewMouseLeftButtonDown="searchResults_Resize_PreviewMouseLeftButtonDown" Margin="0,-6,0,0" Fill="#01000000" Cursor="SizeNS"/>
+            <Button x:Name="CloseSearchResults_Button" Background="{x:Null}" Click="CloseSearchResults" BorderBrush="{x:Null}" Focusable="False" Margin="0,1,1,0" VerticalAlignment="Top" HorizontalAlignment="Right" Height="15" Width="27">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Background" Value="LightBlue" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#FFC32626" TargetName="Border" />
+                                        </Trigger>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="#FF8A1A1A" TargetName="Border" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+                <Image x:Name="CloseButton_Icon1" Source="/Assets/WindowChrome/CloseWhite.png" Height="15" Width="27" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"/>
+            </Button>
+        </Grid>
     </Grid>
 </Window>

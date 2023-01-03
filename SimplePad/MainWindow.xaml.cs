@@ -26,6 +26,9 @@ using System.Runtime.InteropServices;
 
 using TextFile_Lib;
 using Point = System.Windows.Point;
+using Gma.System.MouseKeyHook;
+using System.Collections;
+using static System.Windows.Forms.LinkLabel;
 
 namespace SimplePad
 {
@@ -34,7 +37,6 @@ namespace SimplePad
     /// </summary>
     public partial class MainWindow : Window
 	{
-		
         // Constants
         private const uint WP_SYSTEMMENU = 0x02;
 		private const uint WM_SYSTEMMENU = 0xa4;
@@ -47,8 +49,7 @@ namespace SimplePad
         /// 
         //
 
-        // Structs
-        internal struct SearchResult
+        internal class SearchResult
 		{
 			public string desiredString;
             public int startPosition;
@@ -59,15 +60,18 @@ namespace SimplePad
                 startPosition = _startPosition;
             }
         }
-		//
+        //
 
-		// Common private fields
+        // Common private fields
+        private bool searchResults_isResizing = false;
 		private readonly FindWindow findWindow = new();
         private Encoding encoding = Encoding.UTF8;
-		//
+        private IKeyboardMouseEvents m_GlobalHook;
+        private Point mouseOffset;
+        private TextFile textFile;
+        //
 
-		// Common protected fields
-		private TextFile textFile;
+        // Common internal fields
         internal List<SearchResult> searchResults = new();
         //
 
@@ -80,13 +84,18 @@ namespace SimplePad
 
 		protected void OnLoad(object sender, RoutedEventArgs e)
 		{
-			// Load properties
+            searchResults_Grid.Visibility = Visibility.Collapsed;
+            searchResults_Grid.Height = 0;
+
+            // Load properties
             this.Top = Properties.Settings.Default.WindowTop;
 			this.Left = Properties.Settings.Default.WindowLeft;
 			this.Height = Properties.Settings.Default.WindowHeight;
 			this.Width = Properties.Settings.Default.WindowWidth;
 
             textBoxMain.FontSize = Properties.Settings.Default.FontSize;
+            searchResults_TextBox.FontSize = Properties.Settings.Default.FontSize;
+            searchResults_Grid.Height = Properties.Settings.Default.SearchResultsHeight;
 
             if (Properties.Settings.Default.Maximized)
 			{
@@ -103,9 +112,17 @@ namespace SimplePad
                 textBoxMain.TextWrapping = TextWrapping.NoWrap;
                 FormatButton_WordWrap.IsChecked = false;
             }
-			//
+            //
 
+            // GlobalHook initializing
+            m_GlobalHook = Hook.GlobalEvents();
+
+            m_GlobalHook.MouseUpExt += GlobalHookMouseUpExt;
+            //
+
+            // EncodingProvider initializing
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            //
 
 			// WindowChrome
 			IntPtr windIntPtr = new WindowInteropHelper(this).Handle;
@@ -164,7 +181,12 @@ namespace SimplePad
 		// Closing
 		protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
 		{
-			base.OnClosing(e);
+            m_GlobalHook.MouseUpExt -= GlobalHookMouseUpExt;
+
+            //It is recommened to dispose it
+            m_GlobalHook.Dispose();
+
+            base.OnClosing(e);
 
 			if (WindowState == WindowState.Maximized)
 			{
@@ -194,6 +216,7 @@ namespace SimplePad
             }
 
             Properties.Settings.Default.FontSize = (int)textBoxMain.FontSize;
+            Properties.Settings.Default.SearchResultsHeight = searchResults_Grid.Height;
 
             Properties.Settings.Default.Save();
 			Process.GetCurrentProcess().Kill();
@@ -478,8 +501,13 @@ namespace SimplePad
 		/// </summary>
 		/// <param name="desiredString"></param>
 		/// <param name="text"></param>
-		private void CreateFindResultList(string desiredString, string text)
+		private void CreateFindResultList(string desiredString, string text, bool anyCase)
 		{
+            if (anyCase == true)
+            {
+                text = text.ToLower();
+                desiredString = desiredString.ToLower();
+            }
             for (int i = 0; i < text.Length - desiredString.Length + 1; i++)
             {
                 string checkingString = "";
@@ -487,6 +515,8 @@ namespace SimplePad
                 for (int j = 0; j < desiredString.Length; j++)
                 {
                     checkingString += text[i + j];
+                    if (checkingString[j] != desiredString[j])
+                        break;
                 }
                 if (checkingString == desiredString)
                 {
@@ -497,17 +527,6 @@ namespace SimplePad
         }
 
         /// <summary>
-        /// Find line in the textBoxMain
-        /// </summary>
-        internal void FindLine(int line)
-        {
-			textBoxMain.Focus();
-
-			textBoxMain.SelectionStart = textBoxMain.GetCharacterIndexFromLineIndex(line - 1);
-			textBoxMain.SelectionLength = 0;
-        }
-
-        /// <summary>
 		/// Find string in the textBoxMain
 		/// </summary>
 		/// <param name="desiredString"></param>
@@ -515,33 +534,16 @@ namespace SimplePad
 		/// <param name="DirectionIsDown"></param>
         internal void FindString(string desiredString, bool anyCase, bool DirectionIsDown)
         {
-			if (anyCase == true)
-			{
-				string lowerCaseText = textBoxMain.Text.ToLower();
-				desiredString = desiredString.ToLower();
-				if (searchResults.Count == 0)
-				{
-					CreateFindResultList(desiredString, lowerCaseText);
-				}
-				else if (searchResults[0].desiredString != desiredString)
-				{
-					searchResults.Clear();
-					CreateFindResultList(desiredString, lowerCaseText);
-				}
-			}
-			else
-			{
-				if (searchResults.Count == 0)
-				{
-					CreateFindResultList(desiredString, textBoxMain.Text);
-				}
-				else if (searchResults[0].desiredString != desiredString)
-				{
-					searchResults.Clear();
-					CreateFindResultList(desiredString, textBoxMain.Text);
-				}
-			}
-			if (searchResults.Count > 0)
+            if (searchResults.Count == 0)
+            {
+                CreateFindResultList(desiredString, textBoxMain.Text, anyCase);
+            }
+            else if (searchResults[0].desiredString != desiredString)
+            {
+                searchResults.Clear();
+                CreateFindResultList(desiredString, textBoxMain.Text, anyCase);
+            }
+            if (searchResults.Count > 0)
 			{
 				if (DirectionIsDown == true)
 				{
@@ -583,14 +585,16 @@ namespace SimplePad
         }
 
         /// <summary>
-        /// Find string in the textBoxMain
+        /// Replace string in the textBoxMain
         /// </summary>
         /// <param name="desiredString"></param>
         /// <param name="anyCase"></param>
         /// <param name="DirectionIsDown"></param>
         internal void ReplaceString(string replaceFrom, string replaceTo, bool anyCase, bool DirectionIsDown)
         {
-			bool textReplaced = false;
+            searchResults.Clear();
+
+            bool textReplaced = false;
 
             if (textBoxMain.SelectedText == replaceFrom)
             {
@@ -600,6 +604,7 @@ namespace SimplePad
 
 			FindString(replaceFrom, anyCase, DirectionIsDown);
 
+            textBoxMain.TextChanged -= textBoxMain_TextChanged;
             if (searchResults.Count > 0)
             {
                 if (textReplaced == false)
@@ -607,8 +612,271 @@ namespace SimplePad
                     textBoxMain.SelectedText = textBoxMain.SelectedText.Replace(textBoxMain.SelectedText, replaceTo);
                 }
             }
+            textBoxMain.TextChanged += textBoxMain_TextChanged;
+        }
+
+        /// <summary>
+        /// Replace all strings in the textBoxMain
+        /// </summary>
+        /// <param name="desiredString"></param>
+        /// <param name="anyCase"></param>
+        /// <param name="DirectionIsDown"></param>
+        internal void ReplaceAllStrings(string replaceFrom, string replaceTo, bool anyCase)
+        {
+            int deltaLength = replaceTo.Length - replaceFrom.Length;
+
+            searchResults.Clear();
+
+            if (searchResults.Count == 0)
+            {
+                CreateFindResultList(replaceFrom, textBoxMain.Text, anyCase);
+            }
+            else if (searchResults[0].desiredString != replaceFrom)
+            {
+                searchResults.Clear();
+                CreateFindResultList(replaceFrom, textBoxMain.Text, anyCase);
+            }
+
+            textBoxMain.TextChanged -= textBoxMain_TextChanged;
+            if (searchResults.Count > 0)
+            {
+                for (int i = 0; i < searchResults.Count; i++)
+                {
+                    textBoxMain.SelectionStart = searchResults[i].startPosition;
+                    textBoxMain.SelectionLength = replaceFrom.Length;
+                    textBoxMain.SelectedText = textBoxMain.SelectedText.Replace(textBoxMain.SelectedText, replaceTo);
+                    if (i != searchResults.Count - 1)
+                    {
+                        if (deltaLength != 0)
+                        {
+                            searchResults[i + 1].startPosition += deltaLength;
+                            deltaLength += deltaLength;
+                        }
+                    }
+                }
+            }
+            textBoxMain.TextChanged += textBoxMain_TextChanged;
+        }
+
+        /// <summary>
+        /// Find line in the textBoxMain
+        /// </summary>
+        internal void FindLine(int line)
+        {
+            textBoxMain.Focus();
+
+            textBoxMain.SelectionStart = textBoxMain.GetCharacterIndexFromLineIndex(line - 1);
+            textBoxMain.SelectionLength = 0;
+        }
+
+        /// <summary>
+		/// Find string in files in specified directory
+		/// </summary>
+		/// <param name="desiredString"></param>
+		/// <param name="anyCase"></param>
+		/// <param name="DirectionIsDown"></param>
+        internal void FindStringInFiles(string desiredString, string directory, bool anyCase, bool subfolders)
+        {
+            string text = "";
+            string[][] fileArray = new string[3][];
+            bool filesFound = false;
+            FindInFilesWindow findInFilesWindow;
+
+            if (anyCase == true)
+            {
+                desiredString = desiredString.ToLower();
+            }
+            if (subfolders)
+            {
+                fileArray[0] = System.IO.Directory.GetFiles((directory + "\\"), "*.txt", System.IO.SearchOption.AllDirectories);
+                fileArray[1] = System.IO.Directory.GetFiles((directory + "\\"), "*.json", System.IO.SearchOption.AllDirectories);
+                fileArray[2] = System.IO.Directory.GetFiles((directory + "\\"), "*.lua", System.IO.SearchOption.AllDirectories);
+            }
+            else
+            {
+                fileArray[0] = System.IO.Directory.GetFiles((directory + "\\"), "*.txt", System.IO.SearchOption.TopDirectoryOnly);
+                fileArray[1] = System.IO.Directory.GetFiles((directory + "\\"), "*.json", System.IO.SearchOption.TopDirectoryOnly);
+                fileArray[2] = System.IO.Directory.GetFiles((directory + "\\"), "*.lua", System.IO.SearchOption.TopDirectoryOnly);
+            }
+            for (int l = 0; l < fileArray.Length; l++)
+            {
+                if (fileArray[l].Length > 0)
+                {
+                    findInFilesWindow = new FindInFilesWindow();
+                    if (filesFound == false)
+                    {
+                        SearchResultsData.ProgressBar_Maximum = fileArray.Length - 1;
+                        searchResults_TextBox.Text = "";
+
+                        if (findWindow.Left >= System.Windows.SystemParameters.WorkArea.Width / 1.5)
+                        {
+                            findInFilesWindow.Left = System.Windows.SystemParameters.WorkArea.Width - findInFilesWindow.Width;
+                        }
+                        else if (findWindow.Left <= 0)
+                        {
+                            findInFilesWindow.Left = 0;
+                        }
+                        else
+                        {
+                            findInFilesWindow.Left = findWindow.Left;
+                        }
+                        if (findWindow.Top >= System.Windows.SystemParameters.WorkArea.Height / 1.5)
+                        {
+                            findInFilesWindow.Top = System.Windows.SystemParameters.WorkArea.Height - findInFilesWindow.Height;
+                        }
+                        else if (findWindow.Top <= 0)
+                        {
+                            findInFilesWindow.Top = 0;
+                        }
+                        else
+                        {
+                            findInFilesWindow.Top = findWindow.Top + 100;
+                        }
+                    }
+
+                    findInFilesWindow.Show();
+
+                    bool foundInFile = false;
+                    searchResults_Grid.Visibility = Visibility.Visible;
+                    for (int i = 0; i < fileArray[l].Length; i++)
+                    {
+                        SearchResultsData.ProgressBar_Value = i;
+                        SearchResultsData.Label_Content = fileArray[l][i];
+
+                        text = TextFile.ReadFromFile(fileArray[l][i], text);
+                        string[] lines = text.Replace("\r", "").Split('\n');
+                        for (int j = 0; j < lines.Length; j++)
+                        {
+                            bool foundInLine = false;
+                            string line = lines[j];
+
+                            if (anyCase == true)
+                            {
+                                line = line.ToLower();
+                            }
+                            for (int t = 0; t < line.Length - desiredString.Length + 1; t++)
+                            {
+                                string checkingString = "";
+
+                                for (int m = 0; m < desiredString.Length; m++)
+                                {
+                                    checkingString += line[t + m];
+                                    if (checkingString[m] != desiredString[m])
+                                        break;
+                                }
+                                if (checkingString == desiredString)
+                                {
+                                    foundInLine = true;
+                                    t += desiredString.Length - 1;
+                                }
+                            }
+                            if (foundInLine)
+                            {
+                                if (foundInFile == false)
+                                {
+                                    searchResults_TextBox.Text += fileArray[l][i] + "\n";
+                                    foundInFile = true;
+                                }
+                                if (searchResults.Count == 1)
+                                {
+                                    searchResults_TextBox.Text += "line " + (j + 1) + ": " + lines[j] + "\n";
+                                }
+                                else
+                                {
+                                    searchResults_TextBox.Text += "line " + (j + 1) + ", " + searchResults.Count + " matches: " + lines[j] + "\n";
+                                }
+                            }
+                        }
+                        if (foundInFile == true)
+                        {
+                            searchResults_TextBox.Text += "\n";
+                            foundInFile = false;
+                        }
+                    }
+                    if (findInFilesWindow.IsEnabled)
+                    {
+                        findInFilesWindow.Close();
+                    }
+                }
+            }
         }
         // 
+
+        // Search results events
+        /// <summary>
+        /// Resize searchResults_Grid
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected override void OnPreviewMouseMove(MouseEventArgs e)
+        {
+            if (searchResults_isResizing)
+            {
+                Point mouseDelta = Mouse.GetPosition(this);
+                double deltaY = mouseDelta.Y - mouseOffset.Y;
+                mouseOffset.Y = mouseDelta.Y;
+
+                if ((searchResults_Grid.Height - deltaY > 17) && (this.Height - 63 - searchResults_Grid.Height + deltaY >= 0))
+                {
+                    searchResults_Grid.Height -= deltaY;
+                }
+
+                if (this.Height - 63 - searchResults_Grid.Height >= 0)
+                    textBoxMain.Height = this.Height - 63 - searchResults_Grid.Height;
+            }
+        }
+
+        /// <summary>
+        /// Start resize searchResults_Grid
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void searchResults_Resize_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            mouseOffset = Mouse.GetPosition(this);
+            searchResults_isResizing = true;
+        }
+
+        /// <summary>
+        /// Event on mouse wheel using
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void searchResults_TextBox_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            // CTRL + MouseWheel
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+            {
+                /// Scale up
+                if (e.Delta > 0)
+                {
+                    textBoxMain.FontSize += 1;
+                    searchResults_TextBox.FontSize += 1;
+                }
+                /// Scale down
+                if (e.Delta < 0 && textBoxMain.FontSize > 1)
+                {
+                    textBoxMain.FontSize -= 1;
+                    searchResults_TextBox.FontSize -= 1;
+                }
+            }
+            else if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+            {
+                searchResults_TextBox.ScrollToHorizontalOffset(searchResults_TextBox.HorizontalOffset - e.Delta);
+                e.Handled = true;
+            }
+            else
+            {
+                searchResults_TextBox.ScrollToVerticalOffset(searchResults_TextBox.VerticalOffset - e.Delta);
+                e.Handled = true;
+            }
+        }
+
+        private void CloseSearchResults(object sender, RoutedEventArgs e)
+        {
+            searchResults_Grid.Visibility = Visibility.Hidden;
+        }
+        //
 
         // TextBox events
         /// <summary>
@@ -703,40 +971,66 @@ namespace SimplePad
         /// <param name="sender"></param>
         /// <param name="e"></param>
         protected void textBoxMain_MouseWheel(object sender, MouseWheelEventArgs e)
-		{
-			// CTRL + MouseWheel
-			if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
-			{
-				/// Scale up
-				if (e.Delta > 0)
-				{
-					textBoxMain.FontSize += 1;
-				}
-				/// Scale down
-				if (e.Delta < 0 && textBoxMain.FontSize > 1)
-				{
-					textBoxMain.FontSize -= 1;
-				}
-			}
-			else if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
-			{
-				textBoxMain.ScrollToHorizontalOffset(textBoxMain.HorizontalOffset - e.Delta);
-				e.Handled = true;
-			}
-			else
-			{
-				textBoxMain.ScrollToVerticalOffset(textBoxMain.VerticalOffset - e.Delta);
-				e.Handled = true;
-			}
-		}
+        {
+            // CTRL + MouseWheel
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+            {
+                /// Scale up
+                if (e.Delta > 0)
+                {
+                    textBoxMain.FontSize += 1;
+                    searchResults_TextBox.FontSize += 1;
+                }
+                /// Scale down
+                if (e.Delta < 0 && textBoxMain.FontSize > 1)
+                {
+                    textBoxMain.FontSize -= 1;
+                    searchResults_TextBox.FontSize -= 1;
+                }
+            }
+            else if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+            {
+                textBoxMain.ScrollToHorizontalOffset(textBoxMain.HorizontalOffset - e.Delta);
+                e.Handled = true;
+            }
+            else
+            {
+                textBoxMain.ScrollToVerticalOffset(textBoxMain.VerticalOffset - e.Delta);
+                e.Handled = true;
+            }
+        }
         //
 
         // Window methods
-		/// <summary>
-		/// Change title after save, opening and other operations with text file
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
+        /// <summary>
+        /// Event on mouse left button up
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void GlobalHookMouseUpExt(object sender, MouseEventExtArgs e)
+        {
+            searchResults_isResizing = false;
+        }
+
+        /// <summary>
+        /// Change title after save, opening and other operations with text file
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (this.Height - 63 - searchResults_Grid.Height >= 0)
+                textBoxMain.Height = this.Height - 63 - searchResults_Grid.Height;
+
+            searchResults_RectangleTitle.Width = this.Width - 12;
+            searchResults_RectangleUpResizer.Width = this.Width - 12;
+        }
+
+        /// <summary>
+        /// Change title after save, opening and other operations with text file
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnFileOperation(object sender, EventArgs e)
         {
             FileButton_Save.Style = (Style)Resources["ClickableMenuItemBlack"];

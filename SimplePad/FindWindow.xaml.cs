@@ -17,9 +17,17 @@ using System.Windows.Media.TextFormatting;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Shell;
+using System.Windows.Forms;
 
 using TextFile_Lib;
+using System.IO;
+using Microsoft.Win32;
 
+// TODO: In all sub folders, in hidden folders options;
+// TODO: Add fast selection of current directory;
+// TODO: Make comments and readibility
+// TODO: Make result window closing
+// TODO: GlobalHook must initialize only after making result window visible!
 namespace SimplePad
 {
     /// <summary>
@@ -41,11 +49,11 @@ namespace SimplePad
         protected virtual void OnLoad(object sender, RoutedEventArgs e)
         {
             // Load settings
+            this.directoryInput_TextBox.Text = Properties.Settings.Default.FindInFiles_Directory;
             this.findInput_TextBox.Text = Properties.Settings.Default.DesiredString;
             this.replaceInput_TextBox.Text = Properties.Settings.Default.ReplaceTo_String;
             this.matchCase_CheckBox.IsChecked = Properties.Settings.Default.MatchCase;
             this.multipleLine_CheckBox.IsChecked = Properties.Settings.Default.MultipleLineInput;
-            this.down_RadioButton.IsChecked = Properties.Settings.Default.SearchDirectionIsDown;
             this.down_RadioButton.IsChecked = Properties.Settings.Default.SearchDirectionIsDown;
             this.up_RadioButton.IsChecked = !Properties.Settings.Default.SearchDirectionIsDown;
             //
@@ -172,7 +180,7 @@ namespace SimplePad
             }
             else if (findInFiles_TabItem.IsSelected == true)
             {
-                matchesCounter.Visibility = Visibility.Visible;
+                matchesCounter.Visibility = Visibility.Hidden;
                 matchCase_CheckBox.Visibility = Visibility.Visible;
                 multipleLine_CheckBox.Visibility = Visibility.Visible;
 
@@ -191,8 +199,8 @@ namespace SimplePad
 
                 findButton.Content = "Find";
 
-                this.Height = 217;
-                this.Width = 463;
+                this.Height = 238;
+                this.Width = 472;
             }
             else if (goTo_TabItem.IsSelected == true)
             {
@@ -227,15 +235,18 @@ namespace SimplePad
         /// <param name="e"></param>
         private void TabItem_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (goTo_TabItem.IsSelected != true)
+            if (findInFiles_TabItem.IsSelected != true)
             {
-                findInput_TextBox.Focus();
-                findInput_TextBox.SelectAll();
-            }
-            else
-            {
-                goToInput_TextBox.Focus();
-                goToInput_TextBox.SelectAll();
+                if (goTo_TabItem.IsSelected != true)
+                {
+                    findInput_TextBox.Focus();
+                    findInput_TextBox.SelectAll();
+                }
+                else
+                {
+                    goToInput_TextBox.Focus();
+                    goToInput_TextBox.SelectAll();
+                }
             }
         }
 
@@ -307,6 +318,46 @@ namespace SimplePad
             {
                 InitiateReplace(findInput_TextBox.Text, replaceInput_TextBox.Text);
             }
+            else
+            {
+
+            }
+        }
+
+        /// <summary>
+        /// Event on ReplaceAllButton clicking
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ReplaceAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            InitiateReplaceAll(findInput_TextBox.Text, replaceInput_TextBox.Text);
+        }
+
+        /// <summary>
+        /// Event on DirectoryButton clicking
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DirectoryButton_Click(object sender, RoutedEventArgs e)
+        {
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            folderBrowserDialog.InitialDirectory = Properties.Settings.Default.FindInFiles_Directory;
+
+            if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                directoryInput_TextBox.Text = folderBrowserDialog.SelectedPath;
+            }
+        }
+
+        /// <summary>
+        /// Event on FindInFilesButton clicking
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void FindInFilesButton_Click(object sender, RoutedEventArgs e)
+        {
+            InitiateSearchInFiles(findInput_TextBox.Text, directoryInput_TextBox.Text);
         }
 
         /// <summary>
@@ -324,7 +375,7 @@ namespace SimplePad
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        protected void goToInput_KeyDown(object sender, KeyEventArgs e)
+        protected void goToInput_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             // ENTER
             if (e.Key == Key.Return && multipleLine_CheckBox.IsChecked == false)
@@ -341,7 +392,7 @@ namespace SimplePad
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        protected void findInput_KeyDown(object sender, KeyEventArgs e)
+        protected void findInput_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             // ENTER
             if (e.Key == Key.Return && multipleLine_CheckBox.IsChecked == false)
@@ -390,6 +441,60 @@ namespace SimplePad
             this.replaceButton.Focus();
             matchesCounter.Content = "*matches found: " + ((MainWindow)this.Owner).searchResults.Count;
         }
+
+        /// <summary>
+        /// Call ReplaceString method based on selected settings
+        /// </summary>
+        /// <param name="text"></param>
+        private void InitiateReplaceAll(string replaceFrom, string replaceTo)
+        {
+            if (replaceFrom.Length > 0)
+            {
+                ((MainWindow)this.Owner).textBoxMain.Focus();
+                if (matchCase_CheckBox.IsChecked == true)
+                {
+                    ((MainWindow)this.Owner).ReplaceAllStrings(replaceFrom, replaceTo, false);
+                }
+                else
+                {
+                    ((MainWindow)this.Owner).ReplaceAllStrings(replaceFrom, replaceTo, true);
+                }
+            }
+            matchesCounter.Content = "*matches found: " + ((MainWindow)this.Owner).searchResults.Count;
+        }
+
+        /// <summary>
+        /// Call FindInFilesString method based on selected settings
+        /// </summary>
+        /// <param name="text"></param>
+        private void InitiateSearchInFiles(string text, string directory)
+        {
+            bool anyCase;
+            bool subfolders;
+            if (System.IO.Directory.Exists(directory))
+            {
+                if (matchCase_CheckBox.IsChecked == true)
+                {
+                    anyCase = false;
+                }
+                else
+                {
+                    anyCase = true;
+                }
+                if (subfolders_CheckBox.IsChecked == true)
+                {
+                    subfolders = true;
+                }
+                else
+                {
+                    subfolders = false;
+                }
+
+                ((MainWindow)this.Owner).FindStringInFiles(text, directory, anyCase, subfolders);
+                matchesCounter.Content = "*matches found: " + ((MainWindow)this.Owner).searchResults.Count;
+            }
+        }
+        //
 
         /// <summary>
         /// Call FindString method based on selected settings
@@ -461,7 +566,7 @@ namespace SimplePad
         /// Open goTo_tabItem on ctrl + g
         /// </summary>
         /// <param name="e"></param>
-        protected override void OnKeyDown(KeyEventArgs e)
+        protected override void OnKeyDown(System.Windows.Input.KeyEventArgs e)
         {
             // CTRL + F
             if (e.Key == Key.F && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
@@ -506,6 +611,7 @@ namespace SimplePad
         /// <param name="e"></param>
         private void CloseWindow(object sender, RoutedEventArgs e)
         {
+            Properties.Settings.Default.FindInFiles_Directory = this.directoryInput_TextBox.Text;
             Properties.Settings.Default.DesiredString = this.findInput_TextBox.Text;
             Properties.Settings.Default.ReplaceTo_String = this.replaceInput_TextBox.Text;
             Properties.Settings.Default.MatchCase = this.matchCase_CheckBox.IsChecked ?? false;

@@ -166,5 +166,29 @@ namespace SimplePad.Properties {
                 this["ReplaceTo_String"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FindInFiles_Directory {
+            get {
+                return ((string)(this["FindInFiles_Directory"]));
+            }
+            set {
+                this["FindInFiles_Directory"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("200")]
+        public double SearchResultsHeight {
+            get {
+                return ((double)(this["SearchResultsHeight"]));
+            }
+            set {
+                this["SearchResultsHeight"] = value;
+            }
+        }
     }
 }

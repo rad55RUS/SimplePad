@@ -27,10 +27,48 @@ namespace TextFile_Lib
 		public event OnFileOperationHandler ?OnFileOperation;
         #endregion
 
-		// Methods
-		/// <summary>
-		/// Constructor
-		/// </summary>
+        // Static methods
+        /// <summary>
+        /// Static method for reading text from file with specified directory.
+        /// </summary>
+        /// <param name="text"></param>
+        public static string ReadFromFile(string directory, string text)
+        {
+            // Encoding determining
+            MemoryStream stream = new MemoryStream();
+
+            StreamWriter streamWriter = new StreamWriter(stream);
+            streamWriter.Write(directory);
+            streamWriter.Flush();
+            stream.Position = 0;
+
+            Encoding encoding = Encoding.UTF8;
+
+            Ude.CharsetDetector cDet = new();
+            cDet.Feed(stream);
+            cDet.DataEnd();
+            if (cDet.Charset != null)
+            {
+                encoding = Encoding.GetEncoding(cDet.Charset);
+            }
+            stream.Dispose();
+            stream.Close();
+
+            // Read from file
+            StreamReader reader = new(directory, encoding);
+            text = reader.ReadToEnd();
+            reader.Dispose();
+            reader.Close();
+            //
+
+            return text;
+        }
+        //
+
+        // Object methods
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public TextFile() : base()
 		{
 			saveFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
@@ -156,7 +194,6 @@ namespace TextFile_Lib
         /// Show <b>OpenFileDialog</b> and return <b>text</b> of opened file.
         /// </summary>
         /// <param name="text"></param>
-        /// <param name="encoding"></param>
         /// <returns></returns>
         public string OpenFile(string text)
         {
@@ -202,7 +239,7 @@ namespace TextFile_Lib
 		}
 
         /// <summary>
-        /// Method for reading text from file.
+        /// Method for reading text from file with specified encoding.
         /// </summary>
         /// <param name="text"></param>
         public string ReadFromFile(string text, Encoding encoding)
