@@ -101,7 +101,7 @@ namespace SimplePad
 
             searchResults_Grid.Visibility = Visibility.Collapsed;
             searchResults_Grid.Height = 0;
-            textBoxMain.Height = this.Height - 63;
+
 
             if (Properties.Settings.Default.Maximized)
 			{
@@ -729,6 +729,7 @@ namespace SimplePad
                         App.Current.Dispatcher.Invoke(delegate
                         {
                             findInFilesWindow = new FindInFilesWindow();
+                            findInFilesWindow.Owner = this;
                             findInFilesWindow.progressBar.Maximum = fileCount;
 
                             if (findWindow.Left >= System.Windows.SystemParameters.WorkArea.Width / 1.5)
@@ -759,7 +760,7 @@ namespace SimplePad
 
                             searchResults_TextBox.Text = "";
                             searchResults_Grid.Visibility = Visibility.Visible;
-                            textBoxMain.Height = this.Height - 63 - searchResults_Grid.Height;
+
                             searchResults_Grid.Height = Properties.Settings.Default.SearchResultsHeight;
                         });
                     }
@@ -875,9 +876,6 @@ namespace SimplePad
                 {
                     searchResults_Grid.Height -= deltaY;
                 }
-
-                if (this.Height - 63 - searchResults_Grid.Height >= 0)
-                    textBoxMain.Height = this.Height - 63 - searchResults_Grid.Height;
             }
         }
 
@@ -930,7 +928,6 @@ namespace SimplePad
         private void CloseSearchResults(object sender, RoutedEventArgs e)
         {
             searchResults_Grid.Visibility = Visibility.Collapsed;
-            textBoxMain.Height = this.Height - 63;
             searchResults_Grid.Height = 0;
         }
         //
@@ -1076,9 +1073,6 @@ namespace SimplePad
         /// <param name="e"></param>
         private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (this.Height - 63 - searchResults_Grid.Height >= 0)
-                textBoxMain.Height = this.Height - 63 - searchResults_Grid.Height;
-
             searchResults_RectangleTitle.Width = this.Width - 12;
             searchResults_RectangleUpResizer.Width = this.Width - 12;
         }

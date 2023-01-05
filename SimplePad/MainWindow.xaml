@@ -52,31 +52,32 @@
             <!---->
 
             <!-- Custom Scrollbar -->
-            <Style TargetType="ScrollViewer">
-                <Setter Property="OverridesDefaultStyle" Value="True"/>
-                <Setter Property="CanContentScroll" Value="True"/>
+            <Style TargetType="{x:Type ScrollViewer}">
                 <Setter Property="Template">
                     <Setter.Value>
-                        <ControlTemplate TargetType="ScrollViewer">
-                            <Border CornerRadius="2" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <ScrollContentPresenter Grid.Column="0"/>
-                                    <Rectangle Grid.Column="1" Grid.Row="1" Fill="#FF272727"/>
-                                    <ScrollBar x:Name="PART_VerticalScrollBar" Value="{TemplateBinding VerticalOffset}" Grid.Column="1" Grid.Row="0" Orientation="Vertical" Maximum="{TemplateBinding ScrollableHeight}" ViewportSize="{TemplateBinding ViewportHeight}" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
-                                    <ScrollBar x:Name="PART_HorizontalScrollBar" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Grid.Column="0" Grid.Row="1" Orientation="Horizontal" ViewportSize="{TemplateBinding ViewportWidth}" Maximum="{TemplateBinding ScrollableWidth}" Value="{TemplateBinding HorizontalOffset}"/>
-                                </Grid>
-                            </Border>
+                        <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                            <Grid x:Name="Grid" Background="{TemplateBinding Background}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Rectangle x:Name="Corner" Grid.Column="1" Fill="#FF272727" Grid.Row="1"/>
+                                <ScrollContentPresenter x:Name="PART_ScrollContentPresenter" CanHorizontallyScroll="False" ContentTemplate="{TemplateBinding ContentTemplate}" CanVerticallyScroll="False" Grid.Column="0" Content="{TemplateBinding Content}" CanContentScroll="{TemplateBinding CanContentScroll}" Margin="{TemplateBinding Padding}" Grid.Row="0"/>
+                                <ScrollBar x:Name="PART_VerticalScrollBar" AutomationProperties.AutomationId="VerticalScrollBar" Cursor="Arrow" Grid.Column="1" Maximum="{TemplateBinding ScrollableHeight}" Minimum="0" Grid.Row="0" Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportHeight}" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
+                                <ScrollBar x:Name="PART_HorizontalScrollBar" AutomationProperties.AutomationId="HorizontalScrollBar" Cursor="Arrow" Grid.Column="0" Maximum="{TemplateBinding ScrollableWidth}" Minimum="0" Orientation="Horizontal" Grid.Row="1" Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"/>
+                            </Grid>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsEnabled" Value="false">
+                        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                    </Trigger>
+                </Style.Triggers>
             </Style>
             
             <Style x:Key="ScrollThumbs" TargetType="{x:Type Thumb}">
@@ -464,7 +465,11 @@
             <!---->
         </ResourceDictionary>
     </Window.Resources>
-    <Grid Height="Auto" Width="Auto" ScrollViewer.VerticalScrollBarVisibility="Disabled" UseLayoutRounding="False" Focusable="False">
+    <Grid Height="Auto" ScrollViewer.VerticalScrollBarVisibility="Disabled" UseLayoutRounding="False" Focusable="False">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" MinHeight="63"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
         <Grid.Background>
             <SolidColorBrush Opacity="0.01" Color="Black"/>
         </Grid.Background>
@@ -592,7 +597,7 @@
                 <Image x:Name="Icon" Width="32" Source="/Assets/WindowChrome/Icon.png" Height="22" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"/>
             </Button>
         </DockPanel>
-        <TextBox x:Name="textBoxMain" Margin="6,59,6,0" TextWrapping="NoWrap" Background="#FF0C0C0C" SelectionBrush="#FF0061FF" RenderTransformOrigin="0.5,0.5" Foreground="White" CaretBrush="White" AcceptsReturn="True" BorderThickness="0" BorderBrush="{x:Null}" TextChanged="textBoxMain_TextChanged" SelectionChanged="textBoxMain_SelectionChanged" LostFocus="textBoxMain_LostFocus" IsInactiveSelectionHighlightEnabled="True" FocusManager.IsFocusScope="False" FontFamily="Consolas" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" PreviewMouseWheel="textBoxMain_MouseWheel" AcceptsTab="True" UndoLimit="1000" VerticalAlignment="Top" Height="384">
+        <TextBox x:Name="textBoxMain" Margin="6,59,6,0" TextWrapping="NoWrap" Background="#FF0C0C0C" SelectionBrush="#FF0061FF" RenderTransformOrigin="0.5,0.5" Foreground="White" CaretBrush="White" AcceptsReturn="True" BorderThickness="0" BorderBrush="{x:Null}" TextChanged="textBoxMain_TextChanged" SelectionChanged="textBoxMain_SelectionChanged" LostFocus="textBoxMain_LostFocus" IsInactiveSelectionHighlightEnabled="True" FocusManager.IsFocusScope="False" FontFamily="Consolas" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" PreviewMouseWheel="textBoxMain_MouseWheel" AcceptsTab="True" UndoLimit="1000" Grid.Row="0">
             <TextBox.Resources>
                 <Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource ScrollBarStyle}"/>
             </TextBox.Resources>
@@ -802,7 +807,7 @@
                 </TextBlock.RenderTransform>
             </TextBlock>
         </Button>
-        <Grid x:Name="searchResults_Grid" Height="175" Margin="6,59,6,4" Background="#FF171717" VerticalAlignment="Bottom">
+        <Grid x:Name="searchResults_Grid" Height="141" Margin="6,0,6,0" Background="#FF171717" VerticalAlignment="Center" Grid.Row="1">
             <TextBox x:Name="searchResults_TextBox" Margin="0,17,0,0" TextWrapping="NoWrap" Background="#FF101010" SelectionBrush="#FF0061FF" RenderTransformOrigin="0.5,0.5" Foreground="White" CaretBrush="White" AcceptsReturn="True" BorderThickness="0" BorderBrush="{x:Null}" IsReadOnly="True" IsInactiveSelectionHighlightEnabled="True" FocusManager.IsFocusScope="False" FontFamily="Consolas" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" PreviewMouseWheel="searchResults_TextBox_MouseWheel" AcceptsTab="True" UndoLimit="0">
                 <TextBox.Resources>
                     <Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource ScrollBarStyle}"/>
