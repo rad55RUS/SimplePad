@@ -688,6 +688,7 @@ namespace SimplePad
         {
             bool filesFound = false;
             int fileCount = 0;
+            int matches = 0;
             string text = "";
             string[][] fileArray = new string[4][];
 
@@ -765,7 +766,6 @@ namespace SimplePad
 
 
                     bool foundInFile = false;
-                    int matches = 0;
 
                     for (int i = 0; i < fileArray[l].Length; i++)
                     {
