@@ -176,7 +176,7 @@ namespace SimplePad
             textFile.OnFileOperation += OnFileOperation;
             if (textFile.Path != "")
 			{
-				textBoxMain.Text = textFile.ReadFromFile(textBoxMain.Text, encoding);
+				textBoxMain.Text = textFile.ReadFromFile(encoding);
                 findWindow.lineCounter.Content = "line amount: " + textBoxMain.LineCount.ToString();
             }
             textBoxMain.TextChanged += textBoxMain_TextChanged;
@@ -776,7 +776,14 @@ namespace SimplePad
                             findInFilesWindow.progressBar.Value++;
                         });
 
-                        text = TextFile.ReadFromFile(fileArray[l][i], text);
+                        if (l != 3)
+                        {
+                            text = TextFile.ReadFromFile(fileArray[l][i]);
+                        }
+                        else
+                        {
+                            text = TextFile.ReadFromFile(fileArray[l][i], Encoding.UTF8);
+                        }
                         string[] lines = text.Replace("\r", "").Split('\n');
                         for (int j = 0; j < lines.Length; j++)
                         {

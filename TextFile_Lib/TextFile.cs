@@ -32,7 +32,7 @@ namespace TextFile_Lib
         /// Static method for reading text from file with specified directory.
         /// </summary>
         /// <param name="text"></param>
-        public static string ReadFromFile(string directory, string text)
+        public static string ReadFromFile(string directory)
         {
             // Encoding determining
             MemoryStream stream = new MemoryStream();
@@ -51,12 +51,29 @@ namespace TextFile_Lib
             {
                 encoding = Encoding.GetEncoding(cDet.Charset);
             }
+            Debug.Print(encoding.ToString());
             stream.Dispose();
             stream.Close();
 
             // Read from file
             StreamReader reader = new(directory, encoding);
-            text = reader.ReadToEnd();
+            string text = reader.ReadToEnd();
+            reader.Dispose();
+            reader.Close();
+            //
+
+            return text;
+        }
+
+        /// <summary>
+        /// Static method for reading text from file with specified directory and encoding.
+        /// </summary>
+        /// <param name="text"></param>
+        public static string ReadFromFile(string directory, Encoding encoding)
+        {
+            // Read from file
+            StreamReader reader = new(directory, encoding);
+            string text = reader.ReadToEnd();
             reader.Dispose();
             reader.Close();
             //
@@ -184,7 +201,7 @@ namespace TextFile_Lib
 					stream.Close();
                     //
 
-                    text = ReadFromFile(text, encoding);
+                    text = ReadFromFile(encoding);
                 }
 			}
             return text;
@@ -216,7 +233,7 @@ namespace TextFile_Lib
                     stream.Close();
 					//
 
-					text = ReadFromFile(text, encoding);
+					text = ReadFromFile(encoding);
                 }
             }
             return text;
@@ -242,14 +259,14 @@ namespace TextFile_Lib
         /// Method for reading text from file with specified encoding.
         /// </summary>
         /// <param name="text"></param>
-        public string ReadFromFile(string text, Encoding encoding)
+        public string ReadFromFile(Encoding encoding)
         {
             if (OnFileOperation != null)
                 OnFileOperation.Invoke(this, new EventArgs());
 
             // Read from file
             StreamReader reader = new(Path, encoding);
-            text = reader.ReadToEnd();
+            string text = reader.ReadToEnd();
             this.isSaved = true;
             reader.Dispose();
             reader.Close();
