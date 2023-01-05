@@ -23,6 +23,7 @@ using System.IO.Pipes;
 using System.Runtime.InteropServices.ComTypes;
 using System.Xml.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 using TextFile_Lib;
 using Point = System.Windows.Point;
@@ -68,11 +69,14 @@ namespace SimplePad
         private Encoding encoding = Encoding.UTF8;
         private IKeyboardMouseEvents m_GlobalHook;
         private Point mouseOffset;
-        private TextFile textFile;
+        private FindInFilesWindow findInFilesWindow;
         //
 
         // Common internal fields
         internal List<SearchResult> searchResults = new();
+        internal SearchInFilesArgs searchInFilesArgs;
+        internal TextFile textFile;
+        internal Thread thread1;
         //
 
         // Initialization
@@ -84,8 +88,6 @@ namespace SimplePad
 
 		protected void OnLoad(object sender, RoutedEventArgs e)
 		{
-            searchResults_Grid.Visibility = Visibility.Collapsed;
-            searchResults_Grid.Height = 0;
 
             // Load properties
             this.Top = Properties.Settings.Default.WindowTop;
@@ -96,6 +98,10 @@ namespace SimplePad
             textBoxMain.FontSize = Properties.Settings.Default.FontSize;
             searchResults_TextBox.FontSize = Properties.Settings.Default.FontSize;
             searchResults_Grid.Height = Properties.Settings.Default.SearchResultsHeight;
+
+            searchResults_Grid.Visibility = Visibility.Collapsed;
+            searchResults_Grid.Height = 0;
+            textBoxMain.Height = this.Height - 63;
 
             if (Properties.Settings.Default.Maximized)
 			{
@@ -216,7 +222,10 @@ namespace SimplePad
             }
 
             Properties.Settings.Default.FontSize = (int)textBoxMain.FontSize;
-            Properties.Settings.Default.SearchResultsHeight = searchResults_Grid.Height;
+            if (searchResults_Grid.Height != 0)
+            {
+                Properties.Settings.Default.SearchResultsHeight = searchResults_Grid.Height;
+            }
 
             Properties.Settings.Default.Save();
 			Process.GetCurrentProcess().Kill();
@@ -675,130 +684,176 @@ namespace SimplePad
 		/// <param name="desiredString"></param>
 		/// <param name="anyCase"></param>
 		/// <param name="DirectionIsDown"></param>
-        internal void FindStringInFiles(string desiredString, string directory, bool anyCase, bool subfolders)
+        internal void FindStringInFiles(object? obj)
         {
-            string text = "";
-            string[][] fileArray = new string[3][];
             bool filesFound = false;
-            FindInFilesWindow findInFilesWindow;
+            int fileCount = 0;
+            string text = "";
+            string[][] fileArray = new string[4][];
 
-            if (anyCase == true)
+            if (searchInFilesArgs.anyCase == true)
             {
-                desiredString = desiredString.ToLower();
+                searchInFilesArgs.desiredString = searchInFilesArgs.desiredString.ToLower();
             }
-            if (subfolders)
+            if (searchInFilesArgs.subfolders)
             {
-                fileArray[0] = System.IO.Directory.GetFiles((directory + "\\"), "*.txt", System.IO.SearchOption.AllDirectories);
-                fileArray[1] = System.IO.Directory.GetFiles((directory + "\\"), "*.json", System.IO.SearchOption.AllDirectories);
-                fileArray[2] = System.IO.Directory.GetFiles((directory + "\\"), "*.lua", System.IO.SearchOption.AllDirectories);
+                fileArray[0] = System.IO.Directory.GetFiles((searchInFilesArgs.directory + "\\"), "*.txt", System.IO.SearchOption.AllDirectories);
+                fileArray[1] = System.IO.Directory.GetFiles((searchInFilesArgs.directory + "\\"), "*.json", System.IO.SearchOption.AllDirectories);
+                fileArray[2] = System.IO.Directory.GetFiles((searchInFilesArgs.directory + "\\"), "*.lua", System.IO.SearchOption.AllDirectories);
+                fileArray[3] = System.IO.Directory.GetFiles((searchInFilesArgs.directory + "\\"), "*.cfg", System.IO.SearchOption.AllDirectories);
             }
             else
             {
-                fileArray[0] = System.IO.Directory.GetFiles((directory + "\\"), "*.txt", System.IO.SearchOption.TopDirectoryOnly);
-                fileArray[1] = System.IO.Directory.GetFiles((directory + "\\"), "*.json", System.IO.SearchOption.TopDirectoryOnly);
-                fileArray[2] = System.IO.Directory.GetFiles((directory + "\\"), "*.lua", System.IO.SearchOption.TopDirectoryOnly);
+                fileArray[0] = System.IO.Directory.GetFiles((searchInFilesArgs.directory + "\\"), "*.txt", System.IO.SearchOption.TopDirectoryOnly);
+                fileArray[1] = System.IO.Directory.GetFiles((searchInFilesArgs.directory + "\\"), "*.json", System.IO.SearchOption.TopDirectoryOnly);
+                fileArray[2] = System.IO.Directory.GetFiles((searchInFilesArgs.directory + "\\"), "*.lua", System.IO.SearchOption.TopDirectoryOnly);
+                fileArray[3] = System.IO.Directory.GetFiles((searchInFilesArgs.directory + "\\"), "*.cfg", System.IO.SearchOption.TopDirectoryOnly);
             }
             for (int l = 0; l < fileArray.Length; l++)
             {
                 if (fileArray[l].Length > 0)
                 {
-                    findInFilesWindow = new FindInFilesWindow();
                     if (filesFound == false)
                     {
-                        SearchResultsData.ProgressBar_Maximum = fileArray.Length - 1;
-                        searchResults_TextBox.Text = "";
+                        filesFound = true;
 
-                        if (findWindow.Left >= System.Windows.SystemParameters.WorkArea.Width / 1.5)
+                        for (int i = 0; i < fileArray.Length; i++)
                         {
-                            findInFilesWindow.Left = System.Windows.SystemParameters.WorkArea.Width - findInFilesWindow.Width;
+                            for (int j = 0; j < fileArray[i].Length; j++)
+                            {
+                                fileCount++;
+                            }
                         }
-                        else if (findWindow.Left <= 0)
+
+                        App.Current.Dispatcher.Invoke(delegate
                         {
-                            findInFilesWindow.Left = 0;
-                        }
-                        else
-                        {
-                            findInFilesWindow.Left = findWindow.Left;
-                        }
-                        if (findWindow.Top >= System.Windows.SystemParameters.WorkArea.Height / 1.5)
-                        {
-                            findInFilesWindow.Top = System.Windows.SystemParameters.WorkArea.Height - findInFilesWindow.Height;
-                        }
-                        else if (findWindow.Top <= 0)
-                        {
-                            findInFilesWindow.Top = 0;
-                        }
-                        else
-                        {
-                            findInFilesWindow.Top = findWindow.Top + 100;
-                        }
+                            findInFilesWindow = new FindInFilesWindow();
+                            findInFilesWindow.progressBar.Maximum = fileCount;
+
+                            if (findWindow.Left >= System.Windows.SystemParameters.WorkArea.Width / 1.5)
+                            {
+                                findInFilesWindow.Left = System.Windows.SystemParameters.WorkArea.Width - findInFilesWindow.Width;
+                            }
+                            else if (findWindow.Left <= 0)
+                            {
+                                findInFilesWindow.Left = 0;
+                            }
+                            else
+                            {
+                                findInFilesWindow.Left = findWindow.Left;
+                            }
+                            if (findWindow.Top >= System.Windows.SystemParameters.WorkArea.Height / 1.5)
+                            {
+                                findInFilesWindow.Top = System.Windows.SystemParameters.WorkArea.Height - findInFilesWindow.Height;
+                            }
+                            else if (findWindow.Top <= 0)
+                            {
+                                findInFilesWindow.Top = 0;
+                            }
+                            else
+                            {
+                                findInFilesWindow.Top = findWindow.Top + 100;
+                            }
+                            findInFilesWindow.Show();
+
+                            searchResults_TextBox.Text = "";
+                            searchResults_Grid.Visibility = Visibility.Visible;
+                            textBoxMain.Height = this.Height - 63 - searchResults_Grid.Height;
+                            searchResults_Grid.Height = Properties.Settings.Default.SearchResultsHeight;
+                        });
                     }
 
-                    findInFilesWindow.Show();
 
                     bool foundInFile = false;
-                    searchResults_Grid.Visibility = Visibility.Visible;
+                    int matches = 0;
+
                     for (int i = 0; i < fileArray[l].Length; i++)
                     {
-                        SearchResultsData.ProgressBar_Value = i;
-                        SearchResultsData.Label_Content = fileArray[l][i];
+                        App.Current.Dispatcher.Invoke(delegate
+                        {
+                            findInFilesWindow.currentFile_Label.Content = fileArray[l][i];
+                            findInFilesWindow.progressBar.Value++;
+                        });
 
                         text = TextFile.ReadFromFile(fileArray[l][i], text);
                         string[] lines = text.Replace("\r", "").Split('\n');
                         for (int j = 0; j < lines.Length; j++)
                         {
+                            int lineMatches = 0;
                             bool foundInLine = false;
                             string line = lines[j];
 
-                            if (anyCase == true)
+                            if (searchInFilesArgs.anyCase == true)
                             {
                                 line = line.ToLower();
                             }
-                            for (int t = 0; t < line.Length - desiredString.Length + 1; t++)
+                            for (int t = 0; t < line.Length - searchInFilesArgs.desiredString.Length + 1; t++)
                             {
                                 string checkingString = "";
 
-                                for (int m = 0; m < desiredString.Length; m++)
+                                for (int m = 0; m < searchInFilesArgs.desiredString.Length; m++)
                                 {
                                     checkingString += line[t + m];
-                                    if (checkingString[m] != desiredString[m])
+                                    if (checkingString[m] != searchInFilesArgs.desiredString[m])
                                         break;
                                 }
-                                if (checkingString == desiredString)
+                                if (checkingString == searchInFilesArgs.desiredString)
                                 {
+                                    lineMatches++;
                                     foundInLine = true;
-                                    t += desiredString.Length - 1;
+                                    t += searchInFilesArgs.desiredString.Length - 1;
                                 }
                             }
                             if (foundInLine)
                             {
+                                matches += lineMatches;
+
                                 if (foundInFile == false)
                                 {
-                                    searchResults_TextBox.Text += fileArray[l][i] + "\n";
+                                    App.Current.Dispatcher.Invoke(delegate
+                                    {
+                                        searchResults_TextBox.Text += fileArray[l][i] + "\n";
+                                    });
                                     foundInFile = true;
                                 }
-                                if (searchResults.Count == 1)
+                                if (lineMatches == 1)
                                 {
-                                    searchResults_TextBox.Text += "line " + (j + 1) + ": " + lines[j] + "\n";
+                                    App.Current.Dispatcher.Invoke(delegate
+                                    {
+                                        searchResults_TextBox.Text += "line " + (j + 1) + ": " + lines[j] + "\n";
+                                    });
                                 }
                                 else
                                 {
-                                    searchResults_TextBox.Text += "line " + (j + 1) + ", " + searchResults.Count + " matches: " + lines[j] + "\n";
+                                    App.Current.Dispatcher.Invoke(delegate
+                                    {
+                                        searchResults_TextBox.Text += "line " + (j + 1) + ", " + lineMatches + " matches: " + lines[j] + "\n";
+                                    });
                                 }
                             }
                         }
                         if (foundInFile == true)
                         {
-                            searchResults_TextBox.Text += "\n";
+                            App.Current.Dispatcher.Invoke(delegate
+                            {
+                                searchResults_TextBox.Text += "\n";
+                            });
                             foundInFile = false;
                         }
                     }
-                    if (findInFilesWindow.IsEnabled)
+                    App.Current.Dispatcher.Invoke(delegate
                     {
-                        findInFilesWindow.Close();
-                    }
+                        searchResults_Label.Content = "Search results (" + matches + " matches)";
+                    });
                 }
             }
+            App.Current.Dispatcher.Invoke(delegate
+            {
+                if (findInFilesWindow.IsEnabled)
+                {
+                    findInFilesWindow.Close();
+                }
+            });
         }
         // 
 
@@ -874,7 +929,9 @@ namespace SimplePad
 
         private void CloseSearchResults(object sender, RoutedEventArgs e)
         {
-            searchResults_Grid.Visibility = Visibility.Hidden;
+            searchResults_Grid.Visibility = Visibility.Collapsed;
+            textBoxMain.Height = this.Height - 63;
+            searchResults_Grid.Height = 0;
         }
         //
 
@@ -1190,19 +1247,19 @@ namespace SimplePad
 		/// <param name="e"></param>
 		private void CloseWindow(object sender, RoutedEventArgs e)
 		{
-			if (textFile.isSaved == false)
-			{
-				CloseSaveWindow closeSaveWindow = new()
-				{
-					Left = this.Left + this.Width / 2,
-					Top = this.Top + this.Height / 2
-				};
+            if (textFile.isSaved == false)
+            {
+                CloseSaveWindow closeSaveWindow = new()
+                {
+                    Left = this.Left + this.Width / 2,
+                    Top = this.Top + this.Height / 2
+                };
 
-				if (textFile.Path == "")
-					closeSaveWindow.MainText.Content = "Do you want to save the file?";
-				else
-					closeSaveWindow.MainText.Content = "Do you want to save changes to a file \n\"" + textFile.Path + "\"?";
-				closeSaveWindow.ShowDialog();
+                if (textFile.Path == "")
+                    closeSaveWindow.MainText.Content = "Do you want to save the file?";
+                else
+                    closeSaveWindow.MainText.Content = "Do you want to save changes to a file \n\"" + textFile.Path + "\"?";
+                closeSaveWindow.ShowDialog();
 
                 switch (closeSaveWindow.result)
                 {
@@ -1217,7 +1274,10 @@ namespace SimplePad
                         break;
                 }
             }
-			else Close();
+            else
+            {
+                Close();
+            }
 		}
 
 		/// <summary>

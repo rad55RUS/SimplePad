@@ -6,10 +6,19 @@ using System.Threading.Tasks;
 
 namespace SimplePad
 {
-    static internal class SearchResultsData
+    internal class SearchInFilesArgs
     {
-        static internal int ProgressBar_Value;
-        static internal int ProgressBar_Maximum;
-        static internal string ?Label_Content;
+        internal string desiredString;
+        internal string directory;
+        internal bool anyCase;
+        internal bool subfolders;
+
+        internal SearchInFilesArgs(string _desiredString, string _directory, bool _anyCase, bool _subfolders)
+        {
+            desiredString = _desiredString;
+            directory = _directory;
+            anyCase = _anyCase;
+            subfolders = _subfolders;
+        }
     }
 }

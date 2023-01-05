@@ -18,12 +18,13 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Shell;
 using System.Windows.Forms;
-
-using TextFile_Lib;
+using System.Timers;
 using System.IO;
 using Microsoft.Win32;
 using System.Windows.Threading;
 using System.DirectoryServices;
+
+using TextFile_Lib;
 
 // TODO: In all sub folders, in hidden folders options;
 // TODO: Add fast selection of current directory;
@@ -42,10 +43,6 @@ namespace SimplePad
         private const uint WM_SYSTEMMENU = 0xa4;
         //
 
-        // Private fields
-        private DispatcherTimer ?dispatcherTimer;
-        //
-
         // Initialization
         public FindInFilesWindow()
         {
@@ -54,27 +51,11 @@ namespace SimplePad
 
         protected virtual void OnLoad(object sender, RoutedEventArgs e)
         {
-            //  DispatcherTimer setup
-            dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
-            dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 50);
-            dispatcherTimer.Start();
-            //
-
             // WindowChrome
             IntPtr windIntPtr = new WindowInteropHelper(this).Handle;
             HwndSource hwndSource = HwndSource.FromHwnd(windIntPtr);
             hwndSource.AddHook(new HwndSourceHook(WndProc));
             //
-        }
-        //
-
-        // Updating data
-        private void dispatcherTimer_Tick(object sender, EventArgs e)
-        {
-            progressBar.Value = SearchResultsData.ProgressBar_Value;
-            progressBar.Maximum = SearchResultsData.ProgressBar_Maximum;
-            currentFile.Content = SearchResultsData.Label_Content;
         }
         //
 

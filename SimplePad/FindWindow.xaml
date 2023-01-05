@@ -319,6 +319,29 @@
                             </Button.Style>
                         </Button>
                         <CheckBox x:Name="subfolders_CheckBox" Content="In all subfolders" HorizontalAlignment="Right" Height="16" Margin="0,0,21,119" VerticalAlignment="Bottom" Width="104" Foreground="White" BorderBrush="#FF272727"/>
+                        <Button x:Name="setCurrentDirectory_Button" Content="Set current dir.." HorizontalAlignment="Left" Height="22" Margin="343,96,0,0" VerticalAlignment="Top" Width="101" Foreground="White" Background="#FF373737" BorderBrush="{x:Null}" Click="SetCurrentDirectory_Click" RenderTransformOrigin="0.818,0.424">
+                            <Button.Style>
+                                <Style TargetType="{x:Type Button}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#FF505050" TargetName="Border" />
+                                                    </Trigger>
+                                                    <Trigger Property="IsPressed" Value="True">
+                                                        <Setter Property="Background" Value="#FF7D7D7D" TargetName="Border" />
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
                     </Grid>
                 </TabItem>
                 <TabItem x:Name="goTo_TabItem" Header="Go to" GotFocus="TabItem_GotFocus">

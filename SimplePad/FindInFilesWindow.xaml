@@ -275,7 +275,7 @@
                 </Button.Style>
             </Button>
             <ProgressBar x:Name="progressBar" HorizontalAlignment="Center" Height="18" Margin="0,38,0,0" VerticalAlignment="Top" Width="425" Background="#FF0E0E0E" BorderBrush="#FF252525" Foreground="#FFE4E4E4"/>
-            <Label x:Name="currentFile" Content="Current file" HorizontalAlignment="Center" Height="26" Margin="0,10,0,0" VerticalAlignment="Top" Width="425" Foreground="White"/>
+            <Label x:Name="currentFile_Label" Content="Current file" HorizontalAlignment="Center" Height="26" Margin="0,10,0,0" VerticalAlignment="Top" Width="425" Foreground="White"/>
         </Grid>
     </Grid>
 </Window>

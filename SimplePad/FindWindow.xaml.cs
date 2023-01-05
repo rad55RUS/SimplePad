@@ -18,6 +18,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Shell;
 using System.Windows.Forms;
+using System.Threading;
 
 using TextFile_Lib;
 using System.IO;
@@ -113,7 +114,7 @@ namespace SimplePad
                 {
                     if (Int32.Parse(goToInput_TextBox.Text) > ((MainWindow)this.Owner).textBoxMain.LineCount)
                     {
-                        goToInput_TextBox.Text = (((MainWindow)this.Owner).textBoxMain.LineCount).ToString();
+                        goToInput_TextBox.Text = ((MainWindow)this.Owner).textBoxMain.LineCount.ToString();
                     }
                     else if (Int32.Parse(goToInput_TextBox.Text) == 0)
                     {
@@ -361,6 +362,21 @@ namespace SimplePad
         }
 
         /// <summary>
+        /// Event on setCurrentDirectory_Button clicking
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SetCurrentDirectory_Click(object sender, RoutedEventArgs e)
+        {
+            if (((MainWindow)this.Owner).textFile.Path != "")
+            {
+                directoryInput_TextBox.Text = ((MainWindow)this.Owner).textFile.folder;
+            }
+        }
+
+
+
+        /// <summary>
         /// Event on goToButton clicking
         /// </summary>
         /// <param name="sender"></param>
@@ -490,8 +506,10 @@ namespace SimplePad
                     subfolders = false;
                 }
 
-                ((MainWindow)this.Owner).FindStringInFiles(text, directory, anyCase, subfolders);
-                matchesCounter.Content = "*matches found: " + ((MainWindow)this.Owner).searchResults.Count;
+                ((MainWindow)this.Owner).searchInFilesArgs = new SearchInFilesArgs(text, directory, anyCase, subfolders);
+
+                ((MainWindow)this.Owner).thread1 = new Thread(((MainWindow)this.Owner).FindStringInFiles);
+                ((MainWindow)this.Owner).thread1.Start();
             }
         }
         //
