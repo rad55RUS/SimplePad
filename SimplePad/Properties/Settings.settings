@@ -47,5 +47,8 @@
     <Setting Name="FontSize_SearchResults" Type="System.Double" Scope="User">
       <Value Profile="(Default)">14</Value>
     </Setting>
+    <Setting Name="Subfolders" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

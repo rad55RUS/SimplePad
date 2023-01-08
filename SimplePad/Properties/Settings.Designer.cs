@@ -202,5 +202,17 @@ namespace SimplePad.Properties {
                 this["FontSize_SearchResults"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Subfolders {
+            get {
+                return ((bool)(this["Subfolders"]));
+            }
+            set {
+                this["Subfolders"] = value;
+            }
+        }
     }
 }

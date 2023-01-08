@@ -52,6 +52,7 @@ namespace SimplePad
             this.multipleLine_CheckBox.IsChecked = Properties.Settings.Default.MultipleLineInput;
             this.down_RadioButton.IsChecked = Properties.Settings.Default.SearchDirectionIsDown;
             this.up_RadioButton.IsChecked = !Properties.Settings.Default.SearchDirectionIsDown;
+            this.subfolders_CheckBox.IsChecked = Properties.Settings.Default.Subfolders;
             //
 
             if (multipleLine_CheckBox.IsChecked == true)
@@ -623,6 +624,7 @@ namespace SimplePad
             Properties.Settings.Default.MatchCase = this.matchCase_CheckBox.IsChecked ?? false;
             Properties.Settings.Default.MultipleLineInput = this.multipleLine_CheckBox.IsChecked ?? false;
             Properties.Settings.Default.SearchDirectionIsDown = this.down_RadioButton.IsChecked ?? false;
+            Properties.Settings.Default.Subfolders = this.subfolders_CheckBox.IsChecked ?? false;
 
             Hide();
         }

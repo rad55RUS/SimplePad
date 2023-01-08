@@ -693,25 +693,23 @@ namespace SimplePad
             int fileCount = 0;
             int matches = 0;
             string text = "";
-            string[][] fileArray = new string[4][];
+            string[] extensionsArray = { "txt", "json", "lua", "cfg", "xml", "xaml", "yml", "ini", "html", "css", "cs", "config", "readme" };
+            string[][] fileArray = new string[extensionsArray.Length][];
 
             if (searchInFilesArgs.anyCase == true)
             {
                 searchInFilesArgs.desiredString = searchInFilesArgs.desiredString.ToLower();
             }
-            if (searchInFilesArgs.subfolders)
+            for (int i = 0; i < extensionsArray.Length; i++)
             {
-                fileArray[0] = System.IO.Directory.GetFiles((searchInFilesArgs.directory + "\\"), "*.txt", System.IO.SearchOption.AllDirectories);
-                fileArray[1] = System.IO.Directory.GetFiles((searchInFilesArgs.directory + "\\"), "*.json", System.IO.SearchOption.AllDirectories);
-                fileArray[2] = System.IO.Directory.GetFiles((searchInFilesArgs.directory + "\\"), "*.lua", System.IO.SearchOption.AllDirectories);
-                fileArray[3] = System.IO.Directory.GetFiles((searchInFilesArgs.directory + "\\"), "*.cfg", System.IO.SearchOption.AllDirectories);
-            }
-            else
-            {
-                fileArray[0] = System.IO.Directory.GetFiles((searchInFilesArgs.directory + "\\"), "*.txt", System.IO.SearchOption.TopDirectoryOnly);
-                fileArray[1] = System.IO.Directory.GetFiles((searchInFilesArgs.directory + "\\"), "*.json", System.IO.SearchOption.TopDirectoryOnly);
-                fileArray[2] = System.IO.Directory.GetFiles((searchInFilesArgs.directory + "\\"), "*.lua", System.IO.SearchOption.TopDirectoryOnly);
-                fileArray[3] = System.IO.Directory.GetFiles((searchInFilesArgs.directory + "\\"), "*.cfg", System.IO.SearchOption.TopDirectoryOnly);
+                if (searchInFilesArgs.subfolders)
+                {
+                    fileArray[i] = System.IO.Directory.GetFiles((searchInFilesArgs.directory + "\\"), "*." + extensionsArray[i], System.IO.SearchOption.AllDirectories);
+                }
+                else
+                {
+                    fileArray[i] = System.IO.Directory.GetFiles((searchInFilesArgs.directory + "\\"), "*." + extensionsArray[i], System.IO.SearchOption.TopDirectoryOnly);
+                }
             }
             for (int l = 0; l < fileArray.Length; l++)
             {
