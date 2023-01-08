@@ -662,6 +662,7 @@
                     <MenuItem Name ="EditButton_Copy" Header="Copy" InputGestureText="Ctrl+C" Click="Copy_Click"/>
                     <MenuItem Name ="EditButton_Paste" Header="Paste" InputGestureText="Ctrl+V" Click="Paste_Click"/>
                     <MenuItem Name ="EditButton_Delete" Header="Delete" InputGestureText="Del" Click="Delete_Click"/>
+                    <Separator/>
                     <MenuItem Name ="EditButton_SelectAll" Header="Select All" InputGestureText="Ctrl+A" Click="SelectAll_Click"/>
                 </ContextMenu>
             </Button.ContextMenu>
