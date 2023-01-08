@@ -241,7 +241,6 @@
         <DockPanel x:Name="WindowChrome_Panel" Background="#FF333333" Height="26" VerticalAlignment="Top" Margin="6,5,6,0" Width="Auto" LastChildFill="False" ContextMenuService.IsEnabled="false">
             <DockPanel.ContextMenu>
                 <ContextMenu Name ="TitleBar_ContextMenu">
-                    <MenuItem Name ="TitleBar_Move" Header="Move"/>
                     <MenuItem Name ="TitleBar_Close" Header="Close" Click="CloseWindow" FontWeight="Bold">
                         <MenuItem.Icon>
                             <Image Source="Assets/WindowChrome/CloseBlackIcon.png" Stretch="None"/>
@@ -342,6 +341,29 @@
                                 </Style>
                             </Button.Style>
                         </Button>
+                        <Button x:Name="findInFilesButton" Content="Find Next" HorizontalAlignment="Right" Height="22" Margin="0,11,24,0" VerticalAlignment="Top" Width="101" Foreground="White" Background="#FF373737" BorderBrush="{x:Null}" Click="FindInFilesButton_Click" RenderTransformOrigin="0.818,0.424">
+                            <Button.Style>
+                                <Style TargetType="{x:Type Button}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#FF505050" TargetName="Border" />
+                                                    </Trigger>
+                                                    <Trigger Property="IsPressed" Value="True">
+                                                        <Setter Property="Background" Value="#FF7D7D7D" TargetName="Border" />
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
                     </Grid>
                 </TabItem>
                 <TabItem x:Name="goTo_TabItem" Header="Go to" GotFocus="TabItem_GotFocus">
@@ -387,7 +409,7 @@
             <Label x:Name="findInput_Label" Content="What:" HorizontalAlignment="Left" Height="26" Margin="1,23,0,0" VerticalAlignment="Top" Width="48" HorizontalContentAlignment="Right" Foreground="White"/>
             <TextBox x:Name="replaceInput_TextBox" TextWrapping="NoWrap" Text="" Margin="54,70,0,0" Background="#FF0C0C0C" SelectionBrush="#FF0061FF" RenderTransformOrigin="0.5,0.5" Foreground="White" CaretBrush="White" BorderBrush="{x:Null}" BorderThickness="0" FontSize="14" TextAlignment="Justify" VerticalAlignment="Top" Height="45" AcceptsReturn="True" HorizontalAlignment="Left" Width="286"/>
             <Label x:Name="replaceInput_Label" Content="By:" HorizontalAlignment="Left" Height="26" VerticalAlignment="Top" Width="48" HorizontalContentAlignment="Right" Foreground="White" Margin="1,79,0,0"/>
-            <Button x:Name="findButton" Content="Find Next" HorizontalAlignment="Left" Height="22" Margin="345,14,0,0" VerticalAlignment="Top" Width="101" Foreground="White" Background="#FF373737" BorderBrush="{x:Null}" Click="FindInFilesButton_Click" RenderTransformOrigin="0.818,0.424">
+            <Button x:Name="findButton" Content="Find Next" HorizontalAlignment="Left" Height="22" Margin="345,14,0,0" VerticalAlignment="Top" Width="101" Foreground="White" Background="#FF373737" BorderBrush="{x:Null}" Click="FindButton_Click" RenderTransformOrigin="0.818,0.424">
                 <Button.Style>
                     <Style TargetType="{x:Type Button}">
                         <Setter Property="Template">

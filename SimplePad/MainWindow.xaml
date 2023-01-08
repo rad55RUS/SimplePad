@@ -79,7 +79,7 @@
                     </Trigger>
                 </Style.Triggers>
             </Style>
-            
+
             <Style x:Key="ScrollThumbs" TargetType="{x:Type Thumb}">
                 <Setter Property="Template">
                     <Setter.Value>
@@ -481,8 +481,6 @@
                             <Image Source="Assets/WindowChrome/RestoreBlackIcon.png" Stretch="None"/>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Name ="TitleBar_Move" Header="Move"/>
-                    <MenuItem Name ="TitleBar_Size" Header="Size"/>
                     <MenuItem Name ="TitleBar_Minimize" Header="Minimize" Click="MinimizeWindow">
                         <MenuItem.Icon>
                             <Image Source="Assets/WindowChrome/MinimizeBlackIcon.png" Stretch="None"/>
@@ -808,11 +806,11 @@
             </TextBlock>
         </Button>
         <Grid x:Name="searchResults_Grid" Height="141" Margin="6,0,6,0" Background="#FF171717" VerticalAlignment="Center" Grid.Row="1">
-            <TextBox x:Name="searchResults_TextBox" Margin="0,17,0,0" TextWrapping="NoWrap" Background="#FF101010" SelectionBrush="#FF0061FF" RenderTransformOrigin="0.5,0.5" Foreground="White" CaretBrush="White" AcceptsReturn="True" BorderThickness="0" BorderBrush="{x:Null}" IsReadOnly="True" IsInactiveSelectionHighlightEnabled="True" FocusManager.IsFocusScope="False" FontFamily="Consolas" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" PreviewMouseWheel="searchResults_TextBox_MouseWheel" AcceptsTab="True" UndoLimit="0">
-                <TextBox.Resources>
+            <RichTextBox x:Name="searchResults_RichTextBox" Margin="0,17,0,0" Background="#FF101010" SelectionBrush="#FF0061FF" RenderTransformOrigin="0.5,0.5" Foreground="White" CaretBrush="White" BorderThickness="0" BorderBrush="{x:Null}" IsReadOnly="True" IsInactiveSelectionHighlightEnabled="True" FocusManager.IsFocusScope="False" FontFamily="Consolas" ScrollViewer.VerticalScrollBarVisibility="Auto" PreviewMouseWheel="searchResults_RichTextBox_MouseWheel" UndoLimit="0">
+                <RichTextBox.Resources>
                     <Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource ScrollBarStyle}"/>
-                </TextBox.Resources>
-            </TextBox>
+                </RichTextBox.Resources>
+            </RichTextBox>
             <Label x:Name="searchResults_Label" Content="Search results" HorizontalAlignment="Left" Height="21" VerticalAlignment="Top" Width="788" FontSize="10" Margin="0,-4,0,0" VerticalContentAlignment="Center" Foreground="White"/>
             <Rectangle x:Name="searchResults_RectangleTitle" Height="17" Stroke="#FF101010" VerticalAlignment="Top" Width="788"/>
             <Rectangle x:Name="searchResults_RectangleUpResizer" Height="12" VerticalAlignment="Top" Width="788" PreviewMouseLeftButtonDown="searchResults_Resize_PreviewMouseLeftButtonDown" Margin="0,-6,0,0" Fill="#01000000" Cursor="SizeNS"/>
@@ -828,10 +826,10 @@
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="#FFC32626" TargetName="Border" />
+                                            <Setter Property="Background" Value="#FF202020" TargetName="Border" />
                                         </Trigger>
                                         <Trigger Property="IsPressed" Value="True">
-                                            <Setter Property="Background" Value="#FF8A1A1A" TargetName="Border" />
+                                            <Setter Property="Background" Value="#FF232323" TargetName="Border" />
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>

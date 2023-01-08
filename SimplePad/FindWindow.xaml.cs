@@ -24,11 +24,6 @@ using TextFile_Lib;
 using System.IO;
 using Microsoft.Win32;
 
-// TODO: In all sub folders, in hidden folders options;
-// TODO: Add fast selection of current directory;
-// TODO: Make comments and readibility
-// TODO: Make result window closing
-// TODO: GlobalHook must initialize only after making result window visible!
 namespace SimplePad
 {
     /// <summary>
@@ -150,8 +145,6 @@ namespace SimplePad
                 up_RadioButton.Visibility = Visibility.Visible;
                 down_RadioButton.Visibility = Visibility.Visible;
 
-                findButton.Content = "Find next";
-
                 this.Height = 170;
                 this.Width = 463;
             }
@@ -174,8 +167,6 @@ namespace SimplePad
                 up_RadioButton.Visibility = Visibility.Visible;
                 down_RadioButton.Visibility = Visibility.Visible;
 
-                findButton.Content = "Find next";
-
                 this.Height = 217;
                 this.Width = 463;
             }
@@ -187,18 +178,16 @@ namespace SimplePad
 
                 findInput_TextBox.Visibility = Visibility.Visible;
                 findInput_Label.Visibility = Visibility.Visible;
-                findButton.Visibility = Visibility.Visible;
+                findButton.Visibility = Visibility.Hidden;
 
                 replaceInput_TextBox.Visibility = Visibility.Visible;
                 replaceInput_Label.Visibility = Visibility.Visible;
-                replaceButton.Visibility = Visibility.Visible;
+                replaceButton.Visibility = Visibility.Hidden;
 
                 direction_Label.Visibility = Visibility.Hidden;
                 direction_Rectangle.Visibility = Visibility.Hidden;
                 up_RadioButton.Visibility = Visibility.Hidden;
                 down_RadioButton.Visibility = Visibility.Hidden;
-
-                findButton.Content = "Find";
 
                 this.Height = 238;
                 this.Width = 472;
@@ -221,8 +210,6 @@ namespace SimplePad
                 direction_Rectangle.Visibility = Visibility.Hidden;
                 up_RadioButton.Visibility = Visibility.Hidden;
                 down_RadioButton.Visibility = Visibility.Hidden;
-
-                findButton.Content = "Find";
 
                 this.Height = 140;
                 this.Width = 380;
@@ -348,6 +335,7 @@ namespace SimplePad
             if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 directoryInput_TextBox.Text = folderBrowserDialog.SelectedPath;
+                Properties.Settings.Default.FindInFiles_Directory = this.directoryInput_TextBox.Text;
             }
         }
 
@@ -371,6 +359,7 @@ namespace SimplePad
             if (((MainWindow)this.Owner).textFile.Path != "")
             {
                 directoryInput_TextBox.Text = ((MainWindow)this.Owner).textFile.folder;
+                Properties.Settings.Default.FindInFiles_Directory = this.directoryInput_TextBox.Text;
             }
         }
 
@@ -629,7 +618,6 @@ namespace SimplePad
         /// <param name="e"></param>
         private void CloseWindow(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.FindInFiles_Directory = this.directoryInput_TextBox.Text;
             Properties.Settings.Default.DesiredString = this.findInput_TextBox.Text;
             Properties.Settings.Default.ReplaceTo_String = this.replaceInput_TextBox.Text;
             Properties.Settings.Default.MatchCase = this.matchCase_CheckBox.IsChecked ?? false;

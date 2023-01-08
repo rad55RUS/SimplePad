@@ -30,6 +30,7 @@ using Point = System.Windows.Point;
 using Gma.System.MouseKeyHook;
 using System.Collections;
 using static System.Windows.Forms.LinkLabel;
+using System.Windows.Threading;
 
 namespace SimplePad
 {
@@ -68,6 +69,7 @@ namespace SimplePad
 		private readonly FindWindow findWindow = new();
         private Encoding encoding = Encoding.UTF8;
         private IKeyboardMouseEvents m_GlobalHook;
+        private Paragraph paragraph;
         private Point mouseOffset;
         private FindInFilesWindow findInFilesWindow;
         //
@@ -96,9 +98,9 @@ namespace SimplePad
 			this.Width = Properties.Settings.Default.WindowWidth;
 
             textBoxMain.FontSize = Properties.Settings.Default.FontSize;
-            searchResults_TextBox.FontSize = Properties.Settings.Default.FontSize;
-            searchResults_Grid.Height = Properties.Settings.Default.SearchResultsHeight;
 
+            searchResults_RichTextBox.FontSize = Properties.Settings.Default.FontSize_SearchResults;
+            searchResults_Grid.Height = Properties.Settings.Default.SearchResultsHeight;
             searchResults_Grid.Visibility = Visibility.Collapsed;
             searchResults_Grid.Height = 0;
 
@@ -222,6 +224,7 @@ namespace SimplePad
             }
 
             Properties.Settings.Default.FontSize = (int)textBoxMain.FontSize;
+            Properties.Settings.Default.FontSize_SearchResults = (int)searchResults_RichTextBox.FontSize;
             if (searchResults_Grid.Height != 0)
             {
                 Properties.Settings.Default.SearchResultsHeight = searchResults_Grid.Height;
@@ -758,13 +761,12 @@ namespace SimplePad
                             }
                             findInFilesWindow.Show();
 
-                            searchResults_TextBox.Text = "";
+                            searchResults_RichTextBox.Document.Blocks.Clear();
                             searchResults_Grid.Visibility = Visibility.Visible;
 
                             searchResults_Grid.Height = Properties.Settings.Default.SearchResultsHeight;
                         });
                     }
-
 
                     bool foundInFile = false;
 
@@ -772,7 +774,37 @@ namespace SimplePad
                     {
                         App.Current.Dispatcher.Invoke(delegate
                         {
-                            findInFilesWindow.currentFile_Label.Content = fileArray[l][i];
+                            if (fileArray[l][i].Length < 71)
+                            {
+                                findInFilesWindow.currentFile_Label.Content = fileArray[l][i];
+                            }
+                            else
+                            {
+                                string currentFile_LabelContent = "";
+
+                                for (int j = 0; j < 35; j++)
+                                {
+                                    currentFile_LabelContent += fileArray[l][i][j];
+                                }
+
+                                currentFile_LabelContent += "..";
+                                if (!currentFile_LabelContent.EndsWith("\\"))
+                                {
+                                    currentFile_LabelContent += "\\";
+                                    currentFile_LabelContent += "..";
+                                }
+                                else
+                                {
+                                    currentFile_LabelContent += ".";
+                                }
+
+                                for (int j = fileArray[l][i].Length - 35; j < fileArray[l][i].Length; j++)
+                                {
+                                    currentFile_LabelContent += fileArray[l][i][j];
+                                }
+
+                                findInFilesWindow.currentFile_Label.Content = currentFile_LabelContent;
+                            }
                             findInFilesWindow.progressBar.Value++;
                         });
 
@@ -787,9 +819,9 @@ namespace SimplePad
                         string[] lines = text.Replace("\r", "").Split('\n');
                         for (int j = 0; j < lines.Length; j++)
                         {
-                            int lineMatches = 0;
                             bool foundInLine = false;
                             string line = lines[j];
+                            string test = "";
 
                             if (searchInFilesArgs.anyCase == true)
                             {
@@ -807,44 +839,62 @@ namespace SimplePad
                                 }
                                 if (checkingString == searchInFilesArgs.desiredString)
                                 {
-                                    lineMatches++;
-                                    foundInLine = true;
+                                    matches++;
                                     t += searchInFilesArgs.desiredString.Length - 1;
+
+                                    if (!foundInFile)
+                                    {
+                                        App.Current.Dispatcher.Invoke(delegate
+                                        {
+                                            paragraph = new Paragraph();
+                                            paragraph.Inlines.Add(new Run(fileArray[l][i]) { Foreground = System.Windows.Media.Brushes.PaleGoldenrod });
+                                        });
+                                    }
+                                    if (!foundInLine)
+                                    {
+                                        App.Current.Dispatcher.Invoke(delegate
+                                        {
+                                            paragraph.Inlines.Add(new Bold(new Run("\n" + "line ")));
+                                            paragraph.Inlines.Add(new Bold(new Run("" + (j + 1))) { Foreground = System.Windows.Media.Brushes.LightSkyBlue });
+                                            paragraph.Inlines.Add(new Bold(new Run(": ")));
+                                        });
+                                    }
+                                    App.Current.Dispatcher.Invoke(delegate
+                                    {
+                                        paragraph.Inlines.Add(new Run(test));
+                                        paragraph.Inlines.Add(new Run(searchInFilesArgs.desiredString) { Foreground = System.Windows.Media.Brushes.Gold } );
+                                    });
+
+                                    foundInFile = true;
+                                    foundInLine = true;
+
+                                    test = "";
+                                }
+                                else
+                                {
+                                    test += line[t];
+                                    if (t == line.Length - searchInFilesArgs.desiredString.Length && foundInLine == true)
+                                    {
+                                        for (int m = t + 1; m < line.Length; m++)
+                                        {
+                                            test += line[m];
+                                        }
+                                    }
                                 }
                             }
                             if (foundInLine)
                             {
-                                matches += lineMatches;
-
-                                if (foundInFile == false)
+                                App.Current.Dispatcher.Invoke(delegate
                                 {
-                                    App.Current.Dispatcher.Invoke(delegate
-                                    {
-                                        searchResults_TextBox.Text += fileArray[l][i] + "\n";
-                                    });
-                                    foundInFile = true;
-                                }
-                                if (lineMatches == 1)
-                                {
-                                    App.Current.Dispatcher.Invoke(delegate
-                                    {
-                                        searchResults_TextBox.Text += "line " + (j + 1) + ": " + lines[j] + "\n";
-                                    });
-                                }
-                                else
-                                {
-                                    App.Current.Dispatcher.Invoke(delegate
-                                    {
-                                        searchResults_TextBox.Text += "line " + (j + 1) + ", " + lineMatches + " matches: " + lines[j] + "\n";
-                                    });
-                                }
+                                    paragraph.Inlines.Add(new Run(test));
+                                });
                             }
                         }
-                        if (foundInFile == true)
+                        if (foundInFile)
                         {
                             App.Current.Dispatcher.Invoke(delegate
                             {
-                                searchResults_TextBox.Text += "\n";
+                                searchResults_RichTextBox.Document.Blocks.Add(paragraph);
                             });
                             foundInFile = false;
                         }
@@ -902,7 +952,7 @@ namespace SimplePad
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        protected void searchResults_TextBox_MouseWheel(object sender, MouseWheelEventArgs e)
+        protected void searchResults_RichTextBox_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             // CTRL + MouseWheel
             if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
@@ -910,24 +960,22 @@ namespace SimplePad
                 /// Scale up
                 if (e.Delta > 0)
                 {
-                    textBoxMain.FontSize += 1;
-                    searchResults_TextBox.FontSize += 1;
+                    searchResults_RichTextBox.FontSize += 1;
                 }
                 /// Scale down
                 if (e.Delta < 0 && textBoxMain.FontSize > 1)
                 {
-                    textBoxMain.FontSize -= 1;
-                    searchResults_TextBox.FontSize -= 1;
+                    searchResults_RichTextBox.FontSize -= 1;
                 }
             }
             else if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
             {
-                searchResults_TextBox.ScrollToHorizontalOffset(searchResults_TextBox.HorizontalOffset - e.Delta);
+                searchResults_RichTextBox.ScrollToHorizontalOffset(searchResults_RichTextBox.HorizontalOffset - e.Delta);
                 e.Handled = true;
             }
             else
             {
-                searchResults_TextBox.ScrollToVerticalOffset(searchResults_TextBox.VerticalOffset - e.Delta);
+                searchResults_RichTextBox.ScrollToVerticalOffset(searchResults_RichTextBox.VerticalOffset - e.Delta);
                 e.Handled = true;
             }
         }
@@ -1040,13 +1088,11 @@ namespace SimplePad
                 if (e.Delta > 0)
                 {
                     textBoxMain.FontSize += 1;
-                    searchResults_TextBox.FontSize += 1;
                 }
                 /// Scale down
                 if (e.Delta < 0 && textBoxMain.FontSize > 1)
                 {
                     textBoxMain.FontSize -= 1;
-                    searchResults_TextBox.FontSize -= 1;
                 }
             }
             else if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))

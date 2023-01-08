@@ -46,6 +46,7 @@ namespace TextFile_Lib
 							name = path[i] + name;
 							i--;
 						}
+						i--;
 						fullName = name + '.' + extension;
 						while (i >= 0)
 						{

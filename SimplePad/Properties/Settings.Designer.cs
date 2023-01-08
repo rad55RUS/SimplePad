@@ -190,5 +190,17 @@ namespace SimplePad.Properties {
                 this["SearchResultsHeight"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("14")]
+        public double FontSize_SearchResults {
+            get {
+                return ((double)(this["FontSize_SearchResults"]));
+            }
+            set {
+                this["FontSize_SearchResults"] = value;
+            }
+        }
     }
 }

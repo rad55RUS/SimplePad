@@ -44,5 +44,8 @@
     <Setting Name="SearchResultsHeight" Type="System.Double" Scope="User">
       <Value Profile="(Default)">200</Value>
     </Setting>
+    <Setting Name="FontSize_SearchResults" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">14</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
