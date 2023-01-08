@@ -1317,7 +1317,6 @@ namespace SimplePad
                     case "Cancel":
                         break;
                     default:
-                        Close();
                         break;
                 }
             }
