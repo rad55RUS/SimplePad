@@ -579,7 +579,16 @@ namespace SimplePad
             // CTRL + F
             if (e.Key == Key.F && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
             {
-                find_TabItem.IsSelected = true;
+                // NO SHIFT
+                if (!Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+                {
+                    find_TabItem.IsSelected = true;
+                }
+                // SHIFT
+                else
+                {
+                    findInFiles_TabItem.IsSelected = true;
+                }
 
                 e.Handled = true;
             }
