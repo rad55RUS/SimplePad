@@ -636,6 +636,7 @@ namespace SimplePad
         internal void ReplaceAllStrings(string replaceFrom, string replaceTo, bool anyCase)
         {
             int deltaLength = replaceTo.Length - replaceFrom.Length;
+            int deltaLengthStor = deltaLength;
 
             searchResults.Clear();
 
@@ -661,8 +662,8 @@ namespace SimplePad
                     {
                         if (deltaLength != 0)
                         {
-                            searchResults[i + 1].startPosition += deltaLength;
-                            deltaLength += deltaLength;
+                            searchResults[i + 1].startPosition += deltaLengthStor;
+                            deltaLengthStor += deltaLength;
                         }
                     }
                 }
