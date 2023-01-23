@@ -31,6 +31,7 @@ using Gma.System.MouseKeyHook;
 using System.Collections;
 using static System.Windows.Forms.LinkLabel;
 using System.Windows.Threading;
+using System.Windows.Media.TextFormatting;
 
 namespace SimplePad
 {
@@ -786,15 +787,15 @@ namespace SimplePad
                                     currentFile_LabelContent += fileArray[l][i][j];
                                 }
 
-                                currentFile_LabelContent += "..";
                                 if (!currentFile_LabelContent.EndsWith("\\"))
                                 {
+                                    currentFile_LabelContent += "..";
                                     currentFile_LabelContent += "\\";
                                     currentFile_LabelContent += "..";
                                 }
                                 else
                                 {
-                                    currentFile_LabelContent += ".";
+                                    currentFile_LabelContent += "...";
                                 }
 
                                 for (int j = fileArray[l][i].Length - 35; j < fileArray[l][i].Length; j++)
@@ -1295,16 +1296,44 @@ namespace SimplePad
 		{
             if (textFile.isSaved == false)
             {
+                string textFilePath = "";
+                if (textFile.Path.Length > 50)
+                {
+                    for (int j = 0; j < 25; j++)
+                    {
+                        textFilePath += textFile.Path[j];
+                    }
+
+                    if (!textFilePath.EndsWith("\\"))
+                    {
+                        textFilePath += "\\";
+                        textFilePath += "..";
+                    }
+                    else
+                    {
+                        textFilePath += "...";
+                    }
+
+                    for (int j = textFile.Path.Length - 25; j < textFile.Path.Length; j++)
+                    {
+                        textFilePath += textFile.Path[j];
+                    }
+                }
+                else
+                {
+                    textFilePath = textFile.Path;
+                }
+
                 CloseSaveWindow closeSaveWindow = new()
                 {
                     Left = this.Left + this.Width / 2,
                     Top = this.Top + this.Height / 2
                 };
 
-                if (textFile.Path == "")
+                if (textFilePath == "")
                     closeSaveWindow.MainText.Content = "Do you want to save the file?";
                 else
-                    closeSaveWindow.MainText.Content = "Do you want to save changes to a file \n\"" + textFile.Path + "\"?";
+                    closeSaveWindow.MainText.Content = "Do you want to save changes to a file \n\"" + textFilePath + "\"?";
                 closeSaveWindow.ShowDialog();
 
                 switch (closeSaveWindow.result)
@@ -1316,6 +1345,7 @@ namespace SimplePad
                     case "Cancel":
                         break;
                     default:
+                        Close();
                         break;
                 }
             }

@@ -45,7 +45,7 @@
                     </MenuItem>
                 </ContextMenu>
             </DockPanel.ContextMenu>
-            <Button x:Name="CloseButton" DockPanel.Dock="Right" Width="48" Background="{x:Null}" Click="CloseWindow" BorderBrush="{x:Null}" Focusable="False">
+            <Button x:Name="CloseButton" DockPanel.Dock="Right" Width="48" Background="{x:Null}" Click="CancelButton_Click" BorderBrush="{x:Null}" Focusable="False">
                 <Button.Style>
                     <Style TargetType="{x:Type Button}">
                         <Setter Property="Background" Value="LightBlue" />
@@ -73,7 +73,7 @@
         </DockPanel>
         <Label x:Name="WindowName" Content="SimplePad" HorizontalAlignment="Left" Width="238" Height="32" VerticalAlignment="Top" Foreground="White" Margin="6,8,0,0"/>
         <Grid Margin="6,40,6,10" Background="#FF171717">
-            <Label Name ="MainText" Content="Do you want to save" HorizontalAlignment="Left" Height="76" VerticalAlignment="Top" Width="344" Foreground="White" FontSize="16" Margin="10,0,0,0"/>
+            <Label Name ="MainText" Content="Do you want to save" HorizontalAlignment="Left" Height="76" VerticalAlignment="Top" Width="344" Foreground="White" Margin="10,0,0,0" FontSize="14"/>
             <Button Content="Save" HorizontalAlignment="Left" Height="22" Margin="19,77,0,0" VerticalAlignment="Top" Width="104" Foreground="White" Background="#FF373737" BorderBrush="{x:Null}" Click="SaveButton_Click">
                 <Button.Style>
                     <Style TargetType="{x:Type Button}">
