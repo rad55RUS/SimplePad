@@ -1297,7 +1297,7 @@ namespace SimplePad
             if (textFile.isSaved == false)
             {
                 string textFilePath = "";
-                if (textFile.Path.Length > 50)
+                if (textFile.Path.Length > 45)
                 {
                     for (int j = 0; j < 25; j++)
                     {
@@ -1306,15 +1306,16 @@ namespace SimplePad
 
                     if (!textFilePath.EndsWith("\\"))
                     {
+                        textFilePath += "...";
                         textFilePath += "\\";
-                        textFilePath += "..";
+                        textFilePath += "...";
                     }
                     else
                     {
                         textFilePath += "...";
                     }
 
-                    for (int j = textFile.Path.Length - 25; j < textFile.Path.Length; j++)
+                    for (int j = textFile.Path.Length - 20; j < textFile.Path.Length; j++)
                     {
                         textFilePath += textFile.Path[j];
                     }
