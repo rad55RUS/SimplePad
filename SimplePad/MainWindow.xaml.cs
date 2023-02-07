@@ -184,6 +184,8 @@ namespace SimplePad
             }
             textBoxMain.TextChanged += textBoxMain_TextChanged;
             //
+
+            this.textBoxMain.Focus();
         }
 		//
 
