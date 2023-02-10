@@ -179,7 +179,7 @@ namespace SimplePad
             textFile.OnFileOperation += OnFileOperation;
             if (textFile.Path != "")
 			{
-				textBoxMain.Text = textFile.ReadFromFile(encoding);
+				textBoxMain.Text = TextFile.ReadFromFile(textFile.Path);
                 findWindow.lineCounter.Content = "line amount: " + textBoxMain.LineCount.ToString();
             }
             textBoxMain.TextChanged += textBoxMain_TextChanged;
