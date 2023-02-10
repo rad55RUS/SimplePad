@@ -68,7 +68,6 @@ namespace SimplePad
         // Common private fields
         private bool searchResults_isResizing = false;
 		private readonly FindWindow findWindow = new();
-        private Encoding encoding = Encoding.UTF8;
         private IKeyboardMouseEvents m_GlobalHook;
         private Paragraph paragraph;
         private Point mouseOffset;
@@ -127,10 +126,6 @@ namespace SimplePad
             m_GlobalHook = Hook.GlobalEvents();
 
             m_GlobalHook.MouseUpExt += GlobalHookMouseUpExt;
-            //
-
-            // EncodingProvider initializing
-            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
             //
 
 			// WindowChrome
@@ -296,7 +291,7 @@ namespace SimplePad
 		{
 			textBoxMain.TextChanged -= textBoxMain_TextChanged;
 
-            textBoxMain.Text = textFile.OpenFile(textBoxMain.Text, ref encoding);
+            textBoxMain.Text = textFile.OpenFile(textBoxMain.Text);
 
             textBoxMain.TextChanged += textBoxMain_TextChanged;
         }
@@ -1253,7 +1248,7 @@ namespace SimplePad
 			{
                 textBoxMain.TextChanged -= textBoxMain_TextChanged;
 
-                textBoxMain.Text = textFile.OpenFile(textBoxMain.Text, ref encoding);
+                textBoxMain.Text = textFile.OpenFile(textBoxMain.Text);
 
                 textBoxMain.TextChanged += textBoxMain_TextChanged;
 

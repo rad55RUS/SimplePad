@@ -13,14 +13,18 @@ using System.Runtime;
 using System.Diagnostics;
 using Microsoft.VisualBasic.FileIO;
 using static System.Net.WebRequestMethods;
+using System.Windows.Shapes;
 
 namespace TextFile_Lib
 {
 	/// <summary>
 	/// Represents text file with necessary methods for integration into an application.
 	/// </summary>
-	public sealed class TextFile : File, ITextFilePublicMethods
+	public sealed class TextFile : File
 	{
+        // Static fields
+        public static Encoding encoding;
+
 		// Events
 		#region
 		public delegate void OnFileOperationHandler(object sender, EventArgs e);
@@ -35,25 +39,17 @@ namespace TextFile_Lib
         public static string ReadFromFile(string directory)
         {
             // Encoding determining
-            MemoryStream stream = new MemoryStream();
-
-            StreamWriter streamWriter = new StreamWriter(stream);
-            streamWriter.Write(directory);
-            streamWriter.Flush();
-            stream.Position = 0;
-
-            Encoding encoding = Encoding.UTF8;
+            FileStream fileStream = System.IO.File.OpenRead(directory);
 
             Ude.CharsetDetector cDet = new();
-            cDet.Feed(stream);
+            cDet.Feed(fileStream);
             cDet.DataEnd();
             if (cDet.Charset != null)
             {
                 encoding = Encoding.GetEncoding(cDet.Charset);
             }
-            Debug.Print(encoding.ToString());
-            stream.Dispose();
-            stream.Close();
+            fileStream.Dispose();
+            fileStream.Close();
 
             // Read from file
             StreamReader reader = new(directory, encoding);
@@ -88,7 +84,9 @@ namespace TextFile_Lib
         /// </summary>
         public TextFile() : base()
 		{
-			saveFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+            saveFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
 			saveFileDialog.FilterIndex = 2;
 			saveFileDialog.FileName = "TextFile.txt";
 
@@ -175,38 +173,6 @@ namespace TextFile_Lib
 			}
         }
 
-		/// <summary>
-		/// Show <b>OpenFileDialog</b> and return <b>text</b> and <b>encoding</b> of opened file.
-		/// </summary>
-		/// <param name="text"></param>
-		/// <param name="encoding"></param>
-		/// <returns></returns>
-		public string OpenFile(string text, ref Encoding encoding)
-		{
-			if (openFileDialog.ShowDialog() == true)
-			{
-				if ((stream = openFileDialog.OpenFile()) != null)
-				{
-					Path = openFileDialog.FileName;
-
-					// Encoding determining
-					Ude.CharsetDetector cDet = new();
-					cDet.Feed(stream);
-					cDet.DataEnd();
-					if (cDet.Charset != null)
-					{
-						encoding = Encoding.GetEncoding(cDet.Charset);
-					}
-					stream.Dispose();
-					stream.Close();
-                    //
-
-                    text = ReadFromFile(encoding);
-                }
-			}
-            return text;
-		}
-
         /// <summary>
         /// Show <b>OpenFileDialog</b> and return <b>text</b> of opened file.
         /// </summary>
@@ -218,7 +184,6 @@ namespace TextFile_Lib
             {
                 if ((stream = openFileDialog.OpenFile()) != null)
                 {
-					Encoding encoding = Encoding.UTF8;
                     Path = openFileDialog.FileName;
 
                     // Encoding determining
@@ -233,7 +198,7 @@ namespace TextFile_Lib
                     stream.Close();
 					//
 
-					text = ReadFromFile(encoding);
+					text = ReadFromFile();
                 }
             }
             return text;
@@ -259,7 +224,7 @@ namespace TextFile_Lib
         /// Method for reading text from file with specified encoding.
         /// </summary>
         /// <param name="text"></param>
-        public string ReadFromFile(Encoding encoding)
+        public string ReadFromFile()
         {
             if (OnFileOperation != null)
                 OnFileOperation.Invoke(this, new EventArgs());
