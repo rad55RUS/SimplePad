@@ -176,6 +176,8 @@ namespace SimplePad
 			{
 				textBoxMain.Text = TextFile.ReadFromFile(textFile.Path);
                 findWindow.lineCounter.Content = "line amount: " + textBoxMain.LineCount.ToString();
+
+                OnFileOperation(textFile, new EventArgs());
             }
             textBoxMain.TextChanged += textBoxMain_TextChanged;
             //

@@ -230,7 +230,17 @@ namespace TextFile_Lib
                 OnFileOperation.Invoke(this, new EventArgs());
 
             // Read from file
-            StreamReader reader = new(Path, encoding);
+            StreamReader reader;
+
+            if (encoding != null)
+            {
+                reader = new(Path, encoding);
+            }
+            else
+            {
+                reader = new(Path);
+            }
+
             string text = reader.ReadToEnd();
             this.isSaved = true;
             reader.Dispose();
