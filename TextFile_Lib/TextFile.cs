@@ -52,7 +52,17 @@ namespace TextFile_Lib
             fileStream.Close();
 
             // Read from file
-            StreamReader reader = new(directory, encoding);
+            StreamReader reader;
+
+            if (encoding != null)
+            {
+                reader = new(directory, encoding);
+            }
+            else
+            {
+                reader = new(directory);
+            }
+
             string text = reader.ReadToEnd();
             reader.Dispose();
             reader.Close();
