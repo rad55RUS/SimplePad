@@ -694,7 +694,7 @@ namespace SimplePad
             int fileCount = 0;
             int matches = 0;
             string text = "";
-            string[] extensionsArray = { "txt", "json", "lua", "cfg", "xml", "xaml", "yml", "ini", "html", "css", "cs", "config", "readme" };
+            string[] extensionsArray = { "txt", "json", "lua", "cfg", "xml", "xaml", "yml", "ini", "html", "css", "cs", "config", "readme", "toml", "properties", "log" };
             string[][] fileArray = new string[extensionsArray.Length][];
 
             if (searchInFilesArgs.anyCase == true)
