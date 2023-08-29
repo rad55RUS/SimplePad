@@ -86,6 +86,20 @@ namespace TextFile_Lib
 
             return text;
         }
+
+        /// <summary>
+        /// Static method for writing text to file with specified text, directory and encoding.
+        /// </summary>
+        /// <param name="text"></param>
+        public static void WriteToFile(string text, string directory)
+        {
+            // Read from file
+            StreamWriter writer = new(directory);
+            writer.Write(text);
+            writer.Dispose();
+            writer.Close();
+            //
+        }
         //
 
         // Object methods

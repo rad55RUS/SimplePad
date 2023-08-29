@@ -183,7 +183,7 @@ namespace SimplePad
 
                 replaceInput_TextBox.Visibility = Visibility.Visible;
                 replaceInput_Label.Visibility = Visibility.Visible;
-                replaceButton.Visibility = Visibility.Hidden;
+                replaceButton.Visibility = Visibility.Visible;
 
                 direction_Label.Visibility = Visibility.Hidden;
                 direction_Rectangle.Visibility = Visibility.Hidden;
@@ -307,9 +307,9 @@ namespace SimplePad
             {
                 InitiateReplace(findInput_TextBox.Text, replaceInput_TextBox.Text);
             }
-            else
+            else if (findInFiles_TabItem.IsSelected == true)
             {
-
+                InitiateReplaceInFiles(findInput_TextBox.Text, replaceInput_TextBox.Text, directoryInput_TextBox.Text);
             }
         }
 
@@ -468,6 +468,41 @@ namespace SimplePad
             }
             matchesCounter.Content = "*matches found: " + ((MainWindow)this.Owner).searchResults.Count;
         }
+
+        /// <summary>
+        /// Call ReplaceInFilesString method based on selected settings
+        /// </summary>
+        /// <param name="text"></param>
+        private void InitiateReplaceInFiles(string replaceFrom, string replaceTo, string directory)
+        {
+            bool anyCase;
+            bool subfolders;
+            if (System.IO.Directory.Exists(directory))
+            {
+                if (matchCase_CheckBox.IsChecked == true)
+                {
+                    anyCase = false;
+                }
+                else
+                {
+                    anyCase = true;
+                }
+                if (subfolders_CheckBox.IsChecked == true)
+                {
+                    subfolders = true;
+                }
+                else
+                {
+                    subfolders = false;
+                }
+
+                ((MainWindow)this.Owner).searchInFilesArgs = new SearchInFilesArgs(replaceFrom, replaceTo, directory, anyCase, subfolders);
+
+                ((MainWindow)this.Owner).thread1 = new Thread(((MainWindow)this.Owner).FindStringInFiles);
+                ((MainWindow)this.Owner).thread1.Start();
+            }
+        }
+        //
 
         /// <summary>
         /// Call FindInFilesString method based on selected settings

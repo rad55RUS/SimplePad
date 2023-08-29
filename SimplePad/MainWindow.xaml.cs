@@ -32,6 +32,7 @@ using System.Collections;
 using static System.Windows.Forms.LinkLabel;
 using System.Windows.Threading;
 using System.Windows.Media.TextFormatting;
+using System.Text.RegularExpressions;
 
 namespace SimplePad
 {
@@ -697,10 +698,14 @@ namespace SimplePad
             string[] extensionsArray = { "txt", "json", "lua", "cfg", "xml", "xaml", "yml", "ini", "html", "css", "cs", "config", "readme", "toml", "properties", "log" };
             string[][] fileArray = new string[extensionsArray.Length][];
 
+            string desiredStringTemp = searchInFilesArgs.desiredString;
+
             if (searchInFilesArgs.anyCase == true)
             {
-                searchInFilesArgs.desiredString = searchInFilesArgs.desiredString.ToLower();
+                desiredStringTemp = searchInFilesArgs.desiredString.ToLower();
             }
+
+            // File array building
             for (int i = 0; i < extensionsArray.Length; i++)
             {
                 if (searchInFilesArgs.subfolders)
@@ -712,10 +717,13 @@ namespace SimplePad
                     fileArray[i] = System.IO.Directory.GetFiles((searchInFilesArgs.directory + "\\"), "*." + extensionsArray[i], System.IO.SearchOption.TopDirectoryOnly);
                 }
             }
+
+            // Main cycle
             for (int l = 0; l < fileArray.Length; l++)
             {
-                if (fileArray[l].Length > 0)
+                if (fileArray[l] != null)
                 {
+                    // Preparations
                     if (filesFound == false)
                     {
                         filesFound = true;
@@ -728,6 +736,7 @@ namespace SimplePad
                             }
                         }
 
+                        // Building findInFilesWindow
                         App.Current.Dispatcher.Invoke(delegate
                         {
                             findInFilesWindow = new FindInFilesWindow();
@@ -769,8 +778,10 @@ namespace SimplePad
 
                     bool foundInFile = false;
 
+                    // Search cycle
                     for (int i = 0; i < fileArray[l].Length; i++)
                     {
+                        // Progress bar updating
                         App.Current.Dispatcher.Invoke(delegate
                         {
                             if (fileArray[l][i].Length < 71)
@@ -806,7 +817,9 @@ namespace SimplePad
                             }
                             findInFilesWindow.progressBar.Value++;
                         });
+                        //
 
+                        // Line preparations
                         if (l != 3)
                         {
                             text = TextFile.ReadFromFile(fileArray[l][i]);
@@ -816,30 +829,49 @@ namespace SimplePad
                             text = TextFile.ReadFromFile(fileArray[l][i], Encoding.UTF8);
                         }
                         string[] lines = text.Replace("\r", "").Split('\n');
+                        string[] linesReplaced;
+                        if (searchInFilesArgs.replaceString != null)
+                        {
+                            if (searchInFilesArgs.anyCase == true)
+                            {
+                                text = Regex.Replace(text, desiredStringTemp, searchInFilesArgs.replaceString, RegexOptions.IgnoreCase);
+                            }
+                            else
+                            {
+                                text = Regex.Replace(text, desiredStringTemp, searchInFilesArgs.replaceString);
+                            }
+                            TextFile.WriteToFile(text, fileArray[l][i]);
+                            linesReplaced = text.Replace("\r", "").Split('\n');
+                        }
+                        //
+                        
+                        // Search-in-file process
                         for (int j = 0; j < lines.Length; j++)
                         {
                             bool foundInLine = false;
                             string line = lines[j];
-                            string test = "";
+                            string noDesiredPart = "";
 
-                            if (searchInFilesArgs.anyCase == true)
-                            {
-                                line = line.ToLower();
-                            }
-                            for (int t = 0; t < line.Length - searchInFilesArgs.desiredString.Length + 1; t++)
+                            for (int t = 0; t < line.Length - desiredStringTemp.Length + 1; t++)
                             {
                                 string checkingString = "";
+                                string checkingStringTemp = "";
 
-                                for (int m = 0; m < searchInFilesArgs.desiredString.Length; m++)
+                                for (int m = 0; m < desiredStringTemp.Length; m++)
                                 {
                                     checkingString += line[t + m];
-                                    if (checkingString[m] != searchInFilesArgs.desiredString[m])
+                                    checkingStringTemp = checkingString;
+                                    if (searchInFilesArgs.anyCase)
+                                    {
+                                        checkingStringTemp = checkingStringTemp.ToLower();
+                                    }
+                                    if (checkingStringTemp[m] != desiredStringTemp[m])
                                         break;
                                 }
-                                if (checkingString == searchInFilesArgs.desiredString)
+                                if (checkingStringTemp == desiredStringTemp)
                                 {
                                     matches++;
-                                    t += searchInFilesArgs.desiredString.Length - 1;
+                                    t += desiredStringTemp.Length - 1;
 
                                     if (!foundInFile)
                                     {
@@ -860,23 +892,23 @@ namespace SimplePad
                                     }
                                     App.Current.Dispatcher.Invoke(delegate
                                     {
-                                        paragraph.Inlines.Add(new Run(test));
-                                        paragraph.Inlines.Add(new Run(searchInFilesArgs.desiredString) { Foreground = System.Windows.Media.Brushes.Gold } );
+                                        paragraph.Inlines.Add(new Run(noDesiredPart));
+                                        paragraph.Inlines.Add(new Run(checkingString) { Foreground = System.Windows.Media.Brushes.Gold });
                                     });
 
                                     foundInFile = true;
                                     foundInLine = true;
 
-                                    test = "";
+                                    noDesiredPart = "";
                                 }
                                 else
                                 {
-                                    test += line[t];
-                                    if (t == line.Length - searchInFilesArgs.desiredString.Length && foundInLine == true)
+                                    noDesiredPart += line[t];
+                                    if (t == line.Length - desiredStringTemp.Length && foundInLine == true)
                                     {
                                         for (int m = t + 1; m < line.Length; m++)
                                         {
-                                            test += line[m];
+                                            noDesiredPart += line[m];
                                         }
                                     }
                                 }
@@ -885,10 +917,60 @@ namespace SimplePad
                             {
                                 App.Current.Dispatcher.Invoke(delegate
                                 {
-                                    paragraph.Inlines.Add(new Run(test));
+                                    paragraph.Inlines.Add(new Run(noDesiredPart));
                                 });
+
+                                if (searchInFilesArgs.replaceString != null)
+                                {
+                                    App.Current.Dispatcher.Invoke(delegate
+                                    {
+                                        paragraph.Inlines.Add(new Run(" => "));
+                                    });
+                                    for (int t = 0; t < line.Length - desiredStringTemp.Length + 1; t++)
+                                    {
+                                        string checkingString = "";
+                                        string checkingStringTemp = "";
+
+                                        for (int m = 0; m < desiredStringTemp.Length; m++)
+                                        {
+                                            checkingString += line[t + m];
+                                            checkingStringTemp = checkingString;
+                                            if (searchInFilesArgs.anyCase)
+                                            {
+                                                checkingStringTemp = checkingStringTemp.ToLower();
+                                            }
+                                            if (checkingStringTemp[m] != desiredStringTemp[m])
+                                                break;
+                                        }
+                                        if (checkingStringTemp == desiredStringTemp)
+                                        {
+                                            t += desiredStringTemp.Length - 1;
+
+                                            App.Current.Dispatcher.Invoke(delegate
+                                            {
+                                                paragraph.Inlines.Add(new Run(noDesiredPart));
+                                                paragraph.Inlines.Add(new Run(searchInFilesArgs.replaceString) { Foreground = System.Windows.Media.Brushes.LightGreen });
+                                            });
+
+                                            noDesiredPart = "";
+                                        }
+                                        else
+                                        {
+                                            noDesiredPart += line[t];
+                                            if (t == line.Length - desiredStringTemp.Length)
+                                            {
+                                                for (int m = t + 1; m < line.Length; m++)
+                                                {
+                                                    noDesiredPart += line[m];
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
+                        //
+
                         if (foundInFile)
                         {
                             App.Current.Dispatcher.Invoke(delegate
@@ -898,6 +980,7 @@ namespace SimplePad
                             foundInFile = false;
                         }
                     }
+                    //
                     App.Current.Dispatcher.Invoke(delegate
                     {
                         searchResults_Label.Content = "Search results (" + matches + " matches)";
