@@ -14,6 +14,8 @@ using System.Diagnostics;
 using Microsoft.VisualBasic.FileIO;
 using static System.Net.WebRequestMethods;
 using System.Windows.Shapes;
+using System.Windows;
+using System.Reflection.PortableExecutable;
 
 namespace TextFile_Lib
 {
@@ -77,11 +79,21 @@ namespace TextFile_Lib
         /// <param name="text"></param>
         public static string ReadFromFile(string directory, Encoding encoding)
         {
+            string text;
+
             // Read from file
-            StreamReader reader = new(directory, encoding);
-            string text = reader.ReadToEnd();
-            reader.Dispose();
-            reader.Close();
+            try
+            {
+                StreamReader reader = new(directory, encoding);
+                text = reader.ReadToEnd();
+                reader.Dispose();
+                reader.Close();
+            }
+            catch
+            {
+                MessageBox.Show("Error while reading file " + directory, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                return "";
+            }
             //
 
             return text;

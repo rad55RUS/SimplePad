@@ -829,7 +829,6 @@ namespace SimplePad
                             text = TextFile.ReadFromFile(fileArray[l][i], Encoding.UTF8);
                         }
                         string[] lines = text.Replace("\r", "").Split('\n');
-                        string[] linesReplaced;
                         if (searchInFilesArgs.replaceString != null)
                         {
                             if (searchInFilesArgs.anyCase == true)
@@ -841,7 +840,6 @@ namespace SimplePad
                                 text = Regex.Replace(text, desiredStringTemp, searchInFilesArgs.replaceString);
                             }
                             TextFile.WriteToFile(text, fileArray[l][i]);
-                            linesReplaced = text.Replace("\r", "").Split('\n');
                         }
                         //
                         
