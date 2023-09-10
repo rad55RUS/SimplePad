@@ -81,7 +81,8 @@ namespace SimplePad
         }
         //
 
-        // This window events
+        // This events
+        #region
         /// <summary>
         /// Event on goToInput_Textbox text changing
         /// </summary>
@@ -364,8 +365,6 @@ namespace SimplePad
             }
         }
 
-
-
         /// <summary>
         /// Event on goToButton clicking
         /// </summary>
@@ -391,7 +390,6 @@ namespace SimplePad
                 e.Handled = true;
             }
         }
-        //
 
         /// <summary>
         /// Event on key down in findInput
@@ -409,15 +407,19 @@ namespace SimplePad
                 e.Handled = true;
             }
         }
+        #endregion
         //
 
         // Initiate search methods
+        #region
         /// <summary>
         /// Call ReplaceString method based on selected settings
         /// </summary>
         /// <param name="text"></param>
         private void InitiateReplace(string replaceFrom, string replaceTo)
         {
+            SaveSettings();
+
             if (replaceFrom.Length > 0)
             {
                 ((MainWindow)this.Owner).textBoxMain.Focus();
@@ -454,6 +456,8 @@ namespace SimplePad
         /// <param name="text"></param>
         private void InitiateReplaceAll(string replaceFrom, string replaceTo)
         {
+            SaveSettings();
+
             if (replaceFrom.Length > 0)
             {
                 ((MainWindow)this.Owner).textBoxMain.Focus();
@@ -475,6 +479,8 @@ namespace SimplePad
         /// <param name="text"></param>
         private void InitiateReplaceInFiles(string replaceFrom, string replaceTo, string directory)
         {
+            SaveSettings();
+
             bool anyCase;
             bool subfolders;
             if (System.IO.Directory.Exists(directory))
@@ -502,7 +508,6 @@ namespace SimplePad
                 ((MainWindow)this.Owner).thread1.Start();
             }
         }
-        //
 
         /// <summary>
         /// Call FindInFilesString method based on selected settings
@@ -510,6 +515,8 @@ namespace SimplePad
         /// <param name="text"></param>
         private void InitiateSearchInFiles(string text, string directory)
         {
+            SaveSettings();
+
             bool anyCase;
             bool subfolders;
             if (System.IO.Directory.Exists(directory))
@@ -537,7 +544,6 @@ namespace SimplePad
                 ((MainWindow)this.Owner).thread1.Start();
             }
         }
-        //
 
         /// <summary>
         /// Call FindString method based on selected settings
@@ -545,6 +551,8 @@ namespace SimplePad
         /// <param name="text"></param>
         private void InitiateSearch(string text)
         {
+            SaveSettings();
+
             if (text.Length > 0)
             {
                 ((MainWindow)this.Owner).textBoxMain.Focus();
@@ -574,9 +582,11 @@ namespace SimplePad
             this.findButton.Focus();
             matchesCounter.Content = "*matches found: " + ((MainWindow)this.Owner).searchResults.Count;
         }
+        #endregion
         //
 
         // Window methods
+        #region
         //// Fixing default context menu via creating another one
         /// <summary>
         /// Prevent bugged default title bar context menu from appearing
@@ -663,16 +673,24 @@ namespace SimplePad
         /// <param name="e"></param>
         private void CloseWindow(object sender, RoutedEventArgs e)
         {
+            SaveSettings();
+            Hide();
+        }
+
+        /// <summary>
+        /// Save settings
+        /// </summary>
+        private void SaveSettings()
+        {
             Properties.Settings.Default.DesiredString = this.findInput_TextBox.Text;
             Properties.Settings.Default.ReplaceTo_String = this.replaceInput_TextBox.Text;
             Properties.Settings.Default.MatchCase = this.matchCase_CheckBox.IsChecked ?? false;
             Properties.Settings.Default.MultipleLineInput = this.multipleLine_CheckBox.IsChecked ?? false;
             Properties.Settings.Default.SearchDirectionIsDown = this.down_RadioButton.IsChecked ?? false;
             Properties.Settings.Default.Subfolders = this.subfolders_CheckBox.IsChecked ?? false;
-
-            Hide();
         }
         ////
+        #endregion
         //
     }
 }

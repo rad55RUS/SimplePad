@@ -848,6 +848,7 @@ namespace SimplePad
                         string[] lines = text.Replace("\r", "").Split('\n');
                         if (searchInFilesArgs.replaceString != null)
                         {
+                            desiredStringTemp = Regex.Escape(desiredStringTemp);
                             if (searchInFilesArgs.anyCase == true)
                             {
                                 text = Regex.Replace(text, desiredStringTemp, searchInFilesArgs.replaceString, RegexOptions.IgnoreCase);
@@ -856,6 +857,7 @@ namespace SimplePad
                             {
                                 text = Regex.Replace(text, desiredStringTemp, searchInFilesArgs.replaceString);
                             }
+                            desiredStringTemp = Regex.Unescape(desiredStringTemp);
                             TextFile.WriteToFile(text, fileList[l][i]);
                         }
                         //

@@ -103,7 +103,7 @@ namespace TextFile_Lib
         /// Static method for writing text to file with specified text, directory and encoding.
         /// </summary>
         /// <param name="text"></param>
-        public static void WriteToFile(string text, string directory)
+        public static void WriteToFile(string text, string directory, bool showErrorBox)
         {
             // Write to file
             try
@@ -115,9 +115,33 @@ namespace TextFile_Lib
             }
             catch
             {
-                MessageBox.Show("Error while writing to file " + directory, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                if (showErrorBox)
+                {
+                    MessageBox.Show("Error while writing to file " + directory, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                else
+                {
+                    MessageBox.Show("Error while writing to file " + directory, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             //
+        }
+
+        /// <summary>
+        /// Static method for writing text to file with specified text, directory and encoding.
+        /// </summary>
+        /// <param name="text"></param>
+        public static void WriteToFile(string text, string directory)
+        {
+            // Write to file
+            try
+            {
+                StreamWriter writer = new(directory);
+                writer.Write(text);
+                writer.Dispose();
+                writer.Close();
+            }
+            catch { }
             //
         }
         //
