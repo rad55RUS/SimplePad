@@ -105,11 +105,19 @@ namespace TextFile_Lib
         /// <param name="text"></param>
         public static void WriteToFile(string text, string directory)
         {
-            // Read from file
-            StreamWriter writer = new(directory);
-            writer.Write(text);
-            writer.Dispose();
-            writer.Close();
+            // Write to file
+            try
+            {
+                StreamWriter writer = new(directory);
+                writer.Write(text);
+                writer.Dispose();
+                writer.Close();
+            }
+            catch
+            {
+                MessageBox.Show("Error while writing to file " + directory, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            //
             //
         }
         //

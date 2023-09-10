@@ -33,6 +33,7 @@ using static System.Windows.Forms.LinkLabel;
 using System.Windows.Threading;
 using System.Windows.Media.TextFormatting;
 using System.Text.RegularExpressions;
+using System.IO;
 
 namespace SimplePad
 {
@@ -696,7 +697,11 @@ namespace SimplePad
             int matches = 0;
             string text = "";
             string[] extensionsArray = { "txt", "json", "lua", "cfg", "xml", "xaml", "yml", "ini", "html", "css", "cs", "config", "readme", "toml", "properties", "log" };
-            string[][] fileArray = new string[extensionsArray.Length][];
+            List<List<string>> fileList = new List<List<string>>();
+            foreach (string extension in extensionsArray)
+            {
+                fileList.Add(new List<string>());
+            }
 
             string desiredStringTemp = searchInFilesArgs.desiredString;
 
@@ -705,32 +710,44 @@ namespace SimplePad
                 desiredStringTemp = searchInFilesArgs.desiredString.ToLower();
             }
 
+            List<string> directoryList = System.IO.Directory.GetDirectories(searchInFilesArgs.directory + "\\").ToList();
+
             // File array building
             for (int i = 0; i < extensionsArray.Length; i++)
             {
+                System.IO.Directory.GetFiles(searchInFilesArgs.directory + "\\", "*." + extensionsArray[i], System.IO.SearchOption.TopDirectoryOnly).ToList().ForEach(file => fileList[i].Add(file));
                 if (searchInFilesArgs.subfolders)
                 {
-                    fileArray[i] = System.IO.Directory.GetFiles((searchInFilesArgs.directory + "\\"), "*." + extensionsArray[i], System.IO.SearchOption.AllDirectories);
-                }
-                else
-                {
-                    fileArray[i] = System.IO.Directory.GetFiles((searchInFilesArgs.directory + "\\"), "*." + extensionsArray[i], System.IO.SearchOption.TopDirectoryOnly);
+                    if (directoryList != null)
+                    {
+                        foreach (string directory in directoryList)
+                        {
+                            try
+                            {
+                                System.IO.Directory.GetFiles(directory, "*." + extensionsArray[i]).ToList().ForEach(file => fileList[i].Add(file));
+                            }
+                            catch
+                            {
+                                Debug.Print("FindStringInFiles - Error while trying to get access in " + directory + "\n");
+                            }
+                        }
+                    }
                 }
             }
 
             // Main cycle
-            for (int l = 0; l < fileArray.Length; l++)
+            for (int l = 0; l < fileList.Count; l++)
             {
-                if (fileArray[l] != null)
+                if (fileList[l] != null)
                 {
                     // Preparations
                     if (filesFound == false)
                     {
                         filesFound = true;
 
-                        for (int i = 0; i < fileArray.Length; i++)
+                        for (int i = 0; i < fileList.Count; i++)
                         {
-                            for (int j = 0; j < fileArray[i].Length; j++)
+                            for (int j = 0; j < fileList[i].Count; j++)
                             {
                                 fileCount++;
                             }
@@ -779,14 +796,14 @@ namespace SimplePad
                     bool foundInFile = false;
 
                     // Search cycle
-                    for (int i = 0; i < fileArray[l].Length; i++)
+                    for (int i = 0; i < fileList[l].Count; i++)
                     {
                         // Progress bar updating
                         App.Current.Dispatcher.Invoke(delegate
                         {
-                            if (fileArray[l][i].Length < 71)
+                            if (fileList[l][i].Count() < 71)
                             {
-                                findInFilesWindow.currentFile_Label.Content = fileArray[l][i];
+                                findInFilesWindow.currentFile_Label.Content = fileList[l][i];
                             }
                             else
                             {
@@ -794,7 +811,7 @@ namespace SimplePad
 
                                 for (int j = 0; j < 35; j++)
                                 {
-                                    currentFile_LabelContent += fileArray[l][i][j];
+                                    currentFile_LabelContent += fileList[l][i][j];
                                 }
 
                                 if (!currentFile_LabelContent.EndsWith("\\"))
@@ -808,9 +825,9 @@ namespace SimplePad
                                     currentFile_LabelContent += "...";
                                 }
 
-                                for (int j = fileArray[l][i].Length - 35; j < fileArray[l][i].Length; j++)
+                                for (int j = fileList[l][i].Count() - 35; j < fileList[l][i].Count(); j++)
                                 {
-                                    currentFile_LabelContent += fileArray[l][i][j];
+                                    currentFile_LabelContent += fileList[l][i][j];
                                 }
 
                                 findInFilesWindow.currentFile_Label.Content = currentFile_LabelContent;
@@ -822,11 +839,11 @@ namespace SimplePad
                         // Line preparations
                         if (l != 3)
                         {
-                            text = TextFile.ReadFromFile(fileArray[l][i]);
+                            text = TextFile.ReadFromFile(fileList[l][i]);
                         }
                         else
                         {
-                            text = TextFile.ReadFromFile(fileArray[l][i], Encoding.UTF8);
+                            text = TextFile.ReadFromFile(fileList[l][i], Encoding.UTF8);
                         }
                         string[] lines = text.Replace("\r", "").Split('\n');
                         if (searchInFilesArgs.replaceString != null)
@@ -839,7 +856,7 @@ namespace SimplePad
                             {
                                 text = Regex.Replace(text, desiredStringTemp, searchInFilesArgs.replaceString);
                             }
-                            TextFile.WriteToFile(text, fileArray[l][i]);
+                            TextFile.WriteToFile(text, fileList[l][i]);
                         }
                         //
                         
@@ -876,7 +893,7 @@ namespace SimplePad
                                         App.Current.Dispatcher.Invoke(delegate
                                         {
                                             paragraph = new Paragraph();
-                                            paragraph.Inlines.Add(new Run(fileArray[l][i]) { Foreground = System.Windows.Media.Brushes.PaleGoldenrod });
+                                            paragraph.Inlines.Add(new Run(fileList[l][i]) { Foreground = System.Windows.Media.Brushes.PaleGoldenrod });
                                         });
                                     }
                                     if (!foundInLine)
@@ -987,9 +1004,12 @@ namespace SimplePad
             }
             App.Current.Dispatcher.Invoke(delegate
             {
-                if (findInFilesWindow.IsEnabled)
+                if (findInFilesWindow != null)
                 {
-                    findInFilesWindow.Close();
+                    if (findInFilesWindow.IsEnabled)
+                    {
+                        findInFilesWindow.Close();
+                    }
                 }
             });
         }
