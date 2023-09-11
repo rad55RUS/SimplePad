@@ -692,7 +692,7 @@ namespace SimplePad
         private void GetSubfolders(ref List<string> subfolderList, string folder)
         {
             List<string> newDirectoryList = new List<string>();
-            newDirectoryList = System.IO.Directory.GetDirectories(path).ToList();
+            newDirectoryList = System.IO.Directory.GetDirectories(folder).ToList();
             int newDirectoryList_Count = newDirectoryList.Count;
             for (int i = 0; i < newDirectoryList_Count; i++)
             {
