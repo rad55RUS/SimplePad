@@ -684,18 +684,23 @@ namespace SimplePad
             textBoxMain.SelectionLength = 0;
         }
 
-        private void Ddie(ref List<string> directoryList, string path)
+        /// <summary>
+        /// Get all subfolders in the folder to subfolderList
+        /// </summary>
+        /// <param name="directoryList"></param>
+        /// <param name="folder"></param>
+        private void GetSubfolders(ref List<string> subfolderList, string folder)
         {
             List<string> newDirectoryList = new List<string>();
             newDirectoryList = System.IO.Directory.GetDirectories(path).ToList();
             int newDirectoryList_Count = newDirectoryList.Count;
             for (int i = 0; i < newDirectoryList_Count; i++)
             {
-                Ddie(ref newDirectoryList, newDirectoryList[i]);
+                GetSubfolders(ref newDirectoryList, newDirectoryList[i]);
             }
             foreach (string directory in newDirectoryList)
             {
-                directoryList.Add(directory);
+                subfolderList.Add(directory);
             }
         }
 
@@ -725,18 +730,17 @@ namespace SimplePad
                 desiredStringTemp = searchInFilesArgs.desiredString.ToLower();
             }
 
-            List<string> directoryList = new List<string>();
-            Ddie(ref directoryList, searchInFilesArgs.directory + "\\");
-
             // File array building
             for (int i = 0; i < extensionsArray.Length; i++)
             {
                 System.IO.Directory.GetFiles(searchInFilesArgs.directory + "\\", "*." + extensionsArray[i], System.IO.SearchOption.TopDirectoryOnly).ToList().ForEach(file => fileList[i].Add(file));
                 if (searchInFilesArgs.subfolders)
                 {
-                    if (directoryList != null)
+                    List<string> subfolderList = new List<string>();
+                    GetSubfolders(ref subfolderList, searchInFilesArgs.directory + "\\");
+                    if (subfolderList != null)
                     {
-                        foreach (string directory in directoryList)
+                        foreach (string directory in subfolderList)
                         {
                             try
                             {
