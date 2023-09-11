@@ -684,6 +684,21 @@ namespace SimplePad
             textBoxMain.SelectionLength = 0;
         }
 
+        private void Ddie(ref List<string> directoryList, string path)
+        {
+            List<string> newDirectoryList = new List<string>();
+            newDirectoryList = System.IO.Directory.GetDirectories(path).ToList();
+            int newDirectoryList_Count = newDirectoryList.Count;
+            for (int i = 0; i < newDirectoryList_Count; i++)
+            {
+                Ddie(ref newDirectoryList, newDirectoryList[i]);
+            }
+            foreach (string directory in newDirectoryList)
+            {
+                directoryList.Add(directory);
+            }
+        }
+
         /// <summary>
 		/// Find string in files in specified directory
 		/// </summary>
@@ -710,7 +725,8 @@ namespace SimplePad
                 desiredStringTemp = searchInFilesArgs.desiredString.ToLower();
             }
 
-            List<string> directoryList = System.IO.Directory.GetDirectories(searchInFilesArgs.directory + "\\").ToList();
+            List<string> directoryList = new List<string>();
+            Ddie(ref directoryList, searchInFilesArgs.directory + "\\");
 
             // File array building
             for (int i = 0; i < extensionsArray.Length; i++)
