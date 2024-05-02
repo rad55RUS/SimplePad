@@ -414,13 +414,13 @@ namespace SimplePad
 
         // Editor methods
         /// <summary>
-        /// Get line in editor from <b>position</b> 
+        /// Get line from <b>position</b> 
         /// </summary>
         private int GetLine(int position)
         {
             int lineCount = 0;
 
-            for (int i = 0; i <= position; i++)
+            for (int i = 0; i < position; i++)
             {
                 char currentChar = editor.Text[i];
                 if (currentChar == '\n')
@@ -429,7 +429,30 @@ namespace SimplePad
                 }
             }
 
-            return lineCount;
+            return lineCount + 1;
+        }
+
+        /// <summary>
+        /// Get first char position in <b>line</b> 
+        /// </summary>
+        private int GetPosition(int line)
+        {
+            int lineCount = 0;
+            int position = 0;
+
+            for (int i = 0; lineCount < line - 1; i++)
+            {
+                char currentChar = editor.Text[i];
+
+                position++;
+
+                if (currentChar == '\n')
+                {
+                    lineCount++;
+                }
+            }
+
+            return position;
         }
         //
 
@@ -593,12 +616,14 @@ namespace SimplePad
                         {
                             editor.SelectionStart = searchResults[i].startPosition;
                             editor.SelectionLength = desiredString.Length;
+                            editor.ScrollTo(GetLine(editor.SelectionStart), editor.SelectionLength);
                             break;
                         }
                         else if (i == searchResults.Count - 1)
                         {
                             editor.SelectionStart = searchResults[0].startPosition;
                             editor.SelectionLength = desiredString.Length;
+                            editor.ScrollTo(GetLine(editor.SelectionStart), editor.SelectionLength);
                             break;
                         }
                     }
@@ -611,12 +636,14 @@ namespace SimplePad
                         {
                             editor.SelectionStart = searchResults[i].startPosition;
                             editor.SelectionLength = desiredString.Length;
+                            editor.ScrollTo(GetLine(editor.SelectionStart), editor.SelectionLength);
                             break;
                         }
                         else if (i == 0)
                         {
                             editor.SelectionStart = searchResults[^1].startPosition;
                             editor.SelectionLength = desiredString.Length;
+                            editor.ScrollTo(GetLine(editor.SelectionStart), editor.SelectionLength);
                             break;
                         }
                     }
@@ -686,6 +713,7 @@ namespace SimplePad
                     editor.SelectionStart = searchResults[i].startPosition;
                     editor.SelectionLength = replaceFrom.Length;
                     editor.SelectedText = editor.SelectedText.Replace(editor.SelectedText, replaceTo);
+                    editor.ScrollTo(GetLine(editor.SelectionStart), editor.SelectionLength);
                     if (i != searchResults.Count - 1)
                     {
                         if (deltaLength != 0)
@@ -706,8 +734,9 @@ namespace SimplePad
         {
             editor.Focus();
 
-            editor.SelectionStart = GetLine(line - 1);
+            editor.SelectionStart = GetPosition(line);
             editor.SelectionLength = 0;
+            editor.ScrollToLine(line - 1);
         }
 
         /// <summary>
