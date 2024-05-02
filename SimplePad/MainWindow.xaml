@@ -7,7 +7,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimplePad"
         mc:Ignorable="d"
-        Title="SimplePad" Height="447" Width="800"
+        Title="SimplePad" Height="454" Width="800"
         MinHeight="100" MinWidth="250"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -466,15 +466,16 @@
             <!---->
         </ResourceDictionary>
     </Window.Resources>
-    <Grid Height="Auto" ScrollViewer.VerticalScrollBarVisibility="Disabled" UseLayoutRounding="False" Focusable="False">
+    <Grid Height="Auto" ScrollViewer.VerticalScrollBarVisibility="Disabled" UseLayoutRounding="False" Focusable="False" Margin="0,0,0,0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" MinHeight="63"/>
+            <RowDefinition Height="443*" MinHeight="63"/>
+            <RowDefinition Height="11*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid.Background>
-            <SolidColorBrush Opacity="0.01" Color="Black"/>
-        </Grid.Background>
-        <DockPanel x:Name="WindowChrome_Panel" Background="#FF171717" Height="53" VerticalAlignment="Top" Margin="6,6,6,0" Width="Auto" LastChildFill="False" ContextMenuService.IsEnabled="false">
+        <Grid.Effect>
+            <DropShadowEffect BlurRadius="10" Direction="-90" RenderingBias="Performance" ShadowDepth="2"/>
+        </Grid.Effect>
+        <DockPanel x:Name="WindowChrome_Panel" Background="#FF202020" Height="56" VerticalAlignment="Top" Margin="6,6,6,0" Width="Auto" LastChildFill="False" ContextMenuService.IsEnabled="false">
             <DockPanel.ContextMenu>
                 <ContextMenu Name ="TitleBar_ContextMenu">
                     <MenuItem Name ="TitleBar_Restore" Header="Restore" Click="RestoreWindow">
@@ -596,13 +597,13 @@
                 <Image x:Name="Icon" Width="32" Source="/Assets/WindowChrome/Icon.png" Height="22" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"/>
             </Button>
         </DockPanel>
-        <avalonEdit:TextEditor x:Name="editor" Margin="6,59,6,0" WordWrap="False" Background="#FF151515" RenderTransformOrigin="0.5,0.5" Foreground="White" BorderThickness="0" BorderBrush="{x:Null}" TextChanged="textBoxMain_TextChanged" Selector.SelectionChanged="textBoxMain_SelectionChanged" LostFocus="textBoxMain_LostFocus" FocusManager.IsFocusScope="False" FontFamily="Consolas" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" PreviewMouseWheel="textBoxMain_MouseWheel" Grid.Row="0">
+        <avalonEdit:TextEditor x:Name="editor" Margin="6,62,6,6" WordWrap="False" Background="#FF151515" RenderTransformOrigin="0.5,0.5" Foreground="White" BorderThickness="0" BorderBrush="{x:Null}" TextChanged="textBoxMain_TextChanged" Selector.SelectionChanged="textBoxMain_SelectionChanged" LostFocus="textBoxMain_LostFocus" FocusManager.IsFocusScope="False" FontFamily="Consolas" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" PreviewMouseWheel="textBoxMain_MouseWheel" Grid.Row="0" Grid.RowSpan="2">
             <avalonEdit:TextEditor.Resources>
                 <Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource ScrollBarStyle}"/>
             </avalonEdit:TextEditor.Resources>
         </avalonEdit:TextEditor>
         <Label x:Name="WindowName" Content="SimplePad" Height="32" VerticalAlignment="Top" Foreground="White" Margin="44,8,150,0"/>
-        <Button x:Name="FileButton" Background="#FF1F1F1F" BorderBrush="{x:Null}" Focusable="False" RenderTransformOrigin="0.5,0.5" Margin="6,40,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="19" PreviewMouseDown="FileButton_MouseDown" ContextMenuService.IsEnabled="false">
+        <Button x:Name="FileButton" Background="#FF2F2F2F" BorderBrush="{x:Null}" Focusable="False" RenderTransformOrigin="0.5,0.5" Margin="6,40,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="22" PreviewMouseDown="FileButton_MouseDown" ContextMenuService.IsEnabled="false">
             <Button.ContextMenu>
                 <ContextMenu Placement="Bottom" PlacementRectangle="0, 0, 0, 0" MinWidth="200">
                     <MenuItem Header="Open..." InputGestureText="Ctrl+O" Click="Open_Click"/>
@@ -631,10 +632,10 @@
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="#FF272727" TargetName="Border" />
+                                        <Setter Property="Background" Value="#FF3F3F3F" TargetName="Border" />
                                     </Trigger>
                                     <Trigger Property="IsPressed" Value="True">
-                                        <Setter Property="Background" Value="#FF2F2F2F" TargetName="Border" />
+                                        <Setter Property="Background" Value="#FF323232" TargetName="Border" />
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
@@ -642,7 +643,7 @@
                     </Setter>
                 </Style>
             </Button.Style>
-            <TextBlock HorizontalAlignment="Center" TextAlignment="Center" Height="18" TextWrapping="Wrap" Text="File" VerticalAlignment="Center" Width="56" RenderTransformOrigin="0.5,0.5" Foreground="White">
+            <TextBlock HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" FontSize="14" Text="File" VerticalAlignment="Center" Width="60" RenderTransformOrigin="0.5,0.5" Foreground="White">
                 <TextBlock.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleY="-1"/>
@@ -653,7 +654,7 @@
                 </TextBlock.RenderTransform>
             </TextBlock>
         </Button>
-        <Button x:Name="EditButton" Background="#FF1F1F1F" BorderBrush="{x:Null}" Focusable="False" RenderTransformOrigin="0.5,0.5" Margin="62,40,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="19" PreviewMouseDown="EditButton_MouseDown" ContextMenuService.IsEnabled="false">
+        <Button x:Name="EditButton" Background="#FF2F2F2F" BorderBrush="{x:Null}" Focusable="False" RenderTransformOrigin="0.5,0.5" Margin="66,40,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="22" PreviewMouseDown="EditButton_MouseDown" ContextMenuService.IsEnabled="false">
             <Button.ContextMenu>
                 <ContextMenu Placement="Bottom" PlacementRectangle="0, 0, 0, 0" MinWidth="200">
                     <MenuItem Name ="EditButton_Undo" Header="Undo" InputGestureText="Ctrl+Z" Click="Undo_Click"/>
@@ -686,10 +687,10 @@
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="#FF272727" TargetName="Border" />
+                                        <Setter Property="Background" Value="#FF3F3F3F" TargetName="Border" />
                                     </Trigger>
                                     <Trigger Property="IsPressed" Value="True">
-                                        <Setter Property="Background" Value="#FF2F2F2F" TargetName="Border" />
+                                        <Setter Property="Background" Value="#FF323232" TargetName="Border" />
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
@@ -697,7 +698,7 @@
                     </Setter>
                 </Style>
             </Button.Style>
-            <TextBlock HorizontalAlignment="Center" TextAlignment="Center" Height="18" TextWrapping="Wrap" Text="Edit" VerticalAlignment="Center" Width="56" RenderTransformOrigin="0.5,0.5" Foreground="White">
+            <TextBlock HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" FontSize="14" Text="Edit" VerticalAlignment="Center" Width="60" RenderTransformOrigin="0.5,0.5" Foreground="White">
                 <TextBlock.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleY="-1"/>
@@ -708,7 +709,7 @@
                 </TextBlock.RenderTransform>
             </TextBlock>
         </Button>
-        <Button x:Name="SearchButton" Background="#FF1F1F1F" BorderBrush="{x:Null}" Focusable="False" RenderTransformOrigin="0.5,0.5" Margin="118,40,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="19" PreviewMouseDown="SearchButton_MouseDown" ContextMenuService.IsEnabled="false">
+        <Button x:Name="SearchButton" Background="#FF2F2F2F" BorderBrush="{x:Null}" Focusable="False" RenderTransformOrigin="0.5,0.5" Margin="126,40,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="22" PreviewMouseDown="SearchButton_MouseDown" ContextMenuService.IsEnabled="false">
             <Button.ContextMenu>
                 <ContextMenu Placement="Bottom" PlacementRectangle="0, 0, 0, 0" MinWidth="200">
                     <MenuItem x:Name ="SearchButton_Find" Header="Find..." InputGestureText="Ctrl+F" Click="Find_Click"/>
@@ -738,10 +739,10 @@
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="#FF272727" TargetName="Border" />
+                                        <Setter Property="Background" Value="#FF3F3F3F" TargetName="Border" />
                                     </Trigger>
                                     <Trigger Property="IsPressed" Value="True">
-                                        <Setter Property="Background" Value="#FF2F2F2F" TargetName="Border" />
+                                        <Setter Property="Background" Value="#FF323232" TargetName="Border" />
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
@@ -749,7 +750,7 @@
                     </Setter>
                 </Style>
             </Button.Style>
-            <TextBlock HorizontalAlignment="Center" TextAlignment="Center" Height="18" TextWrapping="Wrap" Text="Search" VerticalAlignment="Center" Width="56" RenderTransformOrigin="0.5,0.5" Foreground="White">
+            <TextBlock HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Text="Search" FontSize="14" VerticalAlignment="Center" Width="60" RenderTransformOrigin="0.5,0.5" Foreground="White">
                 <TextBlock.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleY="-1"/>
@@ -760,7 +761,7 @@
                 </TextBlock.RenderTransform>
             </TextBlock>
         </Button>
-        <Button x:Name="FormatButton" Background="#FF1F1F1F" BorderBrush="{x:Null}" Focusable="False" RenderTransformOrigin="0.5,0.5" Margin="174,40,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="19" PreviewMouseDown="FormatButton_MouseDown" ContextMenuService.IsEnabled="false" Width="56">
+        <Button x:Name="FormatButton" Background="#FF2F2F2F" BorderBrush="{x:Null}" Focusable="False" RenderTransformOrigin="0.5,0.5" Margin="186,40,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="22" PreviewMouseDown="FormatButton_MouseDown" ContextMenuService.IsEnabled="false">
             <Button.ContextMenu>
                 <ContextMenu Placement="Bottom" PlacementRectangle="0, 0, 0, 0" MinWidth="200">
                     <MenuItem x:Name ="FormatButton_WordWrap" Header="Word wrap" Click="WordWrap_Click" IsCheckable="True"/>
@@ -785,10 +786,10 @@
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="#FF272727" TargetName="Border" />
+                                        <Setter Property="Background" Value="#FF3F3F3F" TargetName="Border" />
                                     </Trigger>
                                     <Trigger Property="IsPressed" Value="True">
-                                        <Setter Property="Background" Value="#FF2F2F2F" TargetName="Border" />
+                                        <Setter Property="Background" Value="#FF323232" TargetName="Border" />
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
@@ -796,7 +797,7 @@
                     </Setter>
                 </Style>
             </Button.Style>
-            <TextBlock HorizontalAlignment="Center" TextAlignment="Center" Height="18" TextWrapping="Wrap" Text="Format" VerticalAlignment="Center" Width="56" RenderTransformOrigin="0.5,0.5" Foreground="White">
+            <TextBlock HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Text="Format" FontSize="14" VerticalAlignment="Center" Width="60" RenderTransformOrigin="0.5,0.5" Foreground="White">
                 <TextBlock.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleY="-1"/>
@@ -807,8 +808,8 @@
                 </TextBlock.RenderTransform>
             </TextBlock>
         </Button>
-        <Grid x:Name="searchResults_Grid" Height="141" Margin="6,0,6,0" Background="#FF171717" VerticalAlignment="Center" Grid.Row="1">
-            <RichTextBox x:Name="searchResults_RichTextBox" Margin="0,17,0,0" Background="#FF111111" SelectionBrush="#FF0061FF" RenderTransformOrigin="0.5,0.5" Foreground="White" CaretBrush="White" BorderThickness="0" BorderBrush="{x:Null}" IsReadOnly="True" IsInactiveSelectionHighlightEnabled="True" FocusManager.IsFocusScope="False" FontFamily="Consolas" ScrollViewer.VerticalScrollBarVisibility="Auto" PreviewMouseWheel="searchResults_RichTextBox_MouseWheel" UndoLimit="0">
+        <Grid x:Name="searchResults_Grid" Height="141" Margin="6,306,6,0" Background="#FF171717" VerticalAlignment="Top">
+            <RichTextBox x:Name="searchResults_RichTextBox" Margin="0,17,0,0" Background="#FF101010" SelectionBrush="#FF0061FF" RenderTransformOrigin="0.5,0.5" Foreground="White" CaretBrush="White" BorderThickness="0" BorderBrush="{x:Null}" IsReadOnly="True" IsInactiveSelectionHighlightEnabled="True" FocusManager.IsFocusScope="False" FontFamily="Consolas" ScrollViewer.VerticalScrollBarVisibility="Auto" PreviewMouseWheel="searchResults_RichTextBox_MouseWheel" UndoLimit="0">
                 <RichTextBox.Resources>
                     <Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource ScrollBarStyle}"/>
                 </RichTextBox.Resources>
