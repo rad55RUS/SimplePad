@@ -597,7 +597,7 @@
                 <Image x:Name="Icon" Width="32" Source="/Assets/WindowChrome/Icon.png" Height="22" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased"/>
             </Button>
         </DockPanel>
-        <avalonEdit:TextEditor x:Name="editor" Margin="6,62,6,6" WordWrap="False" Background="#FF151515" RenderTransformOrigin="0.5,0.5" Foreground="White" BorderThickness="0" BorderBrush="{x:Null}" TextChanged="textBoxMain_TextChanged" Selector.SelectionChanged="textBoxMain_SelectionChanged" LostFocus="textBoxMain_LostFocus" FocusManager.IsFocusScope="False" FontFamily="Consolas" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" PreviewMouseWheel="textBoxMain_MouseWheel" Grid.Row="0" Grid.RowSpan="2">
+        <avalonEdit:TextEditor x:Name="TextEditor" Margin="6,62,6,6" WordWrap="False" Background="#FF151515" RenderTransformOrigin="0.5,0.5" Foreground="White" BorderThickness="0" BorderBrush="{x:Null}" TextChanged="TextEditor_TextChanged" Selector.SelectionChanged="TextEditor_SelectionChanged" LostFocus="TextEditor_LostFocus" FocusManager.IsFocusScope="False" FontFamily="Consolas" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" PreviewMouseWheel="TextEditor_MouseWheel" PreviewKeyDown="TextEditor_OnPreviewKeyDown" Grid.Row="0" Grid.RowSpan="2">
             <avalonEdit:TextEditor.Resources>
                 <Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource ScrollBarStyle}"/>
             </avalonEdit:TextEditor.Resources>
