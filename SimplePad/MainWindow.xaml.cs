@@ -1,4 +1,6 @@
 ﻿using static System.Net.Mime.MediaTypeNames;
+using static System.Windows.Forms.LinkLabel;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -24,16 +26,19 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Xml.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
-
-using TextFile_Lib;
-using Point = System.Windows.Point;
-using Gma.System.MouseKeyHook;
 using System.Collections;
-using static System.Windows.Forms.LinkLabel;
 using System.Windows.Threading;
 using System.Windows.Media.TextFormatting;
 using System.Text.RegularExpressions;
 using System.IO;
+
+
+using TextFile_Lib;
+using Point = System.Windows.Point;
+using Gma.System.MouseKeyHook;
+using System.ComponentModel;
+using ICSharpCode.AvalonEdit;
+
 
 namespace SimplePad
 {
@@ -69,6 +74,7 @@ namespace SimplePad
 
         // Common private fields
         private bool searchResults_isResizing = false;
+        private bool textBoxMain_selectionIsEmpty = true;
 		private readonly FindWindow findWindow = new();
         private IKeyboardMouseEvents m_GlobalHook;
         private Paragraph paragraph;
@@ -79,8 +85,8 @@ namespace SimplePad
         // Common internal fields
         internal List<SearchResult> searchResults = new();
         internal SearchInFilesArgs searchInFilesArgs;
-        internal TextFile textFile;
-        internal Thread thread1;
+        internal TextFile? textFile;
+        internal Thread? thread1;
         //
 
         // Initialization
@@ -92,14 +98,13 @@ namespace SimplePad
 
 		protected void OnLoad(object sender, RoutedEventArgs e)
 		{
-
             // Load properties
             this.Top = Properties.Settings.Default.WindowTop;
 			this.Left = Properties.Settings.Default.WindowLeft;
 			this.Height = Properties.Settings.Default.WindowHeight;
 			this.Width = Properties.Settings.Default.WindowWidth;
 
-            textBoxMain.FontSize = Properties.Settings.Default.FontSize;
+            editor.FontSize = Properties.Settings.Default.FontSize;
 
             searchResults_RichTextBox.FontSize = Properties.Settings.Default.FontSize_SearchResults;
             searchResults_Grid.Height = Properties.Settings.Default.SearchResultsHeight;
@@ -114,12 +119,12 @@ namespace SimplePad
 
 			if (Properties.Settings.Default.WordWrap)
 			{
-				textBoxMain.TextWrapping = TextWrapping.Wrap;
+				editor.WordWrap = true;
 				FormatButton_WordWrap.IsChecked = true;
 			}
 			else
 			{
-                textBoxMain.TextWrapping = TextWrapping.NoWrap;
+                editor.WordWrap = false;
                 FormatButton_WordWrap.IsChecked = false;
             }
             //
@@ -168,23 +173,23 @@ namespace SimplePad
             TitleBar_Restore.Style = (Style)Resources["UnclickableMenuItem"];
 			//
 
-			this.textBoxMain.IsReadOnly = false;
+			this.editor.IsReadOnly = false;
 
             // Insert text from startup file
-            textBoxMain.TextChanged -= textBoxMain_TextChanged;
+            editor.TextChanged -= textBoxMain_TextChanged;
             textFile = App.textFile;
             textFile.OnFileOperation += OnFileOperation;
             if (textFile.Path != "")
 			{
-				textBoxMain.Text = TextFile.ReadFromFile(textFile.Path);
-                findWindow.lineCounter.Content = "line amount: " + textBoxMain.LineCount.ToString();
+				editor.Text = TextFile.ReadFromFile(textFile.Path);
+                findWindow.lineCounter.Content = "line amount: " + editor.LineCount.ToString();
 
                 OnFileOperation(textFile, new EventArgs());
             }
-            textBoxMain.TextChanged += textBoxMain_TextChanged;
+            editor.TextChanged += textBoxMain_TextChanged;
             //
 
-            this.textBoxMain.Focus();
+            this.editor.Focus();
         }
 		//
 
@@ -216,7 +221,7 @@ namespace SimplePad
 				Properties.Settings.Default.Maximized = false;
 			}
 
-			if (textBoxMain.TextWrapping == TextWrapping.Wrap)
+			if (editor.WordWrap == true)
 			{
 				Properties.Settings.Default.WordWrap = true;
 			}
@@ -225,7 +230,7 @@ namespace SimplePad
                 Properties.Settings.Default.WordWrap = false;
             }
 
-            Properties.Settings.Default.FontSize = (int)textBoxMain.FontSize;
+            Properties.Settings.Default.FontSize = (int)editor.FontSize;
             Properties.Settings.Default.FontSize_SearchResults = (int)searchResults_RichTextBox.FontSize;
             if (searchResults_Grid.Height != 0)
             {
@@ -249,37 +254,37 @@ namespace SimplePad
 
 		private void Undo_Click(object sender, RoutedEventArgs e)
 		{
-			textBoxMain.Undo();
+			editor.Undo();
 		}
 
 		private void Redo_Click(object sender, RoutedEventArgs e)
 		{
-			textBoxMain.Redo();
+			editor.Redo();
 		}
 
 		private void Cut_Click(object sender, RoutedEventArgs e)
 		{
-			textBoxMain.Cut();
+			editor.Cut();
 		}
 
 		private void Copy_Click(object sender, RoutedEventArgs e)
 		{
-			textBoxMain.Copy();
+			editor.Copy();
 		}
 
 		private void Paste_Click(object sender, RoutedEventArgs e)
 		{
-			textBoxMain.Paste();
+			editor.Paste();
 		}
 
 		private void Delete_Click(object sender, RoutedEventArgs e)
 		{
-			textBoxMain.SelectedText = "";
+			editor.SelectedText = "";
 		}
 
 		private void SelectAll_Click(object sender, RoutedEventArgs e)
 		{
-			textBoxMain.SelectAll();
+			editor.SelectAll();
 		}
 		///
 		/// FileButton methods
@@ -293,21 +298,21 @@ namespace SimplePad
 
 		private void Open_Click(object sender, RoutedEventArgs e)
 		{
-			textBoxMain.TextChanged -= textBoxMain_TextChanged;
+			editor.TextChanged -= textBoxMain_TextChanged;
 
-            textBoxMain.Text = textFile.OpenFile(textBoxMain.Text);
+            editor.Text = textFile.OpenFile(editor.Text);
 
-            textBoxMain.TextChanged += textBoxMain_TextChanged;
+            editor.TextChanged += textBoxMain_TextChanged;
         }
 
 		private void Save_Click(object sender, RoutedEventArgs e)
 		{
-			textFile.SaveFile(textBoxMain.Text);
+			textFile.SaveFile(editor.Text);
 		}
 
 		private void SaveAs_Click(object sender, RoutedEventArgs e)
 		{
-			textFile.SaveFile(textBoxMain.Text, true);
+			textFile.SaveFile(editor.Text, true);
 		}
 
 		private void RenameOrMove_Click(object sender, RoutedEventArgs e)
@@ -339,7 +344,7 @@ namespace SimplePad
 
             WindowName.Content = "SimplePad";
             this.Title = "SimplePad";
-            textBoxMain.Text = "";
+            editor.Text = "";
         }
         ///
         /// SearchButton methods
@@ -392,19 +397,40 @@ namespace SimplePad
         {
 			if (FormatButton_WordWrap.IsChecked)
 			{
-				this.textBoxMain.TextWrapping = TextWrapping.Wrap;
+				this.editor.WordWrap = true;
 			}
 			else
 			{
-				this.textBoxMain.TextWrapping = TextWrapping.NoWrap;
+				this.editor.WordWrap = false;
 			}
 
-            int currentLine = textBoxMain.GetLineIndexFromCharacterIndex(textBoxMain.SelectionStart);
+            int currentLine = GetLine(editor.SelectionStart);
 
             findWindow.currentLine_Label.Content = "current line is " + currentLine.ToString();
             findWindow.goToInput_TextBox.Text = currentLine.ToString();
         }
         ///
+        //
+
+        // Editor methods
+        /// <summary>
+        /// Get line in editor from <b>position</b> 
+        /// </summary>
+        private int GetLine(int position)
+        {
+            int lineCount = 0;
+
+            for (int i = 0; i <= position; i++)
+            {
+                char currentChar = editor.Text[i];
+                if (currentChar == '\n')
+                {
+                    lineCount++;
+                }
+            }
+
+            return lineCount;
+        }
         //
 
         // Find window methods
@@ -425,7 +451,7 @@ namespace SimplePad
                 findWindow.matchesCounter.Content = "*matches found: " + searchResults.Count;
             }
 
-			textBoxMain.Focus();
+			editor.Focus();
         }
 
         /// <summary>
@@ -445,7 +471,7 @@ namespace SimplePad
                 findWindow.matchesCounter.Content = "*matches found: " + searchResults.Count;
             }
 
-            textBoxMain.Focus();
+            editor.Focus();
         }
 
         /// <summary>
@@ -550,12 +576,12 @@ namespace SimplePad
         {
             if (searchResults.Count == 0)
             {
-                CreateFindResultList(desiredString, textBoxMain.Text, anyCase);
+                CreateFindResultList(desiredString, editor.Text, anyCase);
             }
             else if (searchResults[0].desiredString != desiredString)
             {
                 searchResults.Clear();
-                CreateFindResultList(desiredString, textBoxMain.Text, anyCase);
+                CreateFindResultList(desiredString, editor.Text, anyCase);
             }
             if (searchResults.Count > 0)
 			{
@@ -563,16 +589,16 @@ namespace SimplePad
 				{
 					for (int i = 0; i < searchResults.Count; i++)
 					{
-                        if (searchResults[i].startPosition > textBoxMain.SelectionStart)
+                        if (searchResults[i].startPosition > editor.SelectionStart)
                         {
-                            textBoxMain.SelectionStart = searchResults[i].startPosition;
-                            textBoxMain.SelectionLength = desiredString.Length;
+                            editor.SelectionStart = searchResults[i].startPosition;
+                            editor.SelectionLength = desiredString.Length;
                             break;
                         }
                         else if (i == searchResults.Count - 1)
                         {
-                            textBoxMain.SelectionStart = searchResults[0].startPosition;
-                            textBoxMain.SelectionLength = desiredString.Length;
+                            editor.SelectionStart = searchResults[0].startPosition;
+                            editor.SelectionLength = desiredString.Length;
                             break;
                         }
                     }
@@ -581,16 +607,16 @@ namespace SimplePad
                 {
                     for (int i = searchResults.Count - 1; i >= 0; i--)
                     {
-                        if (searchResults[i].startPosition < textBoxMain.SelectionStart)
+                        if (searchResults[i].startPosition < editor.SelectionStart)
                         {
-                            textBoxMain.SelectionStart = searchResults[i].startPosition;
-                            textBoxMain.SelectionLength = desiredString.Length;
+                            editor.SelectionStart = searchResults[i].startPosition;
+                            editor.SelectionLength = desiredString.Length;
                             break;
                         }
                         else if (i == 0)
                         {
-                            textBoxMain.SelectionStart = searchResults[^1].startPosition;
-                            textBoxMain.SelectionLength = desiredString.Length;
+                            editor.SelectionStart = searchResults[^1].startPosition;
+                            editor.SelectionLength = desiredString.Length;
                             break;
                         }
                     }
@@ -610,23 +636,23 @@ namespace SimplePad
 
             bool textReplaced = false;
 
-            if (textBoxMain.SelectedText == replaceFrom)
+            if (editor.SelectedText == replaceFrom)
             {
-                textBoxMain.SelectedText = textBoxMain.SelectedText.Replace(textBoxMain.SelectedText, replaceTo);
+                editor.SelectedText = editor.SelectedText.Replace(editor.SelectedText, replaceTo);
                 textReplaced = true;
             }
 
 			FindString(replaceFrom, anyCase, DirectionIsDown);
 
-            textBoxMain.TextChanged -= textBoxMain_TextChanged;
+            editor.TextChanged -= textBoxMain_TextChanged;
             if (searchResults.Count > 0)
             {
                 if (textReplaced == false)
                 {
-                    textBoxMain.SelectedText = textBoxMain.SelectedText.Replace(textBoxMain.SelectedText, replaceTo);
+                    editor.SelectedText = editor.SelectedText.Replace(editor.SelectedText, replaceTo);
                 }
             }
-            textBoxMain.TextChanged += textBoxMain_TextChanged;
+            editor.TextChanged += textBoxMain_TextChanged;
         }
 
         /// <summary>
@@ -644,22 +670,22 @@ namespace SimplePad
 
             if (searchResults.Count == 0)
             {
-                CreateFindResultList(replaceFrom, textBoxMain.Text, anyCase);
+                CreateFindResultList(replaceFrom, editor.Text, anyCase);
             }
             else if (searchResults[0].desiredString != replaceFrom)
             {
                 searchResults.Clear();
-                CreateFindResultList(replaceFrom, textBoxMain.Text, anyCase);
+                CreateFindResultList(replaceFrom, editor.Text, anyCase);
             }
 
-            textBoxMain.TextChanged -= textBoxMain_TextChanged;
+            editor.TextChanged -= textBoxMain_TextChanged;
             if (searchResults.Count > 0)
             {
                 for (int i = 0; i < searchResults.Count; i++)
                 {
-                    textBoxMain.SelectionStart = searchResults[i].startPosition;
-                    textBoxMain.SelectionLength = replaceFrom.Length;
-                    textBoxMain.SelectedText = textBoxMain.SelectedText.Replace(textBoxMain.SelectedText, replaceTo);
+                    editor.SelectionStart = searchResults[i].startPosition;
+                    editor.SelectionLength = replaceFrom.Length;
+                    editor.SelectedText = editor.SelectedText.Replace(editor.SelectedText, replaceTo);
                     if (i != searchResults.Count - 1)
                     {
                         if (deltaLength != 0)
@@ -670,7 +696,7 @@ namespace SimplePad
                     }
                 }
             }
-            textBoxMain.TextChanged += textBoxMain_TextChanged;
+            editor.TextChanged += textBoxMain_TextChanged;
         }
 
         /// <summary>
@@ -678,10 +704,10 @@ namespace SimplePad
         /// </summary>
         internal void FindLine(int line)
         {
-            textBoxMain.Focus();
+            editor.Focus();
 
-            textBoxMain.SelectionStart = textBoxMain.GetCharacterIndexFromLineIndex(line - 1);
-            textBoxMain.SelectionLength = 0;
+            editor.SelectionStart = GetLine(line - 1);
+            editor.SelectionLength = 0;
         }
 
         /// <summary>
@@ -1035,6 +1061,11 @@ namespace SimplePad
                 }
             });
         }
+
+        private void SelectionStyling(object? obj)
+        {
+
+        }
         // 
 
         // Search results events
@@ -1085,7 +1116,7 @@ namespace SimplePad
                     searchResults_RichTextBox.FontSize += 1;
                 }
                 /// Scale down
-                if (e.Delta < 0 && textBoxMain.FontSize > 1)
+                if (e.Delta < 0 && editor.FontSize > 1)
                 {
                     searchResults_RichTextBox.FontSize -= 1;
                 }
@@ -1135,19 +1166,24 @@ namespace SimplePad
         /// <returns></returns>
         private void textBoxMain_SelectionChanged(object sender, EventArgs e)
 		{
-			int currentLine = textBoxMain.GetLineIndexFromCharacterIndex(textBoxMain.SelectionStart) + 1;
+            int currentLine = GetLine(editor.SelectionStart) + 1;
 
-			if (!String.IsNullOrEmpty(textBoxMain.SelectedText))
+			if (!String.IsNullOrEmpty(editor.SelectedText) != !textBoxMain_selectionIsEmpty)
 			{
-				EditButton_Cut.Style = (Style)Resources["ClickableMenuItemBlack"];
-				EditButton_Copy.Style = (Style)Resources["ClickableMenuItemBlack"];
-				EditButton_Delete.Style = (Style)Resources["ClickableMenuItemBlack"];
-			}
-			else
-			{
-				EditButton_Cut.Style = (Style)Resources["UnclickableMenuItem"];
-				EditButton_Delete.Style = (Style)Resources["UnclickableMenuItem"];
-			}
+                textBoxMain_selectionIsEmpty = !textBoxMain_selectionIsEmpty;
+
+                if (!textBoxMain_selectionIsEmpty)
+                {
+                    EditButton_Cut.Style = (Style)Resources["ClickableMenuItemBlack"];
+                    EditButton_Copy.Style = (Style)Resources["ClickableMenuItemBlack"];
+                    EditButton_Delete.Style = (Style)Resources["ClickableMenuItemBlack"];
+                }
+                else
+                {
+                    EditButton_Cut.Style = (Style)Resources["UnclickableMenuItem"];
+                    EditButton_Delete.Style = (Style)Resources["UnclickableMenuItem"];
+                }
+            }
 
             findWindow.currentLine_Label.Content = "current line is " + currentLine.ToString();
             findWindow.goToInput_TextBox.Text = currentLine.ToString();
@@ -1161,7 +1197,7 @@ namespace SimplePad
         /// <returns></returns>
         private void textBoxMain_TextChanged(object sender, EventArgs e)
 		{
-			if (textBoxMain.CanRedo == true)
+			if (editor.CanRedo == true)
 			{
 				EditButton_Redo.Style = (Style)Resources["ClickableMenuItemBlack"];
 			}
@@ -1170,7 +1206,7 @@ namespace SimplePad
 				EditButton_Redo.Style = (Style)Resources["UnclickableMenuItem"];
 			}
 
-			if (textBoxMain.CanUndo == true)
+			if (editor.CanUndo == true)
 			{
 				EditButton_Undo.Style = (Style)Resources["ClickableMenuItemBlack"];
 			}
@@ -1190,7 +1226,7 @@ namespace SimplePad
 				this.Title = "*" + "SimplePad";
             }
 
-			findWindow.lineCounter.Content = "line amount: " + textBoxMain.LineCount.ToString();
+			findWindow.lineCounter.Content = "line amount: " + editor.LineCount.ToString();
             searchResults.Clear();
 
             textFile.isSaved = false;
@@ -1209,22 +1245,22 @@ namespace SimplePad
                 /// Scale up
                 if (e.Delta > 0)
                 {
-                    textBoxMain.FontSize += 1;
+                    editor.FontSize += 1;
                 }
                 /// Scale down
-                if (e.Delta < 0 && textBoxMain.FontSize > 1)
+                if (e.Delta < 0 && editor.FontSize > 1)
                 {
-                    textBoxMain.FontSize -= 1;
+                    editor.FontSize -= 1;
                 }
             }
             else if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
             {
-                textBoxMain.ScrollToHorizontalOffset(textBoxMain.HorizontalOffset - e.Delta);
+                editor.ScrollToHorizontalOffset(editor.HorizontalOffset - e.Delta);
                 e.Handled = true;
             }
             else
             {
-                textBoxMain.ScrollToVerticalOffset(textBoxMain.VerticalOffset - e.Delta);
+                editor.ScrollToVerticalOffset(editor.VerticalOffset - e.Delta);
                 e.Handled = true;
             }
         }
@@ -1371,11 +1407,11 @@ namespace SimplePad
             // CTRL + O
             if (e.Key == Key.O && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
 			{
-                textBoxMain.TextChanged -= textBoxMain_TextChanged;
+                editor.TextChanged -= textBoxMain_TextChanged;
 
-                textBoxMain.Text = textFile.OpenFile(textBoxMain.Text);
+                editor.Text = textFile.OpenFile(editor.Text);
 
-                textBoxMain.TextChanged += textBoxMain_TextChanged;
+                editor.TextChanged += textBoxMain_TextChanged;
 
                 e.Handled = true;
 			}
@@ -1385,12 +1421,12 @@ namespace SimplePad
                 // SHIFT
                 if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
 				{
-					textFile.SaveFile(textBoxMain.Text, true);
+					textFile.SaveFile(editor.Text, true);
 				}
 				// NO SHIFT
 				else
 				{
-					textFile.SaveFile(textBoxMain.Text);
+					textFile.SaveFile(editor.Text);
 				}
 
 				e.Handled = true;
@@ -1462,7 +1498,7 @@ namespace SimplePad
                 switch (closeSaveWindow.result)
                 {
                     case "Save":
-                        textFile.SaveFile(textBoxMain.Text);
+                        textFile.SaveFile(editor.Text);
                         Close();
                         break;
                     case "Cancel":

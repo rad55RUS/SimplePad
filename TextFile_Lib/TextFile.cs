@@ -25,7 +25,7 @@ namespace TextFile_Lib
 	public sealed class TextFile : File
 	{
         // Static fields
-        public static Encoding encoding;
+        public static Encoding? encoding;
 
 		// Events
 		#region

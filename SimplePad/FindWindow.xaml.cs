@@ -109,9 +109,9 @@ namespace SimplePad
             {
                 if (goToInput_TextBox.Text != "")
                 {
-                    if (Int32.Parse(goToInput_TextBox.Text) > ((MainWindow)this.Owner).textBoxMain.LineCount)
+                    if (Int32.Parse(goToInput_TextBox.Text) > ((MainWindow)this.Owner).editor.LineCount)
                     {
-                        goToInput_TextBox.Text = ((MainWindow)this.Owner).textBoxMain.LineCount.ToString();
+                        goToInput_TextBox.Text = ((MainWindow)this.Owner).editor.LineCount.ToString();
                     }
                     else if (Int32.Parse(goToInput_TextBox.Text) == 0)
                     {
@@ -422,7 +422,7 @@ namespace SimplePad
 
             if (replaceFrom.Length > 0)
             {
-                ((MainWindow)this.Owner).textBoxMain.Focus();
+                ((MainWindow)this.Owner).editor.Focus();
                 if (matchCase_CheckBox.IsChecked == true)
                 {
                     if (down_RadioButton.IsChecked == true)
@@ -460,7 +460,7 @@ namespace SimplePad
 
             if (replaceFrom.Length > 0)
             {
-                ((MainWindow)this.Owner).textBoxMain.Focus();
+                ((MainWindow)this.Owner).editor.Focus();
                 if (matchCase_CheckBox.IsChecked == true)
                 {
                     ((MainWindow)this.Owner).ReplaceAllStrings(replaceFrom, replaceTo, false);
@@ -555,7 +555,7 @@ namespace SimplePad
 
             if (text.Length > 0)
             {
-                ((MainWindow)this.Owner).textBoxMain.Focus();
+                ((MainWindow)this.Owner).editor.Focus();
                 if (matchCase_CheckBox.IsChecked == true)
                 {
                     if (down_RadioButton.IsChecked == true)
