@@ -454,6 +454,34 @@ namespace SimplePad
 
             return position;
         }
+
+        /// <summary>
+        /// Check selection
+        /// </summary>
+        private void CheckSelection()
+        {
+            int currentLine = GetLine(TextEditor.SelectionStart) + 1;
+
+            if (!String.IsNullOrEmpty(TextEditor.SelectedText) != !TextEditor_selectionIsEmpty)
+            {
+                TextEditor_selectionIsEmpty = !TextEditor_selectionIsEmpty;
+
+                if (!TextEditor_selectionIsEmpty)
+                {
+                    EditButton_Cut.Style = (Style)Resources["ClickableMenuItemBlack"];
+                    EditButton_Copy.Style = (Style)Resources["ClickableMenuItemBlack"];
+                    EditButton_Delete.Style = (Style)Resources["ClickableMenuItemBlack"];
+                }
+                else
+                {
+                    EditButton_Cut.Style = (Style)Resources["UnclickableMenuItem"];
+                    EditButton_Delete.Style = (Style)Resources["UnclickableMenuItem"];
+                }
+            }
+
+            findWindow.currentLine_Label.Content = "current line is " + currentLine.ToString();
+            findWindow.goToInput_TextBox.Text = currentLine.ToString();
+        }
         //
 
         // Find window methods
@@ -1171,11 +1199,22 @@ namespace SimplePad
 
         // Editor events
         /// <summary>
+        /// Event on mouse click up
+        /// </summary>
+        /// <param name="e"></param>
+        private void TextEditor_OnPreviewMouseUp(object sender, MouseEventArgs e)
+        {
+            CheckSelection();
+        }
+
+        /// <summary>
         /// ENTER - Replace selected text by new line;
         /// </summary>
         /// <param name="e"></param>
         private void TextEditor_OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
+            CheckSelection();
+
             // ENTER
             if (e.Key == Key.Enter)
             {
@@ -1199,40 +1238,6 @@ namespace SimplePad
         private void TextEditor_LostFocus(object sender, RoutedEventArgs e)
         {
             e.Handled = false;
-        }
-
-        /// <summary>
-        /// Event on text selection
-        /// </summary>
-        /// <param name="hwnd"></param>
-        /// <param name="msg"></param>
-        /// <param name="wparam"></param>
-        /// <param name="lparam"></param>
-        /// <param name="handled"></param>
-        /// <returns></returns>
-        private void TextEditor_SelectionChanged(object sender, EventArgs e)
-		{
-            int currentLine = GetLine(TextEditor.SelectionStart) + 1;
-
-			if (!String.IsNullOrEmpty(TextEditor.SelectedText) != !TextEditor_selectionIsEmpty)
-			{
-                TextEditor_selectionIsEmpty = !TextEditor_selectionIsEmpty;
-
-                if (!TextEditor_selectionIsEmpty)
-                {
-                    EditButton_Cut.Style = (Style)Resources["ClickableMenuItemBlack"];
-                    EditButton_Copy.Style = (Style)Resources["ClickableMenuItemBlack"];
-                    EditButton_Delete.Style = (Style)Resources["ClickableMenuItemBlack"];
-                }
-                else
-                {
-                    EditButton_Cut.Style = (Style)Resources["UnclickableMenuItem"];
-                    EditButton_Delete.Style = (Style)Resources["UnclickableMenuItem"];
-                }
-            }
-
-            findWindow.currentLine_Label.Content = "current line is " + currentLine.ToString();
-            findWindow.goToInput_TextBox.Text = currentLine.ToString();
         }
 
         /// <summary>
