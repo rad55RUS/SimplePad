@@ -1,2 +1,2 @@
 # SimplePad
-NO TEXT YET
+I'm too lazy to write anything in here
