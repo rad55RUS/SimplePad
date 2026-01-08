@@ -32,15 +32,15 @@
             <Button Content="Edit" Width="67" Padding="0,4" HorizontalContentAlignment="Center" CornerRadius="0">
                 <Button.Flyout>
                     <MenuFlyout Placement="BottomEdgeAlignedLeft" PlacementGravity="BottomLeft" OverlayDismissEventPassThrough="True">
-						<MenuItem Header="Undo"/>
-						<MenuItem Header="Redo"/>
+						<MenuItem Header="Undo" Click="OnUndo"/>
+						<MenuItem Header="Redo" Click="OnRedo"/>
                         <Separator/>
-						<MenuItem Header="Cut"/>
-						<MenuItem Header="Copy"/>
-						<MenuItem Header="Paste"/>
-						<MenuItem Header="Delete"/>
+						<MenuItem Header="Cut" Click="OnCut"/>
+						<MenuItem Header="Copy" Click="OnCopy"/>
+						<MenuItem Header="Paste" Click="OnPaste"/>
+						<MenuItem Header="Delete" Click="OnDelete"/>
                         <Separator/>
-						<MenuItem Header="Select all"/>
+						<MenuItem Header="Select all" Click="OnSelectAll"/>
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>
@@ -64,6 +64,6 @@
                 </Button.Flyout>
             </Button>
         </StackPanel>
-        <AvaloniaEdit:TextEditor Document="{Binding TextDocument}" Foreground="White" Background="{StaticResource TextEditorColor}" Padding="5" Grid.Row="2"/>
+        <AvaloniaEdit:TextEditor x:Name="MainTextEditor" Document="{Binding TextDocument}" Foreground="White" Background="{StaticResource TextEditorColor}" Padding="5" Grid.Row="2"/>
     </Grid>
 </UserControl>

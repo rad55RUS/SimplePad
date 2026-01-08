@@ -17,23 +17,23 @@
         Resized="Window_Resized">
     <Window.Resources>
 		<MenuFlyout x:Key="WindowControlMenu" Placement="BottomEdgeAlignedLeft" PlacementGravity="BottomLeft" OverlayDismissEventPassThrough="True">
-			<MenuItem x:Name="RestoreMenuItem" Header="Restore" PointerPressed="Restore_PointerPressed">
+			<MenuItem x:Name="RestoreMenuItem" Header="Restore" Click="OnRestore">
                 <MenuItem.Icon>
 					<Image Source="\Assets\RestoreWhiteIcon.png" Stretch="None"/>
                 </MenuItem.Icon>
             </MenuItem>
-			<MenuItem Header="Minimize" PointerPressed="Minimize_PointerPressed">
+			<MenuItem Header="Minimize" Click="OnMinimize">
                 <MenuItem.Icon>
 					<Image Source="\Assets\MinimizeWhiteIcon.png" Stretch="None"/>
                 </MenuItem.Icon>
             </MenuItem>
-			<MenuItem x:Name="MaximizeMenuItem" Header="Maximize" PointerPressed="Maximize_PointerPressed">
+			<MenuItem x:Name="MaximizeMenuItem" Header="Maximize" Click="OnMaximize">
                 <MenuItem.Icon>
 					<Image Source="\Assets\MaximizeWhiteIcon.png" Stretch="None"/>
                 </MenuItem.Icon>
             </MenuItem>
             <Separator/>
-			<MenuItem Header="Close" PointerPressed="Close_PointerPressed">
+			<MenuItem Header="Close" Click="OnClose">
                 <MenuItem.Icon>
 					<Image Source="\Assets\CloseWhiteIcon.png" Stretch="None"/>
                 </MenuItem.Icon>

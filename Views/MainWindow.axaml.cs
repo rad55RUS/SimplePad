@@ -1,6 +1,10 @@
+using System;
+
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Styling;
+
 
 namespace SimplePad.Views
 {
@@ -48,7 +52,7 @@ namespace SimplePad.Views
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Restore_PointerPressed(object? sender, PointerPressedEventArgs e)
+        private void OnRestore(object? sender, RoutedEventArgs e)
         {
             WindowState = WindowState.Normal;
         }
@@ -58,7 +62,7 @@ namespace SimplePad.Views
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Minimize_PointerPressed(object? sender, PointerPressedEventArgs e)
+        private void OnMinimize(object? sender, RoutedEventArgs e)
         {
             WindowState = WindowState.Minimized;
         }
@@ -68,7 +72,7 @@ namespace SimplePad.Views
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Maximize_PointerPressed(object? sender, PointerPressedEventArgs e)
+        private void OnMaximize(object? sender, RoutedEventArgs e)
         {
             WindowState = WindowState.Maximized;
         }
@@ -78,7 +82,7 @@ namespace SimplePad.Views
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Close_PointerPressed(object? sender, PointerPressedEventArgs e)
+        private void OnClose(object? sender, RoutedEventArgs e)
         {
             Close();
         }
