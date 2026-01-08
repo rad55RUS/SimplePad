@@ -21,18 +21,14 @@ namespace SimplePad.ViewModels
     {
         private bool _isTextChanged;
         private bool _isWordWrapEnabled;
+        private bool _canUndo = false;
+        private bool _canRedo = false;
         private string _title = "SimplePad";
         private string _currentPath = "";
         private string _intiialText = "";
         private TextDocument _textDocument = new();
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public MainViewModel()
-        {
-            _textDocument.TextChanged += TextChanged;
-        }
+        public event EventHandler? TextChanged;
 
         /// <summary>
         /// 
@@ -61,6 +57,24 @@ namespace SimplePad.ViewModels
         {
             get => _isWordWrapEnabled;
             set => SetProperty(ref _isWordWrapEnabled, value);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool CanUndo 
+        { 
+            get => _canUndo;
+            set => SetProperty(ref _canUndo, value);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool CanRedo 
+        {
+            get => _canRedo;
+            set => SetProperty(ref _canRedo, value);
         }
 
         /// <summary>
@@ -110,6 +124,14 @@ namespace SimplePad.ViewModels
         /// <summary>
         /// 
         /// </summary>
+        public MainViewModel()
+        {
+            _textDocument.TextChanged += OnTextChanged;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         [RelayCommand]
         public async Task OpenCommand()
         {
@@ -119,6 +141,11 @@ namespace SimplePad.ViewModels
             if (paths.Count == 0) return;
 
             CurrentPath = paths[0];
+
+            if (IsTextChanged)
+            {
+                await CallSaveWarning();
+            }
 
             TextDocument.Text = File.ReadAllText(CurrentPath);
 
@@ -132,6 +159,11 @@ namespace SimplePad.ViewModels
         [RelayCommand]
         public void SaveCommand()
         {
+            if (!File.Exists(CurrentPath))
+            {
+                File.Create(CurrentPath);
+            }
+
             File.WriteAllText(CurrentPath, TextDocument.Text);
 
             _intiialText = TextDocument.Text;
@@ -246,10 +278,10 @@ namespace SimplePad.ViewModels
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        /// <exception cref="NotImplementedException"></exception>
-        private void TextChanged(object? sender, EventArgs e)
+        private void OnTextChanged(object? sender, EventArgs e)
         {
             IsTextChanged = TextDocument.Text != _intiialText;
+            TextChanged?.Invoke(TextDocument, e);
         }
     }
 }

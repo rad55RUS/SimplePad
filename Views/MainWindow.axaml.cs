@@ -19,6 +19,11 @@ namespace SimplePad.Views
         /// <summary>
         /// 
         /// </summary>
+        private MainViewModel? DefinedDataContext => (MainViewModel?)DataContext;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public WindowState State
         {
             get => _state;
@@ -133,7 +138,7 @@ namespace SimplePad.Views
                     e.Cancel = true;
 
                     _forceClose = await dataContext.CallSaveWarning();
-                    Close();
+                    if (_forceClose) Close();
                 }
             }
         }

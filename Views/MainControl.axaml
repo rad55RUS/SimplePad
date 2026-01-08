@@ -41,15 +41,31 @@
             <Button Content="Edit" Width="67" Padding="0,4" HorizontalContentAlignment="Center" CornerRadius="0">
                 <Button.Flyout>
                     <MenuFlyout Placement="BottomEdgeAlignedLeft" PlacementGravity="BottomLeft" OverlayDismissEventPassThrough="True">
-						<MenuItem Header="Undo" InputGesture="Ctrl+Z" Click="OnUndo"/>
-						<MenuItem Header="Redo" InputGesture="Ctrl+Y" Click="OnRedo"/>
+						<MenuItem Header="Undo"
+                                  IsEnabled="{Binding CanUndo}"
+                                  InputGesture="Ctrl+Z"
+                                  Click="OnUndo"/>
+						<MenuItem Header="Redo"
+                                  IsEnabled="{Binding CanRedo}"
+                                  InputGesture="Ctrl+Y"
+                                  Click="OnRedo"/>
                         <Separator/>
-						<MenuItem Header="Cut" InputGesture="Ctrl+X" Click="OnCut"/>
-						<MenuItem Header="Copy" InputGesture="Ctrl+C" Click="OnCopy"/>
-						<MenuItem Header="Paste" InputGesture="Ctrl+V" Click="OnPaste"/>
-						<MenuItem Header="Delete" InputGesture="Delete" Click="OnDelete"/>
+						<MenuItem Header="Cut" 
+                                  InputGesture="Ctrl+X" 
+                                  Click="OnCut"/>
+						<MenuItem Header="Copy" 
+                                  InputGesture="Ctrl+C" 
+                                  Click="OnCopy"/>
+						<MenuItem Header="Paste"
+                                  InputGesture="Ctrl+V"
+                                  Click="OnPaste"/>
+						<MenuItem Header="Delete"
+                                  InputGesture="Delete"
+                                  Click="OnDelete"/>
                         <Separator/>
-						<MenuItem Header="Select all" InputGesture="Ctrl+A" Click="OnSelectAll"/>
+						<MenuItem Header="Select all"
+                                  InputGesture="Ctrl+A"
+                                  Click="OnSelectAll"/>
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>

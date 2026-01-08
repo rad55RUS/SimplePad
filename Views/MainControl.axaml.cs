@@ -1,5 +1,11 @@
 using Avalonia.Controls;
+using Avalonia.Data;
 using Avalonia.Interactivity;
+using AvaloniaEdit;
+using AvaloniaEdit.Document;
+using SimplePad.ViewModels;
+using System;
+using static AvaloniaEdit.Document.TextDocumentWeakEventManager;
 
 namespace SimplePad.Views
 {
@@ -8,9 +14,16 @@ namespace SimplePad.Views
         /// <summary>
         /// 
         /// </summary>
+        private MainViewModel? DefinedDataContext => (MainViewModel?)DataContext;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public MainControl()
         {
             InitializeComponent();
+
+            MainTextEditor.TextChanged += OnTextChanged;
         }
 
         /// <summary>
@@ -81,6 +94,20 @@ namespace SimplePad.Views
         private void OnSelectAll(object? sender, RoutedEventArgs e)
         {
             MainTextEditor.Select(0, MainTextEditor.Text.Length);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnTextChanged(object? sender, EventArgs e)
+        {
+            if (DefinedDataContext != null)
+            {
+                DefinedDataContext.CanUndo = MainTextEditor.CanUndo;
+                DefinedDataContext.CanRedo = MainTextEditor.CanRedo;
+            }
         }
     }
 }
