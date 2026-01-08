@@ -13,11 +13,24 @@ using SimplePad.Services;
 
 namespace SimplePad.ViewModels
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public partial class MainViewModel : ViewModelBase
     {
+        private bool _isWordWrapEnabled;
         private string _title = "SimplePad";
         private string _currentPath = "";
         private TextDocument _textDocument = new();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsWordWrapEnabled
+        {
+            get => _isWordWrapEnabled;
+            set => SetProperty(ref _isWordWrapEnabled, value);
+        }
 
         /// <summary>
         /// 
@@ -73,6 +86,15 @@ namespace SimplePad.ViewModels
         public void SaveCommand()
         {
             File.WriteAllText(CurrentPath, TextDocument.Text);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [RelayCommand]
+        public void WordWrapCommand()
+        {
+            IsWordWrapEnabled = !IsWordWrapEnabled;
         }
 
         /// <summary>

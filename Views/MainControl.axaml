@@ -58,8 +58,12 @@
             </Button>
             <Button Content="Format" Width="67" Padding="0,4" HorizontalContentAlignment="Center" CornerRadius="0">
                 <Button.Flyout>
-                    <MenuFlyout Placement="BottomEdgeAlignedLeft" PlacementGravity="BottomLeft"  OverlayDismissEventPassThrough="True">
-						<MenuItem Header="Word wrap"/>
+                    <MenuFlyout Placement="BottomEdgeAlignedLeft" PlacementGravity="BottomLeft" OverlayDismissEventPassThrough="True">
+						<MenuItem Header="Word wrap" Command="{Binding WordWrapCommand}">
+                            <MenuItem.Icon>
+								<CheckBox IsChecked="{Binding IsWordWrapEnabled}" IsHitTestVisible="False"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>
@@ -69,6 +73,7 @@
                                  Foreground="White"
                                  Background="{StaticResource TextEditorColor}"
                                  Padding="5"
+                                 WordWrap="{Binding IsWordWrapEnabled}"
                                  ContextFlyout="{DynamicResource TextEditorControlMenu}"
                                  Grid.Row="2"/>
     </Grid>

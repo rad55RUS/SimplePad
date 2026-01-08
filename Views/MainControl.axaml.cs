@@ -82,6 +82,5 @@ namespace SimplePad.Views
         {
             MainTextEditor.Select(0, MainTextEditor.Text.Length);
         }
-
     }
 }
