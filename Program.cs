@@ -1,8 +1,10 @@
 ﻿using System;
+
 using Avalonia;
+
 using ReactiveUI.Avalonia;
 
-namespace SimplePad_2._0
+namespace SimplePad
 {
     internal sealed class Program
     {

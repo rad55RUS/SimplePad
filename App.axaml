@@ -1,15 +1,76 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="SimplePad_2._0.App"
-             xmlns:local="using:SimplePad_2._0"
-             RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
-
+             xmlns:AvaloniaEdit="using:AvaloniaEdit"
+             x:Class="SimplePad.App"
+             xmlns:local="using:SimplePad"
+             RequestedThemeVariant="Dark">
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
-  
     <Application.Styles>
         <FluentTheme />
+        <StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
+        <!-- Common styles -->
+        <!--| Window style -->
+        <Style Selector="Window">
+			<Setter Property="Background" Value="{DynamicResource DefaultBackgroundColor}"/>
+        </Style>
+        <!--|-->
+		<!--| TextEditor style -->
+		<Style Selector="AvaloniaEdit|TextEditor">
+			<Setter Property="FontFamily" Value="Consolas"/>
+		</Style>
+		<!--|-->
+        <!--| Button style -->
+        <Style Selector="Button">
+			<Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="{DynamicResource DefaultButtonColor}"/>
+        </Style>
+        <!--|-->
+        <!--| Context menu style -->
+        <Style Selector="ContextMenu">
+			<Setter Property="Background" Value="{DynamicResource DefaultButtonColor}"/>
+        </Style>
+        <!--|-->
+        <!--| Flyout menu style -->
+        <Style Selector="MenuFlyoutPresenter">
+			<Setter Property="Background" Value="{DynamicResource DefaultButtonColor}"/>
+        </Style>
+        <!--|-->
+        <!--| Menu item style -->
+        <Style Selector="MenuItem">
+			<Setter Property="Background" Value="{DynamicResource DefaultButtonColor}"/>
+        </Style>
+        <!--|-->
+        <!--| Scrollbar style -->
+        <Style Selector="ScrollBar">
+			<Setter Property="AllowAutoHide" Value="False"/>
+        </Style>
+        <!--|-->
+        <!---->
+        <!-- Specific styles -->
+        <!--| Button styles -->
+        <Style Selector="Button.Transparent">
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+        <Style Selector="Button.Transparent:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+        <Style Selector="Button.Transparent:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+        <!--|-->
+        <!--| Menu item styles -->
+        <Style Selector="MenuItem.Unclickable">
+			<Setter Property="Opacity" Value="0.5"/>
+            <Setter Property="IsEnabled" Value="False"/>
+        </Style>
+        <!--|-->
+        <!---->
     </Application.Styles>
+    <Application.Resources>
+        <SolidColorBrush x:Key="DefaultBackgroundColor">#FF202020</SolidColorBrush>
+        <SolidColorBrush x:Key="DefaultButtonColor">#FF2F2F2F</SolidColorBrush>
+		<SolidColorBrush x:Key="TextEditorColor">#FF151515</SolidColorBrush>
+    </Application.Resources>
 </Application>

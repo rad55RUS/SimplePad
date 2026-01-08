@@ -1,23 +1,66 @@
 <Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:SimplePad_2._0.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:SimplePad.ViewModels"
+		xmlns:v="using:SimplePad.Views"
         mc:Ignorable="d" 
         d:DesignWidth="800" 
         d:DesignHeight="450"
-        x:Class="SimplePad_2._0.Views.MainWindow"
-        x:DataType="vm:MainWindowViewModel"
+        x:Class="SimplePad.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
         Icon="\Icon.ico"
-        Title="SimplePad_2._0"
+        Title="SimplePad"
         MinHeight="100" 
-        MinWidth="250">
+        MinWidth="250"
+        ExtendClientAreaToDecorationsHint="True"
+        Resized="Window_Resized">
+    <Window.Resources>
+		<MenuFlyout x:Key="WindowControlMenu" Placement="BottomEdgeAlignedLeft" PlacementGravity="BottomLeft" OverlayDismissEventPassThrough="True">
+			<MenuItem x:Name="RestoreMenuItem" Header="Restore" PointerPressed="Restore_PointerPressed">
+                <MenuItem.Icon>
+					<Image Source="\Assets\RestoreWhiteIcon.png" Stretch="None"/>
+                </MenuItem.Icon>
+            </MenuItem>
+			<MenuItem Header="Minimize" PointerPressed="Minimize_PointerPressed">
+                <MenuItem.Icon>
+					<Image Source="\Assets\MinimizeWhiteIcon.png" Stretch="None"/>
+                </MenuItem.Icon>
+            </MenuItem>
+			<MenuItem x:Name="MaximizeMenuItem" Header="Maximize" PointerPressed="Maximize_PointerPressed">
+                <MenuItem.Icon>
+					<Image Source="\Assets\MaximizeWhiteIcon.png" Stretch="None"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator/>
+			<MenuItem Header="Close" PointerPressed="Close_PointerPressed">
+                <MenuItem.Icon>
+					<Image Source="\Assets\CloseWhiteIcon.png" Stretch="None"/>
+                </MenuItem.Icon>
+            </MenuItem>
+        </MenuFlyout>
+    </Window.Resources>
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
+        <vm:MainViewModel/>
     </Design.DataContext>
-
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
+    <Grid>
+        <Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Margin="4,0,0,0"
+              Background="{DynamicResource DefaultBackgroundColor}"
+              ContextFlyout="{StaticResource WindowControlMenu}"
+              PointerPressed="TitleBar_PointerPressed">
+            <Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button Classes="Transparent" Flyout="{StaticResource WindowControlMenu}">
+                <Image Width="32" Source="\Icon.ico" Height="22" IsHitTestVisible="False" RenderOptions.EdgeMode="Aliased"/>
+            </Button>
+            <Label Content="{Binding Title}" Padding="5,8" IsHitTestVisible="False" Grid.Column="1"/>
+        </Grid>
+        <v:MainControl Grid.Row="1"/>
+    </Grid>
 </Window>

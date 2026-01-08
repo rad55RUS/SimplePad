@@ -18,16 +18,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.3.9" />
+    <PackageReference Include="Avalonia" Version="11.3.10" />
     <PackageReference Include="Avalonia.AvaloniaEdit" Version="11.3.0" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.3.9" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.9" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.9" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.10" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.10" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.10" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Include="Avalonia.Diagnostics" Version="11.3.9">
+    <PackageReference Include="Avalonia.Diagnostics" Version="11.3.10">
       <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
       <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="ReactiveUI.Avalonia" Version="11.3.8" />
   </ItemGroup>
 
@@ -35,5 +36,62 @@
     <AvaloniaResource Include="Icon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AvaloniaResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Update="Assets\CloseBlack.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\CloseBlackIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\CloseWhite.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\CloseWhiteIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\MaximizeBlack.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\MaximizeBlackIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\MaximizeWhite.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\MaximizeWhiteIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\MinimizeBlack.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\MinimizeBlackIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\MinimizeWhite.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\MinimizeWhiteIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\RestoreBlack.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\RestoreBlackIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\RestoreWhite.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\RestoreWhiteIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\MainControl.axaml.cs">
+      <DependentUpon>MainControl.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

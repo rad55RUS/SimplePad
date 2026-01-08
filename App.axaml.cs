@@ -1,10 +1,11 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using SimplePad_2._0.ViewModels;
-using SimplePad_2._0.Views;
 
-namespace SimplePad_2._0
+using SimplePad.ViewModels;
+using SimplePad.Views;
+
+namespace SimplePad
 {
     public partial class App : Application
     {
@@ -19,7 +20,7 @@ namespace SimplePad_2._0
             {
                 desktop.MainWindow = new MainWindow
                 {
-                    DataContext = new MainWindowViewModel(),
+                    DataContext = new MainViewModel(),
                 };
             }
 

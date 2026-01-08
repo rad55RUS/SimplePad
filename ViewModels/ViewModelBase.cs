@@ -1,8 +1,8 @@
-﻿using ReactiveUI;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace SimplePad_2._0.ViewModels
+namespace SimplePad.ViewModels
 {
-    public abstract class ViewModelBase : ReactiveObject
+    public abstract class ViewModelBase : ObservableObject
     {
     }
 }
