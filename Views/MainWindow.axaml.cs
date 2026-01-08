@@ -1,22 +1,26 @@
 using System;
+using System.Threading.Tasks;
 
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Styling;
+using Avalonia.Threading;
+using SimplePad.ViewModels;
 
 
 namespace SimplePad.Views
 {
     public partial class MainWindow : Window
     {
+        private bool _forceClose = false;
         private WindowState _state = WindowState.Minimized;
 
         /// <summary>
         /// 
         /// </summary>
-        public WindowState State 
-        { 
+        public WindowState State
+        {
             get => _state;
             set
             {
@@ -92,7 +96,7 @@ namespace SimplePad.Views
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Window_Resized(object? sender, WindowResizedEventArgs e)
+        private void OnResized(object? sender, WindowResizedEventArgs e)
         {
             if (WindowState == State) return;
 
@@ -110,6 +114,27 @@ namespace SimplePad.Views
                     MaximizeMenuItem.Classes.Add("Unclickable");
                     break;
 
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void OnClosing(object? sender, WindowClosingEventArgs e)
+        {
+            if (_forceClose) return;
+
+            if (DataContext is MainViewModel dataContext)
+            {
+                if (dataContext.IsTextChanged)
+                {
+                    e.Cancel = true;
+
+                    _forceClose = await dataContext.CallSaveWarning();
+                    Close();
+                }
             }
         }
     }

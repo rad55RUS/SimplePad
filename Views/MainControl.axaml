@@ -22,10 +22,19 @@
                 <Button.Flyout>
                     <MenuFlyout Placement="BottomEdgeAlignedLeft" PlacementGravity="BottomLeft" OverlayDismissEventPassThrough="True">
 						<MenuItem Header="Open..." InputGesture="Ctrl+O" Command="{Binding OpenCommand}"/>
-						<MenuItem Header="Save" InputGesture="Ctrl+S" Command="{Binding SaveCommand}"/>
+						<MenuItem Header="Save"
+                                  IsEnabled="{Binding CurrentPath, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                  InputGesture="Ctrl+S"
+                                  Command="{Binding SaveCommand}"/>
 						<MenuItem Header="Save as..." InputGesture="Ctrl+Shift+S" Command="{Binding SaveAsCommandCommand}"/>
-						<MenuItem Header="Rename or move..." InputGesture="Ctrl+Shift+R" Command="{Binding RenameOrMoveCommand}"/>
-						<MenuItem Header="Move to the Recycle Bin..." InputGesture="Ctrl+Shift+Delete" Command="{Binding DeleteCommand}"/>
+						<MenuItem Header="Rename or move..."
+                                  IsEnabled="{Binding CurrentPath, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                  InputGesture="Ctrl+Shift+R"
+                                  Command="{Binding RenameOrMoveCommand}"/>
+						<MenuItem Header="Move to the Recycle Bin..."
+                                  IsEnabled="{Binding CurrentPath, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                  InputGesture="Ctrl+Shift+Delete"
+                                  Command="{Binding DeleteCommand}"/>
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>
