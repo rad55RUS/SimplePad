@@ -21,38 +21,38 @@
             <Button Content="File" Width="67" Padding="0,4" HorizontalContentAlignment="Center" CornerRadius="0">
                 <Button.Flyout>
                     <MenuFlyout Placement="BottomEdgeAlignedLeft" PlacementGravity="BottomLeft" OverlayDismissEventPassThrough="True">
-						<MenuItem Header="Open..." Command="{Binding OpenCommand}"/>
-						<MenuItem Header="Save" Command="{Binding SaveCommand}"/>
-						<MenuItem Header="Save as..." Command="{Binding SaveAsCommandCommand}"/>
-						<MenuItem Header="Rename or move..."/>
-						<MenuItem Header="Move to the Recycle Bin..."/>
+						<MenuItem Header="Open..." InputGesture="Ctrl+O" Command="{Binding OpenCommand}"/>
+						<MenuItem Header="Save" InputGesture="Ctrl+S" Command="{Binding SaveCommand}"/>
+						<MenuItem Header="Save as..." InputGesture="Ctrl+Shift+S" Command="{Binding SaveAsCommandCommand}"/>
+						<MenuItem Header="Rename or move..." InputGesture="Ctrl+Shift+R"/>
+						<MenuItem Header="Move to the Recycle Bin..." InputGesture="Ctrl+Shift+Delete"/>
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>
             <Button Content="Edit" Width="67" Padding="0,4" HorizontalContentAlignment="Center" CornerRadius="0">
                 <Button.Flyout>
                     <MenuFlyout Placement="BottomEdgeAlignedLeft" PlacementGravity="BottomLeft" OverlayDismissEventPassThrough="True">
-						<MenuItem Header="Undo" Click="OnUndo"/>
-						<MenuItem Header="Redo" Click="OnRedo"/>
+						<MenuItem Header="Undo" InputGesture="Ctrl+Z" Click="OnUndo"/>
+						<MenuItem Header="Redo" InputGesture="Ctrl+Y" Click="OnRedo"/>
                         <Separator/>
-						<MenuItem Header="Cut" Click="OnCut"/>
-						<MenuItem Header="Copy" Click="OnCopy"/>
-						<MenuItem Header="Paste" Click="OnPaste"/>
-						<MenuItem Header="Delete" Click="OnDelete"/>
+						<MenuItem Header="Cut" InputGesture="Ctrl+X" Click="OnCut"/>
+						<MenuItem Header="Copy" InputGesture="Ctrl+C" Click="OnCopy"/>
+						<MenuItem Header="Paste" InputGesture="Ctrl+V" Click="OnPaste"/>
+						<MenuItem Header="Delete" InputGesture="Delete" Click="OnDelete"/>
                         <Separator/>
-						<MenuItem Header="Select all" Click="OnSelectAll"/>
+						<MenuItem Header="Select all" InputGesture="Ctrl+A" Click="OnSelectAll"/>
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>
             <Button Content="Search" Width="67" Padding="0,4" HorizontalContentAlignment="Center" CornerRadius="0">
                 <Button.Flyout>
                     <MenuFlyout Placement="BottomEdgeAlignedLeft" PlacementGravity="BottomLeft"  OverlayDismissEventPassThrough="True">
-						<MenuItem Header="Find..."/>
-						<MenuItem Header="Find in Files..."/>
-						<MenuItem Header="Find next"/>
-						<MenuItem Header="Find previous"/>
-						<MenuItem Header="Replace..."/>
-						<MenuItem Header="Go to..."/>
+						<MenuItem Header="Find..." InputGesture="Ctrl+F"/>
+						<MenuItem Header="Find in Files..." InputGesture="Ctrl+Shift+F"/>
+						<MenuItem Header="Find next" InputGesture="F3"/>
+						<MenuItem Header="Find previous" InputGesture="Shift+F3"/>
+						<MenuItem Header="Replace..." InputGesture="Ctrl+H"/>
+						<MenuItem Header="Go to..." InputGesture="Ctrl+G"/>
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>

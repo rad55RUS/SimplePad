@@ -33,7 +33,7 @@
                 </MenuItem.Icon>
             </MenuItem>
             <Separator/>
-			<MenuItem Header="Close" Click="OnClose">
+			<MenuItem Header="Close" InputGesture="Alt+F4" Click="OnClose">
                 <MenuItem.Icon>
 					<Image Source="\Assets\CloseWhiteIcon.png" Stretch="None"/>
                 </MenuItem.Icon>
