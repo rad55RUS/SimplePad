@@ -24,8 +24,8 @@
 						<MenuItem Header="Open..." InputGesture="Ctrl+O" Command="{Binding OpenCommand}"/>
 						<MenuItem Header="Save" InputGesture="Ctrl+S" Command="{Binding SaveCommand}"/>
 						<MenuItem Header="Save as..." InputGesture="Ctrl+Shift+S" Command="{Binding SaveAsCommandCommand}"/>
-						<MenuItem Header="Rename or move..." InputGesture="Ctrl+Shift+R"/>
-						<MenuItem Header="Move to the Recycle Bin..." InputGesture="Ctrl+Shift+Delete"/>
+						<MenuItem Header="Rename or move..." InputGesture="Ctrl+Shift+R" Command="{Binding RenameOrMoveCommand}"/>
+						<MenuItem Header="Move to the Recycle Bin..." InputGesture="Ctrl+Shift+Delete" Command="{Binding DeleteCommand}"/>
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>

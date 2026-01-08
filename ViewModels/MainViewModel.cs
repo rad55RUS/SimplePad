@@ -1,14 +1,14 @@
-﻿using System;
+﻿using AvaloniaEdit.Document;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.VisualBasic.FileIO;
+using SimplePad.Services;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-
-using AvaloniaEdit.Document;
-
-using CommunityToolkit.Mvvm.Input;
-
-using SimplePad.Services;
 
 
 namespace SimplePad.ViewModels
@@ -86,6 +86,37 @@ namespace SimplePad.ViewModels
         public void SaveCommand()
         {
             File.WriteAllText(CurrentPath, TextDocument.Text);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [RelayCommand]
+        public async Task RenameOrMoveCommand()
+        {
+            string? path = await FileDialogService.SaveFileAsync();
+
+            if (String.IsNullOrEmpty(path)) return;
+
+            File.Move(CurrentPath, path);
+
+            CurrentPath = path;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [RelayCommand]
+        public void DeleteCommand()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                FileSystem.DeleteFile(CurrentPath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                Process.Start("gio", $"trash \"{CurrentPath}\"");
+            }
         }
 
         /// <summary>
