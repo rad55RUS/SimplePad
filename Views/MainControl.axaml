@@ -64,6 +64,12 @@
                 </Button.Flyout>
             </Button>
         </StackPanel>
-        <AvaloniaEdit:TextEditor x:Name="MainTextEditor" Document="{Binding TextDocument}" Foreground="White" Background="{StaticResource TextEditorColor}" Padding="5" Grid.Row="2"/>
+        <AvaloniaEdit:TextEditor x:Name="MainTextEditor"
+                                 Document="{Binding TextDocument}"
+                                 Foreground="White"
+                                 Background="{StaticResource TextEditorColor}"
+                                 Padding="5"
+                                 ContextFlyout="{DynamicResource TextEditorControlMenu}"
+                                 Grid.Row="2"/>
     </Grid>
 </UserControl>

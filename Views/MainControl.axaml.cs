@@ -80,7 +80,7 @@ namespace SimplePad.Views
         /// <param name="e"></param>
         private void OnSelectAll(object? sender, RoutedEventArgs e)
         {
-            MainTextEditor.SelectAll();
+            MainTextEditor.Select(0, MainTextEditor.Text.Length);
         }
 
     }
