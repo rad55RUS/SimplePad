@@ -2,15 +2,24 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:SimplePad.ViewModels"
+        xmlns:ViewModels="using:SimplePad.ViewModels"
         xmlns:AvaloniaEdit="using:AvaloniaEdit"
+        xmlns:Search="using:AvaloniaEdit.Search"
         mc:Ignorable="d" 
         d:DesignWidth="800" 
         d:DesignHeight="450"
-        x:Class="SimplePad.Views.MainControl"
-        x:DataType="vm:MainViewModel">
+        x:Class="SimplePad.Views.MainView"
+        x:DataType="ViewModels:MainViewModel"
+        Loaded="OnLoaded">
+    <UserControl.KeyBindings>
+		<KeyBinding Gesture="Ctrl+O" Command="{Binding OpenCommand}"/>
+        <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveCommand}"/>
+        <KeyBinding Gesture="Ctrl+Shift+S" Command="{Binding SaveAsCommandCommand}"/>
+        <KeyBinding Gesture="Ctrl+Shift+R" Command="{Binding RenameOrMoveCommand}"/>
+        <KeyBinding Gesture="Ctrl+Shift+Delete" Command="{Binding DeleteCommand}"/>
+    </UserControl.KeyBindings>
     <Design.DataContext>
-        <vm:MainViewModel/>
+        <ViewModels:MainViewModel/>
     </Design.DataContext>
     <Grid>
         <Grid.RowDefinitions>
@@ -72,12 +81,12 @@
             <Button Content="Search" Width="67" Padding="0,4" HorizontalContentAlignment="Center" CornerRadius="0">
                 <Button.Flyout>
                     <MenuFlyout Placement="BottomEdgeAlignedLeft" PlacementGravity="BottomLeft"  OverlayDismissEventPassThrough="True">
-						<MenuItem Header="Find..." InputGesture="Ctrl+F"/>
-						<MenuItem Header="Find in Files..." InputGesture="Ctrl+Shift+F"/>
-						<MenuItem Header="Find next" InputGesture="F3"/>
-						<MenuItem Header="Find previous" InputGesture="Shift+F3"/>
-						<MenuItem Header="Replace..." InputGesture="Ctrl+H"/>
-						<MenuItem Header="Go to..." InputGesture="Ctrl+G"/>
+						<MenuItem Header="Find..." InputGesture="Ctrl+F" Click="OnFind"/>
+						<MenuItem Header="Find in Files..." InputGesture="Ctrl+Shift+F" Click="OnFindInFiles"/>
+						<MenuItem Header="Find next" InputGesture="F3" Command="{Binding FindNextCommand}"/>
+						<MenuItem Header="Find previous" InputGesture="Shift+F3" Command="{Binding FindPreviousCommand}"/>
+						<MenuItem Header="Replace..." InputGesture="Ctrl+H" Click="OnReplace"/>
+						<MenuItem Header="Go to..." InputGesture="Ctrl+G" Click="OnGoto"/>
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>

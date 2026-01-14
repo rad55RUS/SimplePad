@@ -1,12 +1,12 @@
-using System;
-using System.Threading.Tasks;
-
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Styling;
 using Avalonia.Threading;
+using SimplePad.Services;
 using SimplePad.ViewModels;
+using System;
+using System.Threading.Tasks;
 
 
 namespace SimplePad.Views
@@ -44,6 +44,42 @@ namespace SimplePad.Views
         public MainWindow()
         {
             InitializeComponent();
+
+            AddHandler(KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnKeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.KeyModifiers.HasFlag(KeyModifiers.Control))
+            {
+                switch (e.Key)
+                {
+                    case Key.F:
+                        if (!e.KeyModifiers.HasFlag(KeyModifiers.Shift))
+                        {
+                            OnFind(this, new RoutedEventArgs());
+                        }
+                        else
+                        {
+                            OnFindInFiles(this, new RoutedEventArgs());
+                        }
+                        e.Handled = true;
+                        break;
+                    case Key.H:
+                        OnReplace(this, new RoutedEventArgs());
+                        e.Handled = true;
+                        break;
+                    case Key.G:
+                        OnGoto(this, new RoutedEventArgs());
+                        e.Handled = true;
+                        break;
+                }
+            }
         }
 
         /// <summary>
@@ -142,5 +178,51 @@ namespace SimplePad.Views
                 }
             }
         }
+
+        #region Search Window Event Handlers
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnFind(object? sender, RoutedEventArgs e)
+        {
+            SearchWindowService.SearchWindow.SearchTabControl.SelectedIndex = 0;
+            SearchWindowService.SearchWindow.Show(this);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnFindInFiles(object? sender, RoutedEventArgs e)
+        {
+            SearchWindowService.SearchWindow.SearchTabControl.SelectedIndex = 2;
+            SearchWindowService.SearchWindow.Show(this);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnReplace(object? sender, RoutedEventArgs e)
+        {
+            SearchWindowService.SearchWindow.SearchTabControl.SelectedIndex = 1;
+            SearchWindowService.SearchWindow.Show(this);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnGoto(object? sender, RoutedEventArgs e)
+        {
+            SearchWindowService.SearchWindow.SearchTabControl.SelectedIndex = 3;
+            SearchWindowService.SearchWindow.Show(this);
+        }
+        #endregion
     }
 }

@@ -1,11 +1,11 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:AvaloniaEdit="using:AvaloniaEdit"
+             xmlns:Local="using:SimplePad"
              x:Class="SimplePad.App"
-             xmlns:local="using:SimplePad"
              RequestedThemeVariant="Dark">
     <Application.DataTemplates>
-        <local:ViewLocator/>
+        <Local:ViewLocator/>
     </Application.DataTemplates>
     <Application.Styles>
         <FluentTheme />
@@ -16,6 +16,23 @@
 			<Setter Property="Background" Value="{DynamicResource DefaultBackgroundColor}"/>
         </Style>
         <!--|-->
+        <!--| Label style -->
+        <Style Selector="Label">
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+        <!--|-->
+        <!--| TextBox style -->
+        <Style Selector="TextBox">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="BorderBrush" Value="DimGray"/>
+        </Style>
+        <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="DarkGray"/>
+        </Style>
+        <Style Selector="TextBox:focus:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="DimGray"/>
+        </Style>
+        <!--|-->
 		<!--| TextEditor style -->
 		<Style Selector="AvaloniaEdit|TextEditor">
 			<Setter Property="FontFamily" Value="Consolas"/>
@@ -23,8 +40,39 @@
 		<!--|-->
         <!--| Button style -->
         <Style Selector="Button">
+            <Setter Property="FontSize" Value="13"/>
 			<Setter Property="Foreground" Value="White"/>
             <Setter Property="Background" Value="{DynamicResource DefaultButtonColor}"/>
+        </Style>
+        <!--|-->
+        <!--| RadioButton style -->
+        <Style Selector="RadioButton">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="3"/>
+        </Style>
+        <Style Selector="RadioButton:unchecked /template/ Ellipse#OuterEllipse">
+			<Setter Property="Width" Value="12"/>
+			<Setter Property="Height" Value="12"/>
+            <Setter Property="Fill" Value="White"/>
+        </Style>
+        <Style Selector="RadioButton:checked /template/ Ellipse#CheckOuterEllipse">
+			<Setter Property="Width" Value="12"/>
+			<Setter Property="Height" Value="12"/>
+        </Style>
+        <Style Selector="RadioButton:pointerover /template/ Ellipse#OuterEllipse">
+            <Setter Property="Stroke" Value="DodgerBlue"/>
+        </Style>
+        <!--|-->
+        <!--| CheckBox style -->
+        <Style Selector="CheckBox">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="3"/>
+        </Style>
+        <Style Selector="CheckBox.Common:unchecked /template/ Border#NormalRectangle">
+            <Setter Property="Background" Value="White"/>
+        </Style>
+        <Style Selector="CheckBox:pointerover /template/ Border#NormalRectangle">
+            <Setter Property="BorderBrush" Value="DodgerBlue"/>
         </Style>
         <!--|-->
         <!--| Context menu style -->
@@ -40,6 +88,16 @@
         <!--| Menu item style -->
         <Style Selector="MenuItem">
 			<Setter Property="Background" Value="{DynamicResource DefaultButtonColor}"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+        <!--|-->
+        <!-- Tab item style -->
+        <Style Selector="TabItem">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+        <Style Selector="TabItem:disabled">
+            <Setter Property="Foreground" Value="White"/>
         </Style>
         <!--|-->
         <!--| Scrollbar style -->
@@ -50,6 +108,12 @@
         <!---->
         <!-- Specific styles -->
         <!--| Button styles -->
+        <Style Selector="Button.Red:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#E81123"/>
+        </Style>
+        <Style Selector="Button.Red:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#F1707A"/>
+        </Style>
         <Style Selector="Button.Transparent">
             <Setter Property="Background" Value="Transparent"/>
         </Style>
@@ -58,6 +122,20 @@
         </Style>
         <Style Selector="Button.Transparent:pressed /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="Transparent"/>
+        </Style>
+        <!--|-->
+        <!--| CheckBox styles -->
+        <Style Selector="CheckBox.Common:unchecked /template/ Border#NormalRectangle">
+			<Setter Property="Width" Value="12"/>
+			<Setter Property="Height" Value="12"/>
+        </Style>
+        <Style Selector="CheckBox.Common:checked /template/ Border#NormalRectangle">
+			<Setter Property="Width" Value="12"/>
+			<Setter Property="Height" Value="12"/>
+        </Style>
+        <Style Selector="CheckBox.Common Panel">
+			<Setter Property="Width" Value="20"/>
+			<Setter Property="Height" Value="20"/>
         </Style>
         <!--|-->
         <!--| Menu item styles -->
@@ -70,6 +148,7 @@
     </Application.Styles>
     <Application.Resources>
         <!-- Colors -->
+        <SolidColorBrush x:Key="DefaultBorderColor">#FF383838</SolidColorBrush>
         <SolidColorBrush x:Key="DefaultBackgroundColor">#FF202020</SolidColorBrush>
         <SolidColorBrush x:Key="DefaultButtonColor">#FF2F2F2F</SolidColorBrush>
 		<SolidColorBrush x:Key="TextEditorColor">#FF151515</SolidColorBrush>

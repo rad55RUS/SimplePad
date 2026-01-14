@@ -2,22 +2,22 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:SimplePad.ViewModels"
-		xmlns:v="using:SimplePad.Views"
+        xmlns:ViewModels="using:SimplePad.ViewModels"
+		xmlns:Views="using:SimplePad.Views"
         mc:Ignorable="d" 
-        d:DesignWidth="800" 
-        d:DesignHeight="450"
+        d:DesignWidth="800" d:DesignHeight="450"
         x:Class="SimplePad.Views.MainWindow"
-        x:DataType="vm:MainViewModel"
-        Icon="\Icon.ico"
-        Title="SimplePad"
-        MinHeight="100" 
-        MinWidth="250"
+        x:DataType="ViewModels:MainViewModel"
+        Title="SimplePad" Icon="\Icon.ico"
+        MinWidth="250" MinHeight="100" 
         ExtendClientAreaToDecorationsHint="True"
         Resized="OnResized"
         Closing="OnClosing">
     <Window.Resources>
-		<MenuFlyout x:Key="WindowControlMenu" Placement="BottomEdgeAlignedLeft" PlacementGravity="BottomLeft" OverlayDismissEventPassThrough="True">
+		<MenuFlyout x:Key="WindowControlMenu" 
+                    Placement="BottomEdgeAlignedLeft"
+                    PlacementGravity="BottomLeft"
+                    OverlayDismissEventPassThrough="True">
 			<MenuItem x:Name="RestoreMenuItem" Header="Restore" Click="OnRestore">
                 <MenuItem.Icon>
 					<Image Source="\Assets\RestoreWhiteIcon.png" Stretch="None"/>
@@ -42,7 +42,7 @@
         </MenuFlyout>
     </Window.Resources>
     <Design.DataContext>
-        <vm:MainViewModel/>
+        <ViewModels:MainViewModel/>
     </Design.DataContext>
     <Grid>
         <Grid.RowDefinitions>
@@ -62,6 +62,6 @@
             </Button>
             <Label Content="{Binding Title}" Padding="5,8" IsHitTestVisible="False" Grid.Column="1"/>
         </Grid>
-        <v:MainControl Grid.Row="1"/>
+        <Views:MainView Grid.Row="1"/>
     </Grid>
 </Window>

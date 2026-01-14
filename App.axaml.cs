@@ -6,6 +6,7 @@ using Avalonia.Markup.Xaml;
 
 using AvaloniaEdit;
 
+using SimplePad.Services;
 using SimplePad.ViewModels;
 using SimplePad.Views;
 
@@ -24,10 +25,14 @@ namespace SimplePad
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
+                MainViewModel MainDataContext = new();
+
                 desktop.MainWindow = new MainWindow
                 {
-                    DataContext = new MainViewModel(),
+                    DataContext = MainDataContext,
                 };
+
+                SearchWindowService.SearchWindow.DataContext = MainDataContext;
             }
 
             base.OnFrameworkInitializationCompleted();

@@ -1,6 +1,8 @@
-﻿using AvaloniaEdit.Document;
+﻿using AvaloniaEdit;
+using AvaloniaEdit.Document;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.VisualBasic.FileIO;
+using SimplePad.EventHandlers;
 using SimplePad.Services;
 using System;
 using System.Collections.Generic;
@@ -21,15 +23,30 @@ namespace SimplePad.ViewModels
     {
         private bool _isTextChanged;
         private bool _isWordWrapEnabled;
+        private bool _isUpDirection = false;
+        private bool _isMatchCase = false;
+        private bool _isMultipleLineInput = false;
         private bool _canUndo = false;
         private bool _canRedo = false;
         private string _title = "SimplePad";
         private string _currentPath = "";
         private string _intiialText = "";
+        private string _findText = "";
+        private string _replaceText = "";
+        private string _goToLineText = "";
         private TextDocument _textDocument = new();
 
         public event EventHandler? TextChanged;
+        public event SearchEventHandler? FindNextCalled;
+        public event SearchEventHandler? FindPreviousCalled;
+        public event SearchEventHandler? FindInFilesCalled;
+        public event SearchEventHandler? ReplaceInFilesCalled;
+        public event SearchEventHandler? ReplaceNextCalled;
+        public event SearchEventHandler? ReplacePreviousCalled;
+        public event SearchEventHandler? ReplaceAllCalled;
+        public event EventHandler<string>? GotoCalled;
 
+        #region Boolean Properties
         /// <summary>
         /// 
         /// </summary>
@@ -62,6 +79,33 @@ namespace SimplePad.ViewModels
         /// <summary>
         /// 
         /// </summary>
+        public bool IsUpDirection
+        {
+            get => _isUpDirection;
+            set => SetProperty(ref _isUpDirection, value);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsMatchCase
+        {
+            get => _isMatchCase;
+            set => SetProperty(ref _isMatchCase, value);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsMultipleLineInput
+        {
+            get => _isMultipleLineInput;
+            set => SetProperty(ref _isMultipleLineInput, value);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public bool CanUndo 
         { 
             get => _canUndo;
@@ -76,7 +120,9 @@ namespace SimplePad.ViewModels
             get => _canRedo;
             set => SetProperty(ref _canRedo, value);
         }
+        #endregion
 
+        #region String Properties
         /// <summary>
         /// 
         /// </summary>
@@ -116,6 +162,34 @@ namespace SimplePad.ViewModels
         /// <summary>
         /// 
         /// </summary>
+        public string FindText
+        {
+            get => _findText;
+            set => SetProperty(ref _findText, value);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string ReplaceText
+        {
+            get => _replaceText;
+            set => SetProperty(ref _replaceText, value);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string GotoText
+        {
+            get => _goToLineText;
+            set => SetProperty(ref _goToLineText, value);
+        }
+        #endregion
+
+        /// <summary>
+        /// 
+        /// </summary>
         public TextDocument TextDocument
         {
             get => _textDocument;
@@ -129,6 +203,7 @@ namespace SimplePad.ViewModels
             _textDocument.TextChanged += OnTextChanged;
         }
 
+        #region File Commands
         /// <summary>
         /// 
         /// </summary>
@@ -140,12 +215,12 @@ namespace SimplePad.ViewModels
             if (paths == null) return;
             if (paths.Count == 0) return;
 
-            CurrentPath = paths[0];
-
             if (IsTextChanged)
             {
-                await CallSaveWarning();
+                if (!await CallSaveWarning()) return;
             }
+
+            CurrentPath = paths[0];
 
             TextDocument.Text = File.ReadAllText(CurrentPath);
 
@@ -157,13 +232,15 @@ namespace SimplePad.ViewModels
         /// 
         /// </summary>
         [RelayCommand]
-        public void SaveCommand()
+        public async Task SaveCommand()
         {
             if (!File.Exists(CurrentPath))
             {
-                File.Create(CurrentPath);
+                await SaveAsCommand();
+                return;
             }
 
+            File.Create(CurrentPath);
             File.WriteAllText(CurrentPath, TextDocument.Text);
 
             _intiialText = TextDocument.Text;
@@ -200,6 +277,7 @@ namespace SimplePad.ViewModels
                 Process.Start("gio", $"trash \"{CurrentPath}\"");
             }
 
+            CurrentPath = "";
             _intiialText = "";
             IsTextChanged = true;
         }
@@ -230,7 +308,95 @@ namespace SimplePad.ViewModels
             _intiialText = TextDocument.Text;
             IsTextChanged = false;
         }
+        #endregion
 
+        #region Search Commands
+        /// <summary>
+        /// 
+        /// </summary>
+        [RelayCommand]
+        public void FindCommand()
+        {
+            if (!IsUpDirection)
+            {
+                FindNextCalled?.Invoke(this, new(FindText, IsMatchCase));
+            }
+            else
+            {
+                FindPreviousCalled?.Invoke(this, new(FindText, IsMatchCase));
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [RelayCommand]
+        public void FindNextCommand()
+        {
+            FindNextCalled?.Invoke(this, new(FindText, IsMatchCase));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [RelayCommand]
+        public void FindPreviousCommand()
+        {
+            FindPreviousCalled?.Invoke(this, new(FindText, IsMatchCase));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [RelayCommand]
+        public void FindInFilesCommand()
+        {
+            FindInFilesCalled?.Invoke(this, new(FindText, IsMatchCase));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [RelayCommand]
+        public void ReplaceInFilesCommand()
+        {
+            ReplaceInFilesCalled?.Invoke(this, new(FindText, ReplaceText, IsMatchCase));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [RelayCommand]
+        public void ReplaceCommand()
+        {
+            if (!IsUpDirection)
+            {
+                ReplaceNextCalled?.Invoke(this, new(FindText, ReplaceText, IsMatchCase));
+            }
+            else
+            {
+                ReplacePreviousCalled?.Invoke(this, new(FindText, ReplaceText, IsMatchCase));
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [RelayCommand]
+        public void ReplaceAllCommand()
+        {
+            ReplaceAllCalled?.Invoke(this, new(FindText, ReplaceText, IsMatchCase));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [RelayCommand]
+        public void GotoCommand()
+        {
+            GotoCalled?.Invoke(this, GotoText);
+        }
+        #endregion
 
         /// <summary>
         /// 
@@ -261,7 +427,7 @@ namespace SimplePad.ViewModels
                 }
                 else
                 {
-                    SaveCommand();
+                    await SaveCommand();
                 }
                 return true;
             }
