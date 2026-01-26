@@ -5,8 +5,7 @@
         xmlns:AvaloniaEdit="using:AvaloniaEdit"
         xmlns:ViewModels="using:SimplePad.ViewModels"
         mc:Ignorable="d"
-        d:DesignWidth="463" 
-        d:DesignHeight="90"
+        d:DesignWidth="466" d:DesignHeight="90"
         x:Class="SimplePad.Views.GotoView"
         x:DataType="ViewModels:MainViewModel"
         Padding="8"
@@ -29,18 +28,22 @@
                  Margin="6" Padding="5"
                  TextWrapping="NoWrap"
                  ContextFlyout="{DynamicResource TextEditorControlMenu}"
-                 Grid.Column="0" Grid.Row="0"/>
+                 Grid.Column="0" Grid.Row="0">
+            <TextBox.KeyBindings>
+                <KeyBinding Gesture="Enter" Command="{Binding GotoCommand}"/>
+            </TextBox.KeyBindings>
+        </TextBox>
         <StackPanel Grid.Column="2" Grid.Row="0" Grid.RowSpan="2">
             <Button Content="Go to line"
                     Command="{Binding GotoCommand}"
                     Margin="0,6,0,3"
                     HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
         </StackPanel>
-        <Label Content="line amount: "
+        <Label Content="{Binding LineCount, StringFormat='line count: {0}'}"
                Margin="6,0,0,0"
                HorizontalAlignment="Left" VerticalAlignment="Center" 
                Grid.Row="1"/>
-        <Label Content="current line is "
+        <Label Content="{Binding CurrentLine, StringFormat='current line is {0}'}"
                Margin="0,0,24,0"
                HorizontalAlignment="Right" VerticalAlignment="Center" 
                Grid.Row="1"/>

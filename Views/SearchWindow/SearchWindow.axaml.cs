@@ -108,7 +108,7 @@ namespace SimplePad.Views
                         Height = 229;
                         break;
                     case 2:
-                        Height = 215;
+                        Height = 260;
                         break;
                     case 3:
                         Height = 127;

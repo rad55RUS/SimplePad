@@ -26,8 +26,10 @@ namespace SimplePad.ViewModels
         private bool _isUpDirection = false;
         private bool _isMatchCase = false;
         private bool _isMultipleLineInput = false;
+        private bool _inAllSubfolders = false;
         private bool _canUndo = false;
         private bool _canRedo = false;
+        private int _currentLine = 0;
         private string _title = "SimplePad";
         private string _currentPath = "";
         private string _intiialText = "";
@@ -102,6 +104,15 @@ namespace SimplePad.ViewModels
             get => _isMultipleLineInput;
             set => SetProperty(ref _isMultipleLineInput, value);
         }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool InAllSubfolders
+        {
+            get => _inAllSubfolders;
+            set => SetProperty(ref _inAllSubfolders, value);
+        }
 
         /// <summary>
         /// 
@@ -119,6 +130,25 @@ namespace SimplePad.ViewModels
         {
             get => _canRedo;
             set => SetProperty(ref _canRedo, value);
+        }
+        #endregion
+
+        #region Integer Properties
+        /// <summary>
+        /// 
+        /// </summary>
+        public int CurrentLine
+        {
+            get => _currentLine;
+            set => SetProperty(ref _currentLine, value);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public int LineCount
+        {
+            get => _textDocument.LineCount;
         }
         #endregion
 
@@ -315,8 +345,10 @@ namespace SimplePad.ViewModels
         /// 
         /// </summary>
         [RelayCommand]
-        public void FindCommand()
+        public void FindCommand(bool checkMultipleLineInput)
         {
+            if (checkMultipleLineInput && IsMultipleLineInput) return;
+
             if (!IsUpDirection)
             {
                 FindNextCalled?.Invoke(this, new(FindText, IsMatchCase));
@@ -349,26 +381,10 @@ namespace SimplePad.ViewModels
         /// 
         /// </summary>
         [RelayCommand]
-        public void FindInFilesCommand()
+        public void ReplaceCommand(bool checkMultipleLineInput)
         {
-            FindInFilesCalled?.Invoke(this, new(FindText, IsMatchCase));
-        }
+            if (checkMultipleLineInput && IsMultipleLineInput) return;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        [RelayCommand]
-        public void ReplaceInFilesCommand()
-        {
-            ReplaceInFilesCalled?.Invoke(this, new(FindText, ReplaceText, IsMatchCase));
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [RelayCommand]
-        public void ReplaceCommand()
-        {
             if (!IsUpDirection)
             {
                 ReplaceNextCalled?.Invoke(this, new(FindText, ReplaceText, IsMatchCase));
@@ -386,6 +402,28 @@ namespace SimplePad.ViewModels
         public void ReplaceAllCommand()
         {
             ReplaceAllCalled?.Invoke(this, new(FindText, ReplaceText, IsMatchCase));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [RelayCommand]
+        public void FindInFilesCommand(bool checkMultipleLineInput)
+        {
+            if (checkMultipleLineInput && IsMultipleLineInput) return;
+
+            FindInFilesCalled?.Invoke(this, new(FindText, IsMatchCase));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [RelayCommand]
+        public void ReplaceInFilesCommand(bool checkMultipleLineInput)
+        {
+            if (checkMultipleLineInput && IsMultipleLineInput) return;
+
+            ReplaceInFilesCalled?.Invoke(this, new(FindText, ReplaceText, IsMatchCase));
         }
 
         /// <summary>
@@ -448,6 +486,8 @@ namespace SimplePad.ViewModels
         {
             IsTextChanged = TextDocument.Text != _intiialText;
             TextChanged?.Invoke(TextDocument, e);
+
+            OnPropertyChanged(nameof(LineCount));
         }
     }
 }

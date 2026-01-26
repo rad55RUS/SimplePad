@@ -18,12 +18,12 @@
         <!--|-->
         <!--| Label style -->
         <Style Selector="Label">
-            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontSize" Value="12"/>
         </Style>
         <!--|-->
         <!--| TextBox style -->
         <Style Selector="TextBox">
-            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontSize" Value="12"/>
             <Setter Property="BorderBrush" Value="DimGray"/>
         </Style>
         <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">

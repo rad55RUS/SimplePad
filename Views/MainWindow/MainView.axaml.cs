@@ -37,6 +37,7 @@ namespace SimplePad.Views
         private void OnLoaded(object? sender, RoutedEventArgs e)
         {
             MainTextEditor.TextChanged += OnTextChanged;
+            MainTextEditor.TextArea.Caret.PositionChanged += OnCaretMoved;
 
             if (DefinedDataContext != null)
             {
@@ -201,6 +202,19 @@ namespace SimplePad.Views
             {
                 DefinedDataContext.CanUndo = MainTextEditor.CanUndo;
                 DefinedDataContext.CanRedo = MainTextEditor.CanRedo;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnCaretMoved(object? sender, EventArgs e)
+        {
+            if (DefinedDataContext != null)
+            {
+                DefinedDataContext.CurrentLine = MainTextEditor.TextArea.Caret.Line;
             }
         }
 
