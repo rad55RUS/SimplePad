@@ -187,8 +187,8 @@ namespace SimplePad.Views
         /// <param name="e"></param>
         private void OnFind(object? sender, RoutedEventArgs e)
         {
-            SearchWindowService.SearchWindow.SearchTabControl.SelectedIndex = 0;
-            SearchWindowService.SearchWindow.Show(this);
+            WindowService.SearchWindow.SearchTabControl.SelectedIndex = 0;
+            WindowService.SearchWindow.Show(this);
         }
 
         /// <summary>
@@ -198,8 +198,8 @@ namespace SimplePad.Views
         /// <param name="e"></param>
         private void OnFindInFiles(object? sender, RoutedEventArgs e)
         {
-            SearchWindowService.SearchWindow.SearchTabControl.SelectedIndex = 2;
-            SearchWindowService.SearchWindow.Show(this);
+            WindowService.SearchWindow.SearchTabControl.SelectedIndex = 2;
+            WindowService.SearchWindow.Show(this);
         }
 
         /// <summary>
@@ -209,8 +209,8 @@ namespace SimplePad.Views
         /// <param name="e"></param>
         private void OnReplace(object? sender, RoutedEventArgs e)
         {
-            SearchWindowService.SearchWindow.SearchTabControl.SelectedIndex = 1;
-            SearchWindowService.SearchWindow.Show(this);
+            WindowService.SearchWindow.SearchTabControl.SelectedIndex = 1;
+            WindowService.SearchWindow.Show(this);
         }
 
         /// <summary>
@@ -220,8 +220,8 @@ namespace SimplePad.Views
         /// <param name="e"></param>
         private void OnGoto(object? sender, RoutedEventArgs e)
         {
-            SearchWindowService.SearchWindow.SearchTabControl.SelectedIndex = 3;
-            SearchWindowService.SearchWindow.Show(this);
+            WindowService.SearchWindow.SearchTabControl.SelectedIndex = 3;
+            WindowService.SearchWindow.Show(this);
         }
         #endregion
     }

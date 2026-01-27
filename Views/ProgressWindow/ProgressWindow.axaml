@@ -8,7 +8,7 @@
         x:Class="SimplePad.Views.ProgressWindow"
         x:DataType="ViewModels:MainViewModel"
         Title="SimplePad" Icon="\Icon.ico"
-        Width="466" Height="125"
+        Width="466" Height="115"
         CanResize="False" CanMaximize="False" CanMinimize="False"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome"

@@ -10,8 +10,12 @@
         x:DataType="ViewModels:MainViewModel"
         Padding="8">
     <StackPanel Margin="12" VerticalAlignment="Center">
-		<Label Content="Current File" Padding="0"/>
-        <ProgressBar Foreground="#FF00A0FF" BorderThickness="1.5" BorderBrush="#FF282828" CornerRadius="0" Background="#FF151515" Value="40" Height="20" Margin="0,6,0,10"/>
-        <Button Content="Cancel" Padding="30,5" HorizontalAlignment="Right"/>
+		<TextBlock Text="{Binding FileProcessingCurrent}" Padding="0"/>
+        <ProgressBar Value="{Binding FileProcessingProgress}"
+                     Height="20"
+                     Foreground="#FF00A0FF" Background="#FF151515"
+                     BorderThickness="1.5" BorderBrush="#FF282828" CornerRadius="0"
+                     Margin="0,6,0,10"/>
+        <Button Content="Cancel" Command="{Binding FileProcessingCancelCommand}" Padding="30,5" HorizontalAlignment="Right"/>
     </StackPanel>
 </UserControl>

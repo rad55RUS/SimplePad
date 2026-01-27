@@ -21,6 +21,11 @@
             <Setter Property="FontSize" Value="12"/>
         </Style>
         <!--|-->
+        <!--| TextBlock style -->
+        <Style Selector="TextBlock">
+            <Setter Property="FontSize" Value="11"/>
+        </Style>
+        <!--|-->
         <!--| TextBox style -->
         <Style Selector="TextBox">
             <Setter Property="FontSize" Value="12"/>

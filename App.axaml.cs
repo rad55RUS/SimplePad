@@ -32,7 +32,7 @@ namespace SimplePad
                     DataContext = MainDataContext,
                 };
 
-                SearchWindowService.SearchWindow.DataContext = MainDataContext;
+                WindowService.SearchWindow.DataContext = MainDataContext;
             }
 
             base.OnFrameworkInitializationCompleted();

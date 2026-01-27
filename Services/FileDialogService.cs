@@ -107,6 +107,20 @@ namespace SimplePad.Services
         /// 
         /// </summary>
         /// <returns></returns>
+        public static async Task<List<string>?> OpenFolderAsync(bool isMultiple)
+        {
+            FolderPickerOpenOptions options = new()
+            {
+                AllowMultiple = isMultiple,
+            };
+
+            return await OpenFolderAsync(options);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         private static async Task<List<string>?> OpenFolderAsync(FolderPickerOpenOptions options)
         {
             var desktop = Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;

@@ -30,15 +30,19 @@ namespace SimplePad.ViewModels
         private bool _canUndo = false;
         private bool _canRedo = false;
         private int _currentLine = 0;
+        private int _fileProcessingProgress = 0;
         private string _title = "SimplePad";
         private string _currentPath = "";
         private string _intiialText = "";
         private string _findText = "";
         private string _replaceText = "";
+        private string _fileProcessingDirectory = "";
+        private string _fileProcessingCurrent = "";
         private string _goToLineText = "";
         private TextDocument _textDocument = new();
 
         public event EventHandler? TextChanged;
+        public event EventHandler? FileProcessingCancelCalled;
         public event SearchEventHandler? FindNextCalled;
         public event SearchEventHandler? FindPreviousCalled;
         public event SearchEventHandler? FindInFilesCalled;
@@ -150,6 +154,15 @@ namespace SimplePad.ViewModels
         {
             get => _textDocument.LineCount;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public int FileProcessingProgress
+        {
+            get => _fileProcessingProgress;
+            set => SetProperty(ref _fileProcessingProgress, value);
+        }
         #endregion
 
         #region String Properties
@@ -205,6 +218,24 @@ namespace SimplePad.ViewModels
         {
             get => _replaceText;
             set => SetProperty(ref _replaceText, value);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string FileProcessingDirectory
+        {
+            get => _fileProcessingDirectory;
+            set => SetProperty(ref _fileProcessingDirectory, value);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string FileProcessingCurrent
+        {
+            get => _fileProcessingCurrent;
+            set => SetProperty(ref _fileProcessingCurrent, value);
         }
 
         /// <summary>
@@ -345,10 +376,8 @@ namespace SimplePad.ViewModels
         /// 
         /// </summary>
         [RelayCommand]
-        public void FindCommand(bool checkMultipleLineInput)
+        public void FindCommand()
         {
-            if (checkMultipleLineInput && IsMultipleLineInput) return;
-
             if (!IsUpDirection)
             {
                 FindNextCalled?.Invoke(this, new(FindText, IsMatchCase));
@@ -381,10 +410,8 @@ namespace SimplePad.ViewModels
         /// 
         /// </summary>
         [RelayCommand]
-        public void ReplaceCommand(bool checkMultipleLineInput)
+        public void ReplaceCommand()
         {
-            if (checkMultipleLineInput && IsMultipleLineInput) return;
-
             if (!IsUpDirection)
             {
                 ReplaceNextCalled?.Invoke(this, new(FindText, ReplaceText, IsMatchCase));
@@ -399,7 +426,7 @@ namespace SimplePad.ViewModels
         /// 
         /// </summary>
         [RelayCommand]
-        public void ReplaceAllCommand()
+        public void ReplaceAll()
         {
             ReplaceAllCalled?.Invoke(this, new(FindText, ReplaceText, IsMatchCase));
         }
@@ -408,9 +435,21 @@ namespace SimplePad.ViewModels
         /// 
         /// </summary>
         [RelayCommand]
-        public void FindInFilesCommand(bool checkMultipleLineInput)
+        public void Goto()
         {
-            if (checkMultipleLineInput && IsMultipleLineInput) return;
+            GotoCalled?.Invoke(this, GotoText);
+        }
+        #endregion
+
+        #region File processing commands
+        /// <summary>
+        /// 
+        /// </summary>
+        [RelayCommand]
+        public void FindInFiles()
+        {
+            if (String.IsNullOrEmpty(FileProcessingDirectory)) return;
+            if (String.IsNullOrEmpty(FindText)) return;
 
             FindInFilesCalled?.Invoke(this, new(FindText, IsMatchCase));
         }
@@ -419,9 +458,10 @@ namespace SimplePad.ViewModels
         /// 
         /// </summary>
         [RelayCommand]
-        public void ReplaceInFilesCommand(bool checkMultipleLineInput)
+        public void ReplaceInFiles()
         {
-            if (checkMultipleLineInput && IsMultipleLineInput) return;
+            if (String.IsNullOrEmpty(FileProcessingDirectory)) return;
+            if (String.IsNullOrEmpty(ReplaceText)) return;
 
             ReplaceInFilesCalled?.Invoke(this, new(FindText, ReplaceText, IsMatchCase));
         }
@@ -430,9 +470,40 @@ namespace SimplePad.ViewModels
         /// 
         /// </summary>
         [RelayCommand]
-        public void GotoCommand()
+        public void FileProcessingSetCurrentDirectoryCommand()
         {
-            GotoCalled?.Invoke(this, GotoText);
+            if (_currentPath != null)
+            {
+                string? directory = Path.GetDirectoryName(_currentPath);
+
+                if (directory != null)
+                {
+                    FileProcessingDirectory = directory;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [RelayCommand]
+        public async Task FileProcessingSetDirectoryCommand()
+        {
+            List<string>? paths = await FileDialogService.OpenFolderAsync(false);
+
+            if (paths == null) return;
+            if (paths.Count == 0) return;
+
+            FileProcessingDirectory = paths[0];
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [RelayCommand]
+        public void FileProcessingCancel()
+        {
+            FileProcessingCancelCalled?.Invoke(this, EventArgs.Empty);
         }
         #endregion
 

@@ -48,6 +48,7 @@ namespace SimplePad.Views
                 DefinedDataContext.ReplaceNextCalled += OnReplaceNext;
                 DefinedDataContext.ReplacePreviousCalled += OnReplacePrevious;
                 DefinedDataContext.ReplaceAllCalled += OnReplaceAll;
+                DefinedDataContext.FileProcessingCancelCalled += OnFileProcessingCancelling;
                 DefinedDataContext.GotoCalled += OnGoto;
             }
         }
@@ -136,8 +137,8 @@ namespace SimplePad.Views
 
             if (window != null)
             {
-                SearchWindowService.SearchWindow.SearchTabControl.SelectedIndex = 0;
-                SearchWindowService.SearchWindow.Show(window);
+                WindowService.SearchWindow.SearchTabControl.SelectedIndex = 0;
+                WindowService.SearchWindow.Show(window);
             }
         }
 
@@ -152,8 +153,8 @@ namespace SimplePad.Views
 
             if (window != null)
             {
-                SearchWindowService.SearchWindow.SearchTabControl.SelectedIndex = 2;
-                SearchWindowService.SearchWindow.Show(window);
+                WindowService.SearchWindow.SearchTabControl.SelectedIndex = 2;
+                WindowService.SearchWindow.Show(window);
             }
         }
 
@@ -168,8 +169,8 @@ namespace SimplePad.Views
 
             if (window != null)
             {
-                SearchWindowService.SearchWindow.SearchTabControl.SelectedIndex = 1;
-                SearchWindowService.SearchWindow.Show(window);
+                WindowService.SearchWindow.SearchTabControl.SelectedIndex = 1;
+                WindowService.SearchWindow.Show(window);
             }
         }
 
@@ -184,8 +185,8 @@ namespace SimplePad.Views
 
             if (window != null)
             {
-                SearchWindowService.SearchWindow.SearchTabControl.SelectedIndex = 3;
-                SearchWindowService.SearchWindow.Show(window);
+                WindowService.SearchWindow.SearchTabControl.SelectedIndex = 3;
+                WindowService.SearchWindow.Show(window);
             }
         }
         #endregion
@@ -275,26 +276,6 @@ namespace SimplePad.Views
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnFindInFiles(object? sender, SearchEventArgs e)
-        {
-
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnReplaceInFiles(object? sender, SearchEventArgs e)
-        {
-
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void OnReplaceNext(object? sender, SearchEventArgs e)
         {
             if (MainTextEditor.SelectedText == e.SearchText)
@@ -362,6 +343,49 @@ namespace SimplePad.Views
             MainTextEditor.Focus();
 
             GetParentWindow()?.Activate();
+        }
+        #endregion
+
+        #region File processing event handlers
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnFindInFiles(object? sender, SearchEventArgs e)
+        {
+            Window? window = GetParentWindow();
+
+            if (window != null)
+            {
+                WindowService.ProgressWindow.Show(window);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnReplaceInFiles(object? sender, SearchEventArgs e)
+        {
+            Window? window = GetParentWindow();
+
+            if (window != null)
+            {
+                WindowService.ProgressWindow.Show(window);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void OnFileProcessingCancelling(object? sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }
