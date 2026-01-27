@@ -94,6 +94,12 @@
     <Compile Update="Views\MainWindow\MainView.axaml.cs">
       <DependentUpon>MainView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\ProgressWindow\ProgressView.axaml.cs">
+      <DependentUpon>ProgressView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ProgressWindow\ProgressWindow.axaml.cs">
+      <DependentUpon>ProgressWindow.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\SearchWindow\GotoView.axaml.cs">
       <DependentUpon>GotoView.axaml</DependentUpon>
     </Compile>
