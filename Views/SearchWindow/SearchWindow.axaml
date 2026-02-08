@@ -15,7 +15,8 @@
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome"
         ExtendClientAreaTitleBarHeightHint="-1"
-        Loaded="OnLoaded" PointerPressed="TitleBar_PointerPressed">
+        Opened="OnOpened" Loaded="OnLoaded"
+        PointerPressed="TitleBar_PointerPressed">
     <Design.DataContext>
         <ViewModels:MainViewModel/>
     </Design.DataContext>

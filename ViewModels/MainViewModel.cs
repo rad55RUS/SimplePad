@@ -29,7 +29,7 @@ namespace SimplePad.ViewModels
         private bool _inAllSubfolders = false;
         private bool _canUndo = false;
         private bool _canRedo = false;
-        private int _currentLine = 0;
+        private int _currentLine = 1;
         private int _fileProcessingProgress = 0;
         private string _title = "SimplePad";
         private string _currentPath = "";
@@ -39,7 +39,9 @@ namespace SimplePad.ViewModels
         private string _fileProcessingDirectory = "";
         private string _fileProcessingCurrent = "";
         private string _goToLineText = "";
-        private TextDocument _textDocument = new();
+
+        private TextDocument _mainTextDocument = new();
+        private TextDocument _searchResultsDocument = new();
 
         public event EventHandler? TextChanged;
         public event EventHandler? FileProcessingCancelCalled;
@@ -152,7 +154,7 @@ namespace SimplePad.ViewModels
         /// </summary>
         public int LineCount
         {
-            get => _textDocument.LineCount;
+            get => _mainTextDocument.LineCount;
         }
 
         /// <summary>
@@ -251,9 +253,17 @@ namespace SimplePad.ViewModels
         /// <summary>
         /// 
         /// </summary>
-        public TextDocument TextDocument
+        public TextDocument MainTextDocument
         {
-            get => _textDocument;
+            get => _mainTextDocument;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public TextDocument SearchResultsDocument
+        {
+            get => _mainTextDocument;
         }
 
         /// <summary>
@@ -261,7 +271,7 @@ namespace SimplePad.ViewModels
         /// </summary>
         public MainViewModel()
         {
-            _textDocument.TextChanged += OnTextChanged;
+            _mainTextDocument.TextChanged += OnTextChanged;
         }
 
         #region File Commands
@@ -283,9 +293,9 @@ namespace SimplePad.ViewModels
 
             CurrentPath = paths[0];
 
-            TextDocument.Text = File.ReadAllText(CurrentPath);
+            MainTextDocument.Text = File.ReadAllText(CurrentPath);
 
-            _intiialText = TextDocument.Text;
+            _intiialText = MainTextDocument.Text;
             IsTextChanged = false;
         }
 
@@ -302,9 +312,9 @@ namespace SimplePad.ViewModels
             }
 
             File.Create(CurrentPath);
-            File.WriteAllText(CurrentPath, TextDocument.Text);
+            File.WriteAllText(CurrentPath, MainTextDocument.Text);
 
-            _intiialText = TextDocument.Text;
+            _intiialText = MainTextDocument.Text;
             IsTextChanged = false;
         }
 
@@ -364,9 +374,9 @@ namespace SimplePad.ViewModels
 
             CurrentPath = path;
 
-            File.WriteAllText(CurrentPath, TextDocument.Text);
+            File.WriteAllText(CurrentPath, MainTextDocument.Text);
 
-            _intiialText = TextDocument.Text;
+            _intiialText = MainTextDocument.Text;
             IsTextChanged = false;
         }
         #endregion
@@ -555,8 +565,8 @@ namespace SimplePad.ViewModels
         /// <param name="e"></param>
         private void OnTextChanged(object? sender, EventArgs e)
         {
-            IsTextChanged = TextDocument.Text != _intiialText;
-            TextChanged?.Invoke(TextDocument, e);
+            IsTextChanged = MainTextDocument.Text != _intiialText;
+            TextChanged?.Invoke(MainTextDocument, e);
 
             OnPropertyChanged(nameof(LineCount));
         }

@@ -1,6 +1,9 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Platform;
+using Avalonia.Svg.Skia;
+using System;
 
 
 namespace SimplePad.Views
@@ -10,6 +13,51 @@ namespace SimplePad.Views
     /// </summary>
     static class ViewUtils
     {
+        #region Window methods
+        public static PixelPoint ClampToScreenRelativeTo(int x, int y, Window child, Window parent)
+        {
+            Screen? currentScreen = parent.Screens.ScreenFromPoint(parent.Position) ?? parent.Screens.Primary;
+
+            if (currentScreen != null)
+            {
+                PixelRect workingArea = currentScreen.WorkingArea;
+
+                x = Math.Max(workingArea.X, Math.Min(x, workingArea.Right - (int)child.Width));
+                y = Math.Max(workingArea.Y, Math.Min(y, workingArea.Bottom - (int)child.Height));
+            }
+
+            return new(x, y);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="child"></param>
+        /// <param name="parent"></param>
+        /// <returns></returns>
+        public static PixelPoint GetCenterRelativeTo(Window child, Window parent)
+        {
+            int x = parent.Position.X + ((int)parent.Width - (int)child.Width) / 2;
+            int y = parent.Position.Y + ((int)parent.Height - (int)child.Height) / 2;
+
+            return ClampToScreenRelativeTo(x, y, child, parent);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="child"></param>
+        /// <param name="parent"></param>
+        /// <returns></returns>
+        public static PixelPoint GetRightUpCornerRelativeTo(Window child, Window parent)
+        {
+            int x = parent.Position.X + ((int)parent.Width - (int)child.Width);
+            int y = parent.Position.Y;
+
+            return ClampToScreenRelativeTo(x, y, child, parent);
+        }
+        #endregion
+
         #region ContextMenu methods
         /// <summary>
         /// 
@@ -99,6 +147,18 @@ namespace SimplePad.Views
             }
 
             return GetTreeViewItem(control.Parent);
+        }
+        #endregion
+
+        #region Image methods
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uriString"></param>
+        /// <returns></returns>
+        public static SvgImage GetSvgFromUriString(string uriString)
+        {
+            return new SvgImage { Source = SvgSource.Load(uriString, null) };
         }
         #endregion
     }

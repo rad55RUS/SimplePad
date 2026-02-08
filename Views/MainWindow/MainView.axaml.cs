@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Svg.Skia;
 using AvaloniaEdit;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Search;
@@ -12,10 +13,14 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 
+using static SimplePad.Views.ViewUtils;
+
 namespace SimplePad.Views
 {
     public partial class MainView : ViewBase
     {
+        private bool _areSearchResultsVisible = false;
+
         /// <summary>
         /// 
         /// </summary>
@@ -133,12 +138,12 @@ namespace SimplePad.Views
         /// <param name="e"></param>
         private void OnFind(object? sender, RoutedEventArgs e)
         {
-            Window? window = GetParentWindow();
+            Window? mainWindow = GetParentWindow();
 
-            if (window != null)
+            if (mainWindow != null)
             {
                 WindowService.SearchWindow.SearchTabControl.SelectedIndex = 0;
-                WindowService.SearchWindow.Show(window);
+                WindowService.SearchWindow.Show(mainWindow);
             }
         }
 
@@ -149,12 +154,12 @@ namespace SimplePad.Views
         /// <param name="e"></param>
         private void OnFindInFiles(object? sender, RoutedEventArgs e)
         {
-            Window? window = GetParentWindow();
+            Window? mainWindow = GetParentWindow();
 
-            if (window != null)
+            if (mainWindow != null)
             {
                 WindowService.SearchWindow.SearchTabControl.SelectedIndex = 2;
-                WindowService.SearchWindow.Show(window);
+                WindowService.SearchWindow.Show(mainWindow);
             }
         }
 
@@ -165,12 +170,12 @@ namespace SimplePad.Views
         /// <param name="e"></param>
         private void OnReplace(object? sender, RoutedEventArgs e)
         {
-            Window? window = GetParentWindow();
+            Window? mainWindow = GetParentWindow();
 
-            if (window != null)
+            if (mainWindow != null)
             {
                 WindowService.SearchWindow.SearchTabControl.SelectedIndex = 1;
-                WindowService.SearchWindow.Show(window);
+                WindowService.SearchWindow.Show(mainWindow);
             }
         }
 
@@ -181,12 +186,12 @@ namespace SimplePad.Views
         /// <param name="e"></param>
         private void OnGoto(object? sender, RoutedEventArgs e)
         {
-            Window? window = GetParentWindow();
+            Window? mainWindow = GetParentWindow();
 
-            if (window != null)
+            if (mainWindow != null)
             {
                 WindowService.SearchWindow.SearchTabControl.SelectedIndex = 3;
-                WindowService.SearchWindow.Show(window);
+                WindowService.SearchWindow.Show(mainWindow);
             }
         }
         #endregion
@@ -346,7 +351,7 @@ namespace SimplePad.Views
         }
         #endregion
 
-        #region File processing event handlers
+        #region File Processing Event Handlers
         /// <summary>
         /// 
         /// </summary>
@@ -354,11 +359,12 @@ namespace SimplePad.Views
         /// <param name="e"></param>
         private void OnFindInFiles(object? sender, SearchEventArgs e)
         {
-            Window? window = GetParentWindow();
+            Window? mainWindow = GetParentWindow();
 
-            if (window != null)
+            if (mainWindow != null)
             {
-                WindowService.ProgressWindow.Show(window);
+                WindowService.ProgressWindow.Position = GetCenterRelativeTo(WindowService.ProgressWindow, mainWindow);
+                WindowService.ProgressWindow.Show(mainWindow);
             }
         }
 
@@ -369,11 +375,12 @@ namespace SimplePad.Views
         /// <param name="e"></param>
         private void OnReplaceInFiles(object? sender, SearchEventArgs e)
         {
-            Window? window = GetParentWindow();
+            Window? mainWindow = GetParentWindow();
 
-            if (window != null)
+            if (mainWindow != null)
             {
-                WindowService.ProgressWindow.Show(window);
+                WindowService.ProgressWindow.Position = GetCenterRelativeTo(WindowService.ProgressWindow, mainWindow);
+                WindowService.ProgressWindow.Show(mainWindow);
             }
         }
 
@@ -386,6 +393,37 @@ namespace SimplePad.Views
         private void OnFileProcessingCancelling(object? sender, EventArgs e)
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnShowHideSearchResults(object? sender, RoutedEventArgs e)
+        {
+            if (_areSearchResultsVisible)
+            {
+                ShowHideSearchResultsIcon.Source = GetSvgFromUriString("avares://SimplePad/Assets/UpDirectionIcon.svg");
+                TextGrid.RowDefinitions[2].Height = new GridLength(25);
+            }
+            else
+            {
+                Window? mainWindow = GetParentWindow();
+
+                ShowHideSearchResultsIcon.Source = GetSvgFromUriString("avares://SimplePad/Assets/DownDirectionIcon.svg");
+
+                if (mainWindow != null)
+                {
+                    TextGrid.RowDefinitions[2].Height = new GridLength(mainWindow.Height / 3);
+                }
+                else
+                {
+                    TextGrid.RowDefinitions[2].Height = new GridLength(300);
+                }
+            }
+
+            _areSearchResultsVisible = !_areSearchResultsVisible;
         }
         #endregion
     }

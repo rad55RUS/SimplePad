@@ -63,12 +63,14 @@
         </StackPanel>
         <Label Content="Direction"
                Background="{StaticResource DefaultBackgroundColor}"
-               Margin="6,0,0,25"
+               Margin="12,0,0,25"
                ZIndex="1"
                HorizontalAlignment="Left" VerticalAlignment="Bottom"
                Grid.ColumnSpan="3" Grid.Row="1" Grid.RowSpan="2"/>
         <StackPanel Margin="0,12,0,0" Orientation="Horizontal" Grid.ColumnSpan="3" Grid.Row="3">
-            <Border BorderThickness="2" BorderBrush="{StaticResource DefaultBorderColor}" Padding="4,2,7,0" Grid.Row="2">
+            <Border BorderThickness="2" BorderBrush="{StaticResource DefaultBorderColor}"
+                    Padding="4,2,7,0" Margin="6,0,0,0"
+                    Grid.Row="2">
 			    <StackPanel Orientation="Horizontal">
                     <RadioButton Content="Down" IsChecked="{Binding !IsUpDirection}" VerticalAlignment="Center"/>
                     <RadioButton Content="Up" IsChecked="{Binding IsUpDirection}" VerticalAlignment="Center"/>

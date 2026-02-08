@@ -1,12 +1,15 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Styling;
 using Avalonia.Threading;
+using SimplePad.Services;
 using SimplePad.ViewModels;
 using System;
 using System.Threading.Tasks;
-using static AvaloniaEdit.Document.TextDocumentWeakEventManager;
+
+using static SimplePad.Views.ViewUtils;
 
 
 namespace SimplePad.Views
@@ -34,6 +37,20 @@ namespace SimplePad.Views
         private void OnLoaded(object? sender, RoutedEventArgs e)
         {
             AddHandler(KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnOpened(object? sender, EventArgs e)
+        {
+            if (Owner is Window ownerWindow)
+            {
+                PixelPoint point = GetRightUpCornerRelativeTo(WindowService.SearchWindow, ownerWindow);
+                Position = new PixelPoint(point.X, point.Y + 60);
+            }
         }
 
         /// <summary>

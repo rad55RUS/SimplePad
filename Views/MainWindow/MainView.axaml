@@ -102,13 +102,49 @@
                 </Button.Flyout>
             </Button>
         </StackPanel>
-        <AvaloniaEdit:TextEditor x:Name="MainTextEditor"
-                                 Document="{Binding TextDocument}"
-                                 Foreground="White"
-                                 Background="{StaticResource TextEditorColor}"
-                                 Padding="5"
-                                 WordWrap="{Binding IsWordWrapEnabled}"
-                                 ContextFlyout="{DynamicResource TextEditorControlMenu}"
-                                 Grid.Row="2"/>
+        <Grid x:Name="TextGrid"  Grid.Row="1">
+            <Grid.RowDefinitions>
+				<RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+				<RowDefinition Height="25" MinHeight="25"/>
+            </Grid.RowDefinitions>
+            <AvaloniaEdit:TextEditor x:Name="MainTextEditor"
+                                     Document="{Binding MainTextDocument}"
+                                     Foreground="White"
+                                     Background="{StaticResource TextEditorColor}"
+                                     Padding="5"
+                                     WordWrap="{Binding IsWordWrapEnabled}"
+                                     ContextFlyout="{DynamicResource TextEditorControlMenu}"/>
+            <GridSplitter Background="Transparent" Margin="0,-3,0,-3" ZIndex="1" Grid.Row="1"/>
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+					<RowDefinition Height="25"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid>
+					<Label Content="Search results" Padding="5,3,0,3"/>
+                    <Button Click="OnShowHideSearchResults"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            CornerRadius="0"
+                            Width="30"
+                            Margin="0,0,0,0"
+                            HorizontalAlignment="Right" VerticalAlignment="Stretch">
+                        <Image x:Name="ShowHideSearchResultsIcon"
+                               Source="{SvgImage /Assets/UpDirectionIcon.svg}"
+                               Width="8"/>
+                    </Button>
+                </Grid>
+                <AvaloniaEdit:TextEditor x:Name="SearchResultsViewer"
+                                         Document="{Binding SearchResultsDocument}"
+                                         Foreground="White"
+                                         Background="{StaticResource DarkTextEditorColor}"
+                                         Padding="5"
+                                         IsReadOnly="True"
+                                         Focusable="False"
+                                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                         Grid.Row="1"/>
+            </Grid>
+        </Grid>
     </Grid>
 </UserControl>

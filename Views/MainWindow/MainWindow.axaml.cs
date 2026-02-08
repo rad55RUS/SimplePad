@@ -8,6 +8,8 @@ using SimplePad.ViewModels;
 using System;
 using System.Threading.Tasks;
 
+using static SimplePad.Views.ViewUtils;
+
 
 namespace SimplePad.Views
 {

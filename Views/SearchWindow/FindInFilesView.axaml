@@ -84,7 +84,7 @@
                      VerticalContentAlignment="Center"
                      Grid.Column="1"/>
         </Grid>
-        <StackPanel Margin="0,12,0,0" Orientation="Horizontal" Grid.ColumnSpan="3" Grid.Row="3">
+        <StackPanel Margin="21,12,0,0" Orientation="Horizontal" Grid.ColumnSpan="3" Grid.Row="3">
             <Border Width="117">
             </Border>
             <CheckBox Content="Match case" IsChecked="{Binding IsMatchCase}"
