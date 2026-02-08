@@ -7,3 +7,4 @@
 * **Microsoft.NET** — [MIT License](https://github.com/microsoft/dotnet/blob/main/LICENSE) Copyright (c) 2019 Microsoft
 * **AvaloniaUI** — [MIT License](https://github.com/AvaloniaUI/Avalonia/blob/master/licence.md) Copyright (c) AvaloniaUI OÜ All Rights Reserved
 * **AvaloniaEdit** — [MIT License](https://github.com/AvaloniaUI/AvaloniaEdit/blob/master/LICENSE) Copyright (c) 2017 Eli Arbel
+* **Svg.Skia** — [MIT License](https://github.com/wieslawsoltes/Svg.Skia/blob/master/LICENSE.TXT) Copyright (c) 2020 Wiesław Šoltés
