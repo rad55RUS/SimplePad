@@ -2,9 +2,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ViewModels="using:SimplePad.ViewModels"
         xmlns:AvaloniaEdit="using:AvaloniaEdit"
         xmlns:Search="using:AvaloniaEdit.Search"
+        xmlns:Behaviors="using:SimplePad.Behaviors"
+        xmlns:ViewModels="using:SimplePad.ViewModels"
         mc:Ignorable="d" 
         d:DesignWidth="800" 
         d:DesignHeight="450"
@@ -125,7 +126,11 @@
                                      Background="{StaticResource TextEditorColor}"
                                      Padding="5"
                                      WordWrap="{CompiledBinding IsWordWrapEnabled}"
-                                     ContextFlyout="{DynamicResource TextEditorMenu}"/>
+                                     ContextFlyout="{DynamicResource TextEditorMenu}">
+			    <Interaction.Behaviors>
+                    <Behaviors:TextEditorZoomBehavior/>
+			    </Interaction.Behaviors>
+            </AvaloniaEdit:TextEditor>
             <!---->
             <GridSplitter Background="Transparent" Margin="0,-3,0,-3" ZIndex="1" Grid.Row="1"/>
             <!-- Search results viewer -->
@@ -158,7 +163,11 @@
                                          SyntaxHighlighting="False"
                                          WordWrap="False"
                                          ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                         Grid.Row="1"/>
+                                         Grid.Row="1">
+			        <Interaction.Behaviors>
+                        <Behaviors:TextEditorZoomBehavior/>
+			        </Interaction.Behaviors>
+                </AvaloniaEdit:TextEditor>
             </Grid>
             <!---->
         </Grid>
