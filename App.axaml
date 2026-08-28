@@ -160,7 +160,8 @@
 		<SolidColorBrush x:Key="TextEditorColor">#FF151515</SolidColorBrush>
 		<SolidColorBrush x:Key="DarkTextEditorColor">#FF101010</SolidColorBrush>
         <!---->
-        <MenuFlyout x:Key="TextEditorControlMenu" Placement="BottomEdgeAlignedLeft" PlacementGravity="BottomLeft" OverlayDismissEventPassThrough="True">
+        <!-- Menus -->
+        <MenuFlyout x:Key="TextEditorMenu" Placement="BottomEdgeAlignedLeft" PlacementGravity="BottomLeft" OverlayDismissEventPassThrough="True" Opened="OnTextEditorMenuOpened">
             <MenuItem Header="Undo" InputGesture="Ctrl+Z" Click="OnTextEditorUndo"/>
 			<MenuItem Header="Redo" InputGesture="Ctrl+Y" Click="OnTextEditorRedo"/>
             <Separator/>
@@ -171,5 +172,6 @@
             <Separator/>
 			<MenuItem Header="Select all" InputGesture="Ctrl+A" Click="OnTextEditorSelectAll"/>
         </MenuFlyout>
+        <!---->
     </Application.Resources>
 </Application>

@@ -1,0 +1,22 @@
+[
+  ".txt",
+  ".json",
+  ".cfg",
+  ".config",
+  ".properties",
+  ".ini",
+  ".toml",
+  ".xml",
+  ".xaml",
+  ".axaml",
+  ".yml",
+  ".lua",
+  ".sql",
+  ".cs",
+  ".html",
+  ".css",
+  ".log",
+  ".readme",
+  ".md",
+  ".manifest"
+]
