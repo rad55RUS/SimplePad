@@ -1,0 +1,59 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:AvaloniaEdit="using:AvaloniaEdit"
+        xmlns:ViewModels="using:SimplePad.ViewModels"
+		xmlns:Behaviors="using:SimplePad.Behaviors"
+        mc:Ignorable="d"
+        d:DesignWidth="466" d:DesignHeight="90"
+        x:Class="SimplePad.Views.GotoView"
+        x:DataType="ViewModels:MainViewModel"
+        Padding="8"
+        Loaded="OnLoaded">
+    <Design.DataContext>
+        <ViewModels:MainViewModel/>
+    </Design.DataContext>
+    <Grid>
+        <Grid.ColumnDefinitions>
+			<ColumnDefinition Width="12*"/>
+            <ColumnDefinition Width="4*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="28"/>
+        </Grid.RowDefinitions>
+        <TextBox x:Name="GotoTextBox"
+                 Text="{CompiledBinding GotoText}" Watermark="Go to..."
+                 Foreground="White" Background="{StaticResource TextEditorColor}"
+                 Margin="6" Padding="5"
+                 TextWrapping="NoWrap"
+                 ContextFlyout="{DynamicResource TextEditorControlMenu}"
+                 Grid.Column="0" Grid.Row="0">
+			<Interaction.Behaviors>
+                <Behaviors:NumericTextBoxBehavior />
+			</Interaction.Behaviors>
+            <TextBox.KeyBindings>
+                <KeyBinding Gesture="Enter" Command="{CompiledBinding GotoCommand}"/>
+            </TextBox.KeyBindings>
+        </TextBox>
+        <!-- Main control buttons -->
+        <StackPanel Grid.Column="2" Grid.Row="0" Grid.RowSpan="2">
+            <Button Content="Go to line"
+                    Command="{CompiledBinding GotoCommand}"
+                    Margin="0,6,0,3"
+                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+        </StackPanel>
+        <!---->
+        <!-- Navigation info -->
+        <Label Content="{CompiledBinding LineCount, StringFormat='line count: {0}'}"
+               Margin="6,0,0,0"
+               HorizontalAlignment="Left" VerticalAlignment="Center" 
+               Grid.Row="1"/>
+        <Label Content="{CompiledBinding CurrentLine, StringFormat='current line is {0}'}"
+               Margin="0,0,24,0"
+               HorizontalAlignment="Right" VerticalAlignment="Center" 
+               Grid.Row="1"/>
+        <!---->
+    </Grid>
+</UserControl>

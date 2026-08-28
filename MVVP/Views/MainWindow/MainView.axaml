@@ -1,0 +1,166 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ViewModels="using:SimplePad.ViewModels"
+        xmlns:AvaloniaEdit="using:AvaloniaEdit"
+        xmlns:Search="using:AvaloniaEdit.Search"
+        mc:Ignorable="d" 
+        d:DesignWidth="800" 
+        d:DesignHeight="450"
+        x:Class="SimplePad.Views.MainView"
+        x:DataType="ViewModels:MainViewModel"
+        Loaded="OnLoaded">
+    <UserControl.KeyBindings>
+		<KeyBinding Gesture="Ctrl+O" Command="{CompiledBinding OpenCommand}"/>
+        <KeyBinding Gesture="Ctrl+S" Command="{CompiledBinding SaveCommand}"/>
+        <KeyBinding Gesture="Ctrl+Shift+S" Command="{CompiledBinding SaveAsCommandCommand}"/>
+        <KeyBinding Gesture="Ctrl+Shift+R" Command="{CompiledBinding RenameOrMoveCommand}"/>
+        <KeyBinding Gesture="Ctrl+Shift+Delete" Command="{CompiledBinding DeleteCommand}"/>
+    </UserControl.KeyBindings>
+    <Design.DataContext>
+        <ViewModels:MainViewModel/>
+    </Design.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <!-- Menu bar -->
+		<StackPanel Orientation="Horizontal">
+            <!-- File operations menu -->
+            <Button Content="File" Width="67" Padding="0,4" HorizontalContentAlignment="Center" CornerRadius="0">
+                <Button.Flyout>
+                    <MenuFlyout Placement="BottomEdgeAlignedLeft" PlacementGravity="BottomLeft" OverlayDismissEventPassThrough="True">
+						<MenuItem Header="Open..." InputGesture="Ctrl+O" Command="{CompiledBinding OpenCommand}"/>
+						<MenuItem Header="Save"
+                                  IsEnabled="{CompiledBinding CurrentPath, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                  InputGesture="Ctrl+S"
+                                  Command="{CompiledBinding SaveCommand}"/>
+						<MenuItem Header="Save as..." InputGesture="Ctrl+Shift+S" Command="{CompiledBinding SaveAsCommandCommand}"/>
+						<MenuItem Header="Rename or move..."
+                                  IsEnabled="{CompiledBinding CurrentPath, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                  InputGesture="Ctrl+Shift+R"
+                                  Command="{CompiledBinding RenameOrMoveCommand}"/>
+						<MenuItem Header="Move to the Recycle Bin..."
+                                  IsEnabled="{CompiledBinding CurrentPath, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                  InputGesture="Ctrl+Shift+Delete"
+                                  Command="{CompiledBinding DeleteCommand}"/>
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+            <!---->
+            <!-- Edit operations menu -->
+            <Button Content="Edit" Width="67" Padding="0,4" HorizontalContentAlignment="Center" CornerRadius="0">
+                <Button.Flyout>
+                    <MenuFlyout Placement="BottomEdgeAlignedLeft" PlacementGravity="BottomLeft" OverlayDismissEventPassThrough="True">
+						<MenuItem Header="Undo"
+                                  IsEnabled="{CompiledBinding CanUndo}"
+                                  InputGesture="Ctrl+Z"
+                                  Click="OnUndo"/>
+						<MenuItem Header="Redo"
+                                  IsEnabled="{CompiledBinding CanRedo}"
+                                  InputGesture="Ctrl+Y"
+                                  Click="OnRedo"/>
+                        <Separator/>
+						<MenuItem Header="Cut" 
+                                  InputGesture="Ctrl+X" 
+                                  Click="OnCut"/>
+						<MenuItem Header="Copy" 
+                                  InputGesture="Ctrl+C" 
+                                  Click="OnCopy"/>
+						<MenuItem Header="Paste"
+                                  InputGesture="Ctrl+V"
+                                  Click="OnPaste"/>
+						<MenuItem Header="Delete"
+                                  InputGesture="Delete"
+                                  Click="OnDelete"/>
+                        <Separator/>
+						<MenuItem Header="Select all"
+                                  InputGesture="Ctrl+A"
+                                  Click="OnSelectAll"/>
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+            <!---->
+            <!-- Search operations menu -->
+            <Button Content="Search" Width="67" Padding="0,4" HorizontalContentAlignment="Center" CornerRadius="0">
+                <Button.Flyout>
+                    <MenuFlyout Placement="BottomEdgeAlignedLeft" PlacementGravity="BottomLeft"  OverlayDismissEventPassThrough="True">
+						<MenuItem Header="Find..." InputGesture="Ctrl+F" Click="OnFind"/>
+						<MenuItem Header="Find in Files..." InputGesture="Ctrl+Shift+F" Click="OnFindInFiles"/>
+						<MenuItem Header="Find next" InputGesture="F3" Command="{CompiledBinding FindNextCommand}"/>
+						<MenuItem Header="Find previous" InputGesture="Shift+F3" Command="{CompiledBinding FindPreviousCommand}"/>
+						<MenuItem Header="Replace..." InputGesture="Ctrl+H" Click="OnReplace"/>
+						<MenuItem Header="Go to..." InputGesture="Ctrl+G" Click="OnGoto"/>
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+            <!---->
+            <!-- Format menu -->
+            <Button Content="Format" Width="67" Padding="0,4" HorizontalContentAlignment="Center" CornerRadius="0">
+                <Button.Flyout>
+                    <MenuFlyout Placement="BottomEdgeAlignedLeft" PlacementGravity="BottomLeft" OverlayDismissEventPassThrough="True">
+						<MenuItem Header="Word wrap" Command="{CompiledBinding WordWrapCommand}">
+                            <MenuItem.Icon>
+								<CheckBox IsChecked="{CompiledBinding IsWordWrapEnabled}" IsHitTestVisible="False"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+            <!---->
+        </StackPanel>
+        <!---->
+        <Grid x:Name="TextGrid"  Grid.Row="1">
+            <Grid.RowDefinitions>
+				<RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+				<RowDefinition Height="25" MinHeight="25"/>
+            </Grid.RowDefinitions>
+            <!-- Main text editor -->
+            <AvaloniaEdit:TextEditor x:Name="MainTextEditor"
+                                     Document="{CompiledBinding MainTextDocument}"
+                                     Foreground="White"
+                                     Background="{StaticResource TextEditorColor}"
+                                     Padding="5"
+                                     WordWrap="{CompiledBinding IsWordWrapEnabled}"
+                                     ContextFlyout="{DynamicResource TextEditorMenu}"/>
+            <!---->
+            <GridSplitter Background="Transparent" Margin="0,-3,0,-3" ZIndex="1" Grid.Row="1"/>
+            <!-- Search results viewer -->
+            <Grid SizeChanged="OnSearchResultsSizeChanged" Grid.Row="2">
+                <Grid.RowDefinitions>
+					<RowDefinition Height="25"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid>
+					<Label Content="{CompiledBinding SearchResultsTitle}" Padding="5,3,0,3"/>
+                    <Button Click="OnShowHideSearchResults"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            CornerRadius="0"
+                            Width="30"
+                            Margin="0,0,0,0"
+                            HorizontalAlignment="Right" VerticalAlignment="Stretch">
+                        <Image x:Name="ShowHideSearchResultsIcon"
+                               Source="{SvgImage /Assets/UpDirectionIcon.svg}"
+                               Width="8"/>
+                    </Button>
+                </Grid>
+                <AvaloniaEdit:TextEditor x:Name="SearchResultsViewer"
+                                         Document="{CompiledBinding SearchResultsDocument}"
+                                         Foreground="White"
+                                         Background="{StaticResource DarkTextEditorColor}"
+                                         Padding="5"
+                                         IsReadOnly="True"
+                                         Focusable="False"
+                                         SyntaxHighlighting="False"
+                                         WordWrap="False"
+                                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                         Grid.Row="1"/>
+            </Grid>
+            <!---->
+        </Grid>
+    </Grid>
+</UserControl>
