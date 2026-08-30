@@ -131,6 +131,7 @@ namespace SimplePad.ViewModels
                 {
                     SetProperty(ref _isTextChanged, value);
                     OnPropertyChanged(nameof(Title));
+                    OnPropertyChanged(nameof(ShortTitle));
                 }
                 else
                 {
@@ -274,6 +275,29 @@ namespace SimplePad.ViewModels
         }
 
         /// <summary>
+        /// Gets the short title of the application window, which includes the current file name and an asterisk (*) if the text has been changed since the last save operation.
+        /// </summary>
+        public string ShortTitle
+        {
+            get
+            {
+                _title = "";
+
+                if (_isTextChanged) _title += "*";
+                if (String.IsNullOrEmpty(_currentPath))
+                {
+                    _title += "SimplePad";
+                }
+                else
+                {
+                    _title += $"{Path.GetFileName(_currentPath)} - SimplePad";
+                }
+
+                return _title;
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the current file path of the document being edited in the <see cref="MainTextDocument"/>. 
         /// <br/><br/>
         /// This property is used to display the file path in the application window title and to determine where to save the document.
@@ -285,6 +309,7 @@ namespace SimplePad.ViewModels
             {
                 SetProperty(ref _currentPath, value);
                 OnPropertyChanged(nameof(Title));
+                OnPropertyChanged(nameof(ShortTitle));
             }
         }
 

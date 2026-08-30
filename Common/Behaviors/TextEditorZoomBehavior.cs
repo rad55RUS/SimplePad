@@ -12,9 +12,9 @@ namespace SimplePad.Behaviors
     /// </summary>
     public class TextEditorZoomBehavior : Behavior<TextEditor>
     {
-        private const double MinFontSize = 8;
-        private const double MaxFontSize = 72;
-        private const double ZoomStep = 2;
+        private const double MIN_FONT_SIZE = 8;
+        private const double MAX_FONT_SIZE = 72;
+        private const double ZOOM_STEP = 2;
 
         /// <summary>
         /// Override the OnAttached method to subscribe to the PointerWheelChanged event of the associated TextEditor control.
@@ -58,8 +58,7 @@ namespace SimplePad.Behaviors
 
             // Check if the Ctrl key is pressed
             var keyModifiers = e.KeyModifiers;
-            if (!keyModifiers.HasFlag(KeyModifiers.Control))
-                return;
+            if (!keyModifiers.HasFlag(KeyModifiers.Control)) return;
             //
 
             // Get the delta of the mouse wheel movement
@@ -72,16 +71,16 @@ namespace SimplePad.Behaviors
 
             if (delta > 0)
             {
-                fontSize += ZoomStep;
+                fontSize += ZOOM_STEP;
             }
             else
             {
-                fontSize -= ZoomStep;
+                fontSize -= ZOOM_STEP;
             }
             //
 
             // Limit the font size
-            fontSize = Math.Max(MinFontSize, Math.Min(MaxFontSize, fontSize));
+            fontSize = Math.Max(MIN_FONT_SIZE, Math.Min(MAX_FONT_SIZE, fontSize));
             //
 
             // Apply the new font size

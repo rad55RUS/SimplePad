@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
 	<PublishSingleFile>true</PublishSingleFile>
     <Nullable>enable</Nullable>
+	<ApplicationIcon>Icon.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
