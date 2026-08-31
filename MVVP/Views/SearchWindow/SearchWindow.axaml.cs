@@ -110,6 +110,16 @@ namespace SimplePad.Views
                         break;
                 }
             }
+            else
+            {
+                switch (e.Key)
+                {
+                    case Key.Escape:
+                        Hide();
+                        e.Handled = true;
+                        break;
+                }
+            }
         }
 
         /// <summary>
